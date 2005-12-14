@@ -1,0 +1,29 @@
+----+----|----+----|----+----|----+----|----+----|----+----|----+----|----+--
+So the idea of the user interface is this:
+
+Super key = Super_[LR] key.
+
+1. superkb loads.
+2. User presses (and holds down Super key).
+3. A keyboard like the one in "draft.svg" shows up in the screen.
+   * That keyboard should make the user aware that W, C and N keys do
+     something. Also, that the arrows and editing keys do something too.
+4. User might do one of the following:
+   a. A user presses (and releases), say, the W. The appropriate action
+      (load Writer) should begin. The keyboard should not disappear from
+      screen.
+   b. A user presses (and holds) any already bound or any bindable key, like
+      the W, N or C, or any other alphabet letter, but not Pause, for
+      instance. If the user keeps the key held down for 3 seconds, the
+      keyboard should disappear and the "Configure Binding" window should
+      appear. If the user releases the key before those 3 seconds, it is
+      actually point (a).
+   c. A user might use the mouse to move or rest the pointer over a key:
+      * If he rolls the mouse over a bound key, additional information might
+        appear --like making the icon bigger--.
+      * If the user clicks a bound key, the action should be performed.
+      * If the user holds the mouse button pressed over a key, the key should
+        be configured as in point (b).
+5. After the user has loaded all the programs he wants, he will release the
+   key and the keyboard will disappear. The programs should at this moment
+   be loading.
