@@ -10,18 +10,10 @@
 #include <errno.h>
 #include <string.h>
 #include <stdio.h>
+#include <signal.h>
 #include <sys/time.h>
 
 #include "superkb.h"
-
-#define       timerisset(tvp)\
-              ((tvp)->tv_sec || (tvp)->tv_usec)
-#define       timercmp(tvp, uvp, cmp)\
-              ((tvp)->tv_sec cmp (uvp)->tv_sec ||\
-              (tvp)->tv_sec == (uvp)->tv_sec &&\
-              (tvp)->tv_usec cmp (uvp)->tv_usec)
-#define       timerclear(tvp)\
-              ((tvp)->tv_sec = (tvp)->tv_usec = 0)
 
 /* Wrappers for easy dynamic array element adding and removing. */
 #define list_add_element(x, xn, y) {x = (y *)realloc(x, (++(xn))*sizeof(y));}
@@ -48,12 +40,16 @@ struct instance {
     Window rootwin;
 };
 
+XEvent sigev;
+
 struct kb *kb = NULL;
 unsigned int kb_n = 0;
 
 struct _kbwin kbwin = { NULL, NULL, NULL, NULL, NULL };
-struct config conf = { "", 0, 0};
+struct config conf = { "", 0, 0 };
 struct instance inst = { 0, 0, NULL, 0 };
+
+struct sigaction action;
 
 static void
 timerdiff(struct timeval *dst, struct timeval *tv0, struct timeval *tv1)
@@ -75,8 +71,9 @@ timerdiff(struct timeval *dst, struct timeval *tv0, struct timeval *tv1)
  * for incoming traffic or timeout. If the former is found, return the
  * next event.
  *
- * RETURNS <= 0 ? Timed out before getting an event.
- * RETURNS > 0 ? Event catched.
+ * RETURNS == 0 ? Timed out before getting an event.
+ * RETURNS <  0 ? Error. Useful to get EINTR. Return set to -errno.
+ * RETURNS >  0 ? Event catched.
  */
 int
 XNextEventWithTimeout(Display * display, XEvent * event_return,
@@ -85,23 +82,44 @@ XNextEventWithTimeout(Display * display, XEvent * event_return,
     fd_set fd;
     int r;
 
+    if (QLength(display) > 0)
+    {
+        XNextEvent(display, event_return);
+        return 1;
+    }
+
+    XFlush(display);
+
     FD_ZERO(&fd);
     FD_SET(XConnectionNumber(display), &fd);
 
     r = select(FD_SETSIZE, &fd, NULL, NULL, to);
 
-    if (r <= 0) {
+    if (r == 0) {
         /* Timeout */
         return r;
     }
 
+    if (r == -1) {
+        /* Error. Hopefully it's EINTR. */
+        return -errno;
+    }
+
     XNextEvent(display, event_return);
-    return r;
+    return 1;
+}
+
+void sighandler(int sig)
+{
+    switch (sig) {
+    case SIGUSR1:
+        break;
+    }
 }
 
 void
 superkb_addkb(KeySym keysym, unsigned int state,
-               enum action_type action_type, const char *command)
+              enum action_type action_type, const char *command)
 {
     list_add_element(kb, kb_n, struct kb);
     kb[kb_n - 1].keycode = XKeysymToKeycode(inst.dpy, keysym);
@@ -127,36 +145,31 @@ void superkb_start()
     /* Counter, in case user presses both Supers and releases only one. */
     int super_was_active = 0;
 
-    for (;;) {
+    while (1) {
 
         struct timeval hold_start;
         struct timeval hold_end;
         XEvent ev;
-        int timed_out;
-
-        timed_out = 0;
+        int XNEWT_ret;
 
         /* Decide wether to use XNextEvent or my own XNextEventWithTimeout
          * and do accordingly. If WithTimeout was used, substract the
          * time actually elapsed to the set timeout. */
-        if (!timerisset(&to))
-        {
-            XNextEvent(inst.dpy, &ev);
-        }
-        else {
+        if (!timerisset(&to)) {
+            XNEWT_ret = XNextEventWithTimeout(inst.dpy, &ev, NULL);
+        } else {
             gettimeofday(&hold_start, NULL);
 
-            if (XNextEventWithTimeout(inst.dpy, &ev, &to) <= 0)
-                /* Timed out */
-                timed_out = 1;
-            else
-                timed_out = 0;
+            XNEWT_ret = XNextEventWithTimeout(inst.dpy, &ev, &to);
 
             gettimeofday(&hold_end, NULL);
             timerdiff(&to, &hold_start, &hold_end);
         }
 
-        if (timed_out) {
+        if (XNEWT_ret == -EINTR) 
+            break;
+        if (XNEWT_ret == 0) {
+            /* Timed out */
             printf("CONFIGURE BINDING!\n");
             timerclear(&to);
             ignore_release = 1;
@@ -193,7 +206,7 @@ void superkb_start()
 
                 /* Restore saved_autorepeat_mode. */
                 XKeyboardControl xkbc;
-                /*xkbc.auto_repeat_mode = saved_autorepeat_mode;*/
+                /*xkbc.auto_repeat_mode = saved_autorepeat_mode; */
                 xkbc.auto_repeat_mode = AutoRepeatModeOn;
                 XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode, &xkbc);
 
@@ -226,7 +239,9 @@ void superkb_start()
             /* According to manual, this should not be necessary. */
             /* XAllowEvents(inst.dpy, ReplayKeyboard, CurrentTime); */
         }
+
     }
+
 }
 
 int superkb_load(char *display,
@@ -237,6 +252,13 @@ int superkb_load(char *display,
                  void (*kbwin_event) (Display *, XEvent ev),
                  const char *kblayout, KeySym key1, KeySym key2)
 {
+
+    /* SIGUSR1: Exit. */
+    action.sa_handler = sighandler;
+    sigemptyset(&action.sa_mask);
+    action.sa_flags = 0;
+    sigaction(SIGUSR1, &action, NULL);
+
     /* FIXME: Validate parameters. */
 
     /* Set configuration values. Parameters should be already validated. */
@@ -264,5 +286,5 @@ int superkb_load(char *display,
 
     XFlush(inst.dpy);
 
-   return 0;
+    return 0;
 }

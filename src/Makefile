@@ -3,7 +3,7 @@ SHELL=/bin/sh
 CC=gcc
 CXX=g++
 CPPFLAGS=-Wall
-CFLAGS=-std=c99 -ansi 
+CFLAGS=
 CXXFLAGS=
 OBJS=superkb.o main.o
 LDLIBS=-lX11
@@ -25,4 +25,5 @@ force:
 .PHONY : clean
 clean:
 	-/bin/rm -f $(OBJS) $(APP)
+	-/bin/rm -f *.*~
 	-/bin/rm -f core.*
