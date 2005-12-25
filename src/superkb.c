@@ -4,10 +4,13 @@
  */
 
 #include <X11/Xlib.h>
+
 #include <assert.h>
 #include <stdlib.h>
-#include <sys/time.h>
 #include <errno.h>
+#include <string.h>
+#include <stdio.h>
+#include <sys/time.h>
 
 #include "superkb.h"
 
@@ -138,11 +141,9 @@ void superkb_start()
          * time actually elapsed to the set timeout. */
         if (!timerisset(&to))
         {
-            printf("XNE: %d %d\n", to.tv_sec, to.tv_usec);
             XNextEvent(inst.dpy, &ev);
         }
         else {
-            printf("XNEWT: %d %d\n", to.tv_sec, to.tv_usec);
             gettimeofday(&hold_start, NULL);
 
             if (XNextEventWithTimeout(inst.dpy, &ev, &to) <= 0)
@@ -263,4 +264,5 @@ int superkb_load(char *display,
 
     XFlush(inst.dpy);
 
+   return 0;
 }
