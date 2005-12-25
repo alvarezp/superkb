@@ -3,7 +3,7 @@ SHELL=/bin/sh
 CC=gcc
 CXX=g++
 CPPFLAGS=-Wall
-CFLAGS=-ansi -std=c99 
+CFLAGS=-std=c99 -ansi 
 CXXFLAGS=
 OBJS=superkb.o main.o
 LDLIBS=-lX11

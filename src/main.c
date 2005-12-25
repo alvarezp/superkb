@@ -37,14 +37,14 @@ void kbwin_init (Display *dpy)
 {
 
     /* Conectar e inicializar */
-    Font f = XLoadFont(dpy, "*-bitstream vera sans-bold-r-*");
+    /* Font f = XLoadFont(dpy, "*-bitstream vera sans-bold-r-*");*/
 
-    unsigned long black = BlackPixel(dpy, DefaultScreen(dpy));
+    /* unsigned long black = BlackPixel(dpy, DefaultScreen(dpy));*/
     unsigned long white = WhitePixel(dpy, DefaultScreen(dpy));
     unsigned long bgcolor = (0 << 16) + (20 << 8) + 220;
 
     /* Crear la ventana con el tecladito: w */
-    XSetWindowAttributes attr;
+    /* XSetWindowAttributes attr; */
 
     w = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), 400, 400, 400, 300,
         0, white, bgcolor);
@@ -69,5 +69,5 @@ int main()
     superkb_addkb(XStringToKeysym("A"), 0, AT_COMMAND, "/usr/bin/gedit");
     superkb_start();
 
-
+    return EXIT_SUCCESS;
 }
