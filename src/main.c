@@ -66,10 +66,8 @@ int main()
     superkb_load(NULL, kbwin_init, kbwin_map, kbwin_unmap, kbwin_draw,
         kbwin_event, "en", XStringToKeysym("Super_L"),
         XStringToKeysym("Super_R"));
-    superkb_addkb(XStringToKeysym("A"), 0, AT_COMMAND, "/usr/bin/gedit");
-    superkb_start();
-    superkb_start();
-    superkb_start();
+    superkb_addkb(XStringToKeysym("n"), 0, AT_COMMAND, "/usr/bin/gedit");
+    superkb_addkb(XStringToKeysym("space"), 0, AT_COMMAND, "/usr/bin/gcalctool");
     superkb_start();
 
     return EXIT_SUCCESS;

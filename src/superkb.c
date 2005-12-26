@@ -5,6 +5,8 @@
 
 #include <X11/Xlib.h>
 
+#include <unistd.h>
+#include <sys/types.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -204,6 +206,8 @@ void superkb_start()
                 if (--super_was_active)
                     continue;
 
+                timerclear(&to);
+
                 /* Restore saved_autorepeat_mode. */
                 XKeyboardControl xkbc;
                 /*xkbc.auto_repeat_mode = saved_autorepeat_mode; */
@@ -216,21 +220,24 @@ void superkb_start()
         } else if (ev.type == KeyPress) {
             to.tv_sec = 3;
             to.tv_usec = 0;
-        } else if (ev.type == KeyRelease && !ignore_release) {
+        } else if (ev.type == KeyRelease && !ignore_release &&
+            super_was_active > 0) {
             /* User might have asked for binding configuration, so ignore key
              * release.
              */
             int i;
             timerclear(&to);
-            printf("KeyRelease: %d %d\n", kb[0].keycode, kb[0].state);
-            printf("KeyRelease: %d %d\n", ev.xkey.keycode, ev.xkey.state);
+            printf("KeyRelease: %s\n", XKeysymToString(XKeycodeToKeysym(inst.dpy, ev.xkey.keycode, 0)));
             for (i = 0; i < kb_n; i++) {
                 if (kb[i].keycode == ev.xkey.keycode &&
                     kb[i].state == (ev.xkey.state & kb[i].state)) {
                     switch (kb[i].action_type) {
                     case AT_COMMAND:
-                        system(kb[kb_n - 1].command);
-                        break;
+                        if (fork() == 0)
+                        {
+                          system(kb[i].command);
+                          exit(EXIT_SUCCESS);
+                        }
                     }
                 }
             }
