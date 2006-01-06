@@ -25,7 +25,6 @@ struct _kbwin {
     void (*init) (Display *);
     void (*map) (Display *);
     void (*unmap) (Display *);
-    void (*draw) (Display *);
     void (*event) (Display *, XEvent ev);
 };
 
@@ -44,10 +43,10 @@ struct instance {
 
 XEvent sigev;
 
-struct kb *kb = NULL;
-unsigned int kb_n = 0;
+struct superkb_kb *superkb_kb = NULL;
+unsigned int superkb_kb_n = 0;
 
-struct _kbwin kbwin = { NULL, NULL, NULL, NULL, NULL };
+struct _kbwin kbwin = { NULL, NULL, NULL, NULL };
 struct config conf = { "", 0, 0 };
 struct instance inst = { 0, 0, NULL, 0 };
 
@@ -123,11 +122,11 @@ void
 superkb_addkb(KeySym keysym, unsigned int state,
               enum action_type action_type, const char *command)
 {
-    list_add_element(kb, kb_n, struct kb);
-    kb[kb_n - 1].keycode = XKeysymToKeycode(inst.dpy, keysym);
-    kb[kb_n - 1].state = state;
-    kb[kb_n - 1].action_type = action_type;
-    strcpy(kb[kb_n - 1].command, command);
+    list_add_element(superkb_kb, superkb_kb_n, struct superkb_kb);
+    superkb_kb[superkb_kb_n - 1].keycode = XKeysymToKeycode(inst.dpy, keysym);
+    superkb_kb[superkb_kb_n - 1].state = state;
+    superkb_kb[superkb_kb_n - 1].action_type = action_type;
+    strcpy(superkb_kb[superkb_kb_n - 1].command, command);
 }
 
 void superkb_start()
@@ -228,14 +227,14 @@ void superkb_start()
             int i;
             timerclear(&to);
             printf("KeyRelease: %s\n", XKeysymToString(XKeycodeToKeysym(inst.dpy, ev.xkey.keycode, 0)));
-            for (i = 0; i < kb_n; i++) {
-                if (kb[i].keycode == ev.xkey.keycode &&
-                    kb[i].state == (ev.xkey.state & kb[i].state)) {
-                    switch (kb[i].action_type) {
+            for (i = 0; i < superkb_kb_n; i++) {
+                if (superkb_kb[i].keycode == ev.xkey.keycode &&
+                    superkb_kb[i].state == (ev.xkey.state & superkb_kb[i].state)) {
+                    switch (superkb_kb[i].action_type) {
                     case AT_COMMAND:
                         if (fork() == 0)
                         {
-                          system(kb[i].command);
+                          system(superkb_kb[i].command);
                           exit(EXIT_SUCCESS);
                         }
                     }
@@ -255,7 +254,6 @@ int superkb_load(char *display,
                  void (*kbwin_init) (Display *),
                  void (*kbwin_map) (Display *),
                  void (*kbwin_unmap) (Display *),
-                 void (*kbwin_draw) (Display *),
                  void (*kbwin_event) (Display *, XEvent ev),
                  const char *kblayout, KeySym key1, KeySym key2)
 {
@@ -272,7 +270,6 @@ int superkb_load(char *display,
     kbwin.init = kbwin_init;
     kbwin.map = kbwin_map;
     kbwin.unmap = kbwin_unmap;
-    kbwin.draw = kbwin_draw;
     kbwin.event = kbwin_event;
     strcpy(conf.kblayout, kblayout);
     conf.key1 = key1;
@@ -295,3 +292,4 @@ int superkb_load(char *display,
 
     return 0;
 }
+

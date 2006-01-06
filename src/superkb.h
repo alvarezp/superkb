@@ -16,8 +16,8 @@ enum action_type {
     AT_COMMAND = 1
 };
 
-/* kb is a dynamic list of keybindings */
-struct kb {
+/* superkb_kb is a dynamic list of keybindings */
+struct superkb_kb {
     KeyCode keycode;       /* Like in XKeyEvent. */
     unsigned int state;         /* Like in XKeyEvent. */
     unsigned int statemask;
@@ -38,7 +38,6 @@ int superkb_load(char *display,
                  void (*kbwin_init) (Display *),
                  void (*kbwin_map) (Display *),
                  void (*kbwin_unmap) (Display *),
-                 void (*kbwin_draw) (Display *),
                  void (*kbwin_event) (Display *, XEvent ev),
                  const char *kblayout, KeySym key1, KeySym key2);
 
