@@ -5,6 +5,9 @@
 
 #include <X11/Xlib.h>
 
+#include <X11/XKBlib.h>
+#include <X11/extensions/XKBgeom.h>
+
 #include <gdk-pixbuf-xlib/gdk-pixbuf-xlib.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glib.h>
@@ -15,20 +18,25 @@
 #include <errno.h>
 
 #include "superkb.h"
+#include "drawkb.h"
 
 Window w;
 
 Window prev_w_focus;
 int prev_w_revert;
 
+XkbDescPtr kbdesc;
+XkbGeometryPtr kb_geom;
+
+double scale;
 GdkPixbuf *kb;
 Font f;
 GC gc;
 
-void DrawKeyboard()
+void DrawKeyboard(Display * dpy)
 {
-    gdk_pixbuf_xlib_render_to_drawable(kb, w, gc, 0, 0, 0, 0, 200, 300,
-      XLIB_RGB_DITHER_NORMAL, 0, 0);
+    KbDrawKeyboard(dpy, w, gc, 0, scale, 0, 0, kb_geom);
+
     return;
 }
 
@@ -36,7 +44,7 @@ void kbwin_event(Display * dpy, XEvent ev)
 {
 
 	if (ev.type == Expose) {
-	    DrawKeyboard();
+	    DrawKeyboard(dpy);
         XFlush(dpy);
     } else if (ev.type == VisibilityNotify &&
       ev.xvisibility.state != VisibilityUnobscured ) {
@@ -68,12 +76,33 @@ void kbwin_init (Display *dpy)
 
     f = XLoadFont(dpy, "*-bitstream vera sans-bold-r-*");
 
+    XkbQueryExtension(dpy, NULL, NULL, NULL, NULL, NULL);
+
+    kbdesc = XkbGetKeyboard(dpy, XkbAllComponentsMask, XkbUseCoreKbd);
+
+    int status;
+    status = XkbGetGeometry(dpy, kbdesc); 
+
+    kb_geom = kbdesc->geom;
+
+
     /* unsigned long black = BlackPixel(dpy, DefaultScreen(dpy));*/
     unsigned long white = WhitePixel(dpy, DefaultScreen(dpy));
-    unsigned long bgcolor = (128 << 16) + (148 << 8) + 220;
 
-    w = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), 400, 400, 400, 300,
-      0, white, bgcolor);
+    int winh = DisplayWidth(dpy, 0);
+    int winv = DisplayHeight(dpy, 0);
+
+    w = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), (DisplayWidth(dpy, 0)-winh)/2, (DisplayHeight(dpy, 0)-winv)/2, winh, winv,
+      0, 0, white);
+
+    double scalew = (float) winh/kb_geom->width_mm;
+    double scaleh = (float) winv/kb_geom->height_mm;
+    
+    if (scalew < scaleh)
+        scale = scalew;
+    else
+        scale = scaleh;
+
 
     gc = XCreateGC(dpy, w, 0, NULL);
 
@@ -81,6 +110,8 @@ void kbwin_init (Display *dpy)
     attr.override_redirect = True;
 
     XChangeWindowAttributes(dpy, w, CWOverrideRedirect, &attr);
+
+    XSetTransientForHint(dpy, w, DefaultRootWindow(dpy));
 
     XSelectInput(dpy, w, ExposureMask | VisibilityChangeMask);
 
@@ -92,6 +123,7 @@ int main()
 {
 
     g_type_init();
+
 
     superkb_load(NULL, kbwin_init, kbwin_map, kbwin_unmap, kbwin_event,
         "en", XStringToKeysym("Super_L"),
