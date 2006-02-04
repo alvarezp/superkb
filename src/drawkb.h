@@ -10,6 +10,6 @@
 
 void KbDrawKeyboard(Display *dpy, Drawable w, GC gc, unsigned int parent_angle,
     double scale, unsigned int left, unsigned int top,
-    XkbGeometryPtr geom);
+    XkbDescPtr _kb);
 
 #endif

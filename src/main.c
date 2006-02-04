@@ -1,4 +1,4 @@
-/* License: GPL. */
+/* License: GPL v2. */
 /* To be compiled with:
  *    gcc -o superkb proto.c -ansi -lX11 -L/usr/X11/lib
  */
@@ -35,7 +35,7 @@ GC gc;
 
 void DrawKeyboard(Display * dpy)
 {
-    KbDrawKeyboard(dpy, w, gc, 0, scale, 0, 0, kb_geom);
+    KbDrawKeyboard(dpy, w, gc, 0, scale, 0, 0, kbdesc);
 
     return;
 }
@@ -92,17 +92,20 @@ void kbwin_init (Display *dpy)
     int winh = DisplayWidth(dpy, 0);
     int winv = DisplayHeight(dpy, 0);
 
-    w = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy), (DisplayWidth(dpy, 0)-winh)/2, (DisplayHeight(dpy, 0)-winv)/2, winh, winv,
-      0, 0, white);
-
     double scalew = (float) winh/kb_geom->width_mm;
     double scaleh = (float) winv/kb_geom->height_mm;
     
-    if (scalew < scaleh)
+    if (scalew < scaleh) {
         scale = scalew;
-    else
+        winv = kb_geom->height_mm * scale;
+    } else {
         scale = scaleh;
+        winh = kb_geom->width_mm * scale;
+    }
 
+    w = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
+        (DisplayWidth(dpy, 0)-winh)/2, (DisplayHeight(dpy, 0)-winv)/2,
+        winh, winv, 0, 0, ((220<<16)+(220<<8)+(220)));
 
     gc = XCreateGC(dpy, w, 0, NULL);
 

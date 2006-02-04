@@ -1,4 +1,4 @@
-/* License: GPL. */
+/* License: GPL v2. */
 /* To be compiled with:
  *    gcc -o superkb proto.c -ansi -lX11 -L/usr/X11/lib
  */
