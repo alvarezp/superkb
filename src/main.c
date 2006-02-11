@@ -33,18 +33,11 @@ GdkPixbuf *kb;
 Font f;
 GC gc;
 
-void DrawKeyboard(Display * dpy)
-{
-    KbDrawKeyboard(dpy, w, gc, 0, scale, 0, 0, kbdesc);
-
-    return;
-}
-
 void kbwin_event(Display * dpy, XEvent ev)
 {
 
 	if (ev.type == Expose) {
-	    DrawKeyboard(dpy);
+	    KbDrawKeyboard(dpy, w, gc, 0, scale, 0, 0, kbdesc);
         XFlush(dpy);
     } else if (ev.type == VisibilityNotify &&
       ev.xvisibility.state != VisibilityUnobscured ) {
@@ -105,7 +98,7 @@ void kbwin_init (Display *dpy)
 
     w = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
         (DisplayWidth(dpy, 0)-winh)/2, (DisplayHeight(dpy, 0)-winv)/2,
-        winh, winv, 0, 0, ((220<<16)+(220<<8)+(220)));
+        winh, winv, 0, 0, ((200<<16)+(200<<8)+(220)));
 
     gc = XCreateGC(dpy, w, 0, NULL);
 
