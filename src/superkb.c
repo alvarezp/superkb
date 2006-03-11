@@ -3,6 +3,8 @@
  *    gcc -o superkb proto.c -ansi -lX11 -L/usr/X11/lib
  */
 
+/* Superkb: This modules does all the key handling magic. */
+
 #include <X11/Xlib.h>
 
 #include <unistd.h>
@@ -17,9 +19,7 @@
 
 #include "superkb.h"
 
-/* Wrappers for easy dynamic array element adding and removing. */
-#define list_add_element(x, xn, y) {x = (y *)realloc(x, (++(xn))*sizeof(y));}
-#define list_rmv_element(x, xn, y) {x = (y *)realloc(x, (--(xn))*sizeof(y));}
+void (*__Action)(KeyCode keycode, unsigned int state);
 
 struct _kbwin {
     void (*init) (Display *);
@@ -42,9 +42,6 @@ struct instance {
 };
 
 XEvent sigev;
-
-struct superkb_kb *superkb_kb = NULL;
-unsigned int superkb_kb_n = 0;
 
 struct _kbwin kbwin = { NULL, NULL, NULL, NULL };
 struct config conf = { "", 0, 0 };
@@ -83,8 +80,7 @@ XNextEventWithTimeout(Display * display, XEvent * event_return,
     fd_set fd;
     int r;
 
-    if (QLength(display) > 0)
-    {
+    if (QLength(display) > 0) {
         XNextEvent(display, event_return);
         return 1;
     }
@@ -116,17 +112,6 @@ void sighandler(int sig)
     case SIGUSR1:
         break;
     }
-}
-
-void
-superkb_addkb(KeySym keysym, unsigned int state,
-              enum action_type action_type, const char *command)
-{
-    list_add_element(superkb_kb, superkb_kb_n, struct superkb_kb);
-    superkb_kb[superkb_kb_n - 1].keycode = XKeysymToKeycode(inst.dpy, keysym);
-    superkb_kb[superkb_kb_n - 1].state = state;
-    superkb_kb[superkb_kb_n - 1].action_type = action_type;
-    strcpy(superkb_kb[superkb_kb_n - 1].command, command);
 }
 
 void superkb_start()
@@ -167,7 +152,7 @@ void superkb_start()
             timerdiff(&to, &hold_start, &hold_end);
         }
 
-        if (XNEWT_ret == -EINTR) 
+        if (XNEWT_ret == -EINTR)
             break;
         if (XNEWT_ret == 0) {
             /* Timed out */
@@ -220,26 +205,17 @@ void superkb_start()
             to.tv_sec = 3;
             to.tv_usec = 0;
         } else if (ev.type == KeyRelease && !ignore_release &&
-            super_was_active > 0) {
+                   super_was_active > 0) {
             /* User might have asked for binding configuration, so ignore key
-             * release.
+             * release. That's what ignore_release is for.
              */
-            int i;
             timerclear(&to);
-            printf("KeyRelease: %s\n", XKeysymToString(XKeycodeToKeysym(inst.dpy, ev.xkey.keycode, 0)));
-            for (i = 0; i < superkb_kb_n; i++) {
-                if (superkb_kb[i].keycode == ev.xkey.keycode &&
-                    superkb_kb[i].state == (ev.xkey.state & superkb_kb[i].state)) {
-                    switch (superkb_kb[i].action_type) {
-                    case AT_COMMAND:
-                        if (fork() == 0)
-                        {
-                          system(superkb_kb[i].command);
-                          exit(EXIT_SUCCESS);
-                        }
-                    }
-                }
-            }
+            printf("KeyRelease: %s\n",
+                   XKeysymToString(XKeycodeToKeysym
+                                   (inst.dpy, ev.xkey.keycode, 0)));
+
+            __Action(XKeycodeToKeysym(inst.dpy, ev.xkey.keycode, 0), ev.xkey.state);
+
 
         } else {
             /* According to manual, this should not be necessary. */
@@ -250,13 +226,19 @@ void superkb_start()
 
 }
 
-int superkb_load(char *display,
-                 void (*kbwin_init) (Display *),
-                 void (*kbwin_map) (Display *),
-                 void (*kbwin_unmap) (Display *),
-                 void (*kbwin_event) (Display *, XEvent ev),
-                 const char *kblayout, KeySym key1, KeySym key2)
+int
+superkb_load(Display *display,
+             void (*kbwin_init) (Display *),
+             void (*kbwin_map) (Display *),
+             void (*kbwin_unmap) (Display *),
+             void (*kbwin_event) (Display *, XEvent ev),
+             const char *kblayout, KeySym key1, KeySym key2,
+             void (*f)(KeyCode keycode, unsigned int state))
+             
 {
+
+    __Action = f;
+    inst.dpy = display;
 
     /* SIGUSR1: Exit. */
     action.sa_handler = sighandler;
@@ -275,15 +257,12 @@ int superkb_load(char *display,
     conf.key1 = key1;
     conf.key2 = key2;
 
-
-    /* 2. Connect to display. */
-    if (!(inst.dpy = XOpenDisplay(display)))
-        return 1;
-
     inst.key1 = XKeysymToKeycode(inst.dpy, key1);
     inst.key2 = XKeysymToKeycode(inst.dpy, key2);
 
     inst.rootwin = DefaultRootWindow(inst.dpy);
+
+    inst.dpy = display;
 
     /* Create the keyboard window. */
     kbwin.init(inst.dpy);
@@ -292,4 +271,3 @@ int superkb_load(char *display,
 
     return 0;
 }
-
