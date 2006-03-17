@@ -3,6 +3,8 @@
  *    gcc -o superkb proto.c -ansi -lX11 -L/usr/X11/lib
  */
 
+/* Thanks to Natan "Whatah" Zohar for helping with tokenizer. */
+
 #include <X11/Xlib.h>
 
 #include <X11/XKBlib.h>
@@ -14,11 +16,14 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <limits.h>
+#include <stdio.h>
 
 #include "superkb.h"
 #include "drawkb.h"
@@ -38,6 +43,8 @@ GdkPixbuf *kb;
 GC gc;
 
 Display *dpy;
+
+int cver = 0;
 
 /* Wrappers for easy dynamic array element adding and removing. */
 #define list_add_element(x, xn, y) {x = (y *)realloc(x, (++(xn))*sizeof(y));}
@@ -200,6 +207,208 @@ add_binding(KeySym keysym, unsigned int state,
     strcpy(key_bindings[key_bindings_n - 1].icon, icon);
 }
 
+/* lets us know if the line is blank or not */
+int empty(char *string, int size) {
+    int i;
+    for (i = 0; i < size; i++) {
+        if (!isspace(string[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+/** Return address of next word in buf and update *wordLength
+ *  to the length of that word.  Return NULL if there is no such
+ *  word. 
+ * 
+ * A word is defined as all the chars from buf until one in delim and
+ *  and until the next item in delim. (it strips whitespace out of the word)
+ *
+ *  If the first character is a double quote, then it will search for the 
+ *  next double quote as a delimiter.
+**/
+const char *next_word(const char *buf, int *wordLength, const char* delim) {
+    char c = *buf;
+    int i = 0; /* Word length counter */
+    int j = 0; /* Leading whitespace counter */
+    
+    while (strchr(delim, c) != NULL && c != '\0') {
+        c = buf[j++];
+    }
+
+    if (j > 0) j--;
+
+    if (buf[j] == '\0') return NULL;
+
+    if (buf[j] == '"') {
+        c = buf[++j];
+        i = j;
+        while (c != '"' && c != '\0') {
+            c = buf[i++];
+        }
+    } else {
+        i = j;
+        while (strchr(delim, c) == NULL) {
+            c = buf[i++];
+        }
+    }
+    
+    *wordLength = --i - j;
+    return buf + j;
+}
+
+
+/** Read next line (terminated by `\n` or EOF) from in into dynamically
+ *  allocated buffer buf having size *bufSize.  The line is terminated
+ *  by a NUL ('\0') character.  The terminating newline is not
+ *  included.  If buf is not large enough to contain
+ *  the line then it is reallocated and the new size stored in *bufSize.
+ *  The return value is a pointer to the start of the buffer containing
+ *  the line.  Sets *isEof to non-zero on EOF.  Aborts with an
+ *  error message on error.
+**/
+char *get_line(FILE *in, char *buf, int *bufSize, int *isEof) {
+    char c;
+    int i = 0;
+
+    if (*bufSize == 0) *bufSize = 1;
+    buf = realloc(buf, *bufSize * sizeof(*buf));
+
+    while((c = fgetc(in)) != EOF && (c != '\n')) {
+        if (ferror(in)) {
+            fprintf(stderr, "Error reading from file\n");
+            exit(1);
+        }
+        if (i == *bufSize) {
+            buf = realloc(buf, sizeof(char) * *bufSize * 2);
+            *bufSize *= 2;
+        }
+        buf[i++] = c;
+    }
+    
+    if (c == EOF) {
+        *isEof = 1;
+    }
+    
+    buf[i] = 0;
+    *bufSize = i;
+
+    return buf;
+}
+
+/* Reads line and updates **c to reflect the configuration of that line */
+void handle_line(char *line, int linesize) {
+    char *comment;
+    /* We zero out anything past a '#', including the '#', for commenting */
+    if ((comment = strchr(line, '#')) != NULL) {
+        *comment = 0;
+        linesize = (comment - line);
+    }
+    
+    /* printf("line:%s characters:%i\n", line, linesize); */
+    
+    /* Sanity Checks */
+    if (linesize == 0) return;
+    if (empty(line, linesize)) return;
+    
+    /* Tokenize the line by whitespace, filling token_array with tok_index
+     * number of items. */
+
+    int wordlength;
+    char **token_array = malloc(sizeof(*token_array));
+    char *token;
+    char *token_item;
+    int tok_size;
+    int tok_index;
+    
+    int q;
+
+    wordlength = -1;
+    token = line;
+    tok_index = 0;
+    tok_size = 1;
+
+    
+    while ((token = (char *) next_word(token + wordlength + 1, &wordlength, " \v\t\r")) != NULL) {
+        if (tok_size <= tok_index) {
+            token_array = realloc(token_array, tok_size * 2 * sizeof(*token_array));
+            tok_size *= 2;
+        }
+        /* Need to end each token with a null, so add 1 to the wordlength and NULL it */
+        token_item = malloc(sizeof(*token_item) * wordlength + 1);
+        /* copy the token into our newly allocated space */
+        memcpy(token_item, token, wordlength);
+        token_item[wordlength] = 0;
+        /* pop it into the array */
+        token_array[tok_index++] = token_item;
+    }
+
+    /* Finished tokenizing */
+
+    /* (Octavio) Interpretation */
+
+    if (!strcmp(token_array[0], "CVER"))
+    {
+        int input;
+
+        /* FIXME: This will accept strings like '2a'. Though it will fallback
+         * correctly to '2', it might not be what the user wants. It should
+         * spit back a warning or an error.
+         */
+        input = atoi(token_array[1]);
+
+        if (input > 0) {
+            fprintf(stderr, "Ignoring bad CVER: %d\n", atoi(token_array[1]));
+        }
+    } else if (cver == 0) {
+
+        /* FIXME: There might not exist token_array[1]. */
+        if (!strcmp(token_array[0], "KEY") && !strcmp(token_array[1], "COMMAND"))
+        {
+            /* FIXME: Do corresponding validation. */
+            /* We have to choose whether to validate here or upon display and
+             * execution. I guess the later would make the program more robust.
+             */
+            add_binding(XStringToKeysym(token_array[2]), atoi(token_array[3]), AT_COMMAND, token_array[4], token_array[5]);
+        } else {
+            fprintf(stderr, "Ignoring invalid config line: '%s", token_array[0]);
+            for (q = 1; q < tok_index; q++) {
+                printf(" %s", token_array[q]);
+            }
+            printf("'\n");
+        }
+        
+    }
+
+    /* Free our allocated memory */
+    
+    /* iterate through the token_array freeing everything */
+    for (q = 0; q < tok_index; q++) {
+        free(token_array[q]);
+    }
+    
+    free(token_array);
+    free(token);
+    
+    return;
+}
+
+void read_config(FILE *file) {
+    char *buf = malloc(sizeof(*buf));
+    int *bufSize = malloc(sizeof(*bufSize));
+    int *eof = malloc(sizeof(*eof));
+ 
+    *bufSize = 1;
+    *eof = 0;
+
+    while (*eof == 0) {
+        buf = get_line(file, buf, bufSize, eof);
+        handle_line(buf, *bufSize);
+    }
+
+    return;
+}
 
 int main()
 {
@@ -213,12 +422,30 @@ int main()
         return EXIT_FAILURE;
     }
 
+    /* Read the mock config file */
+    FILE *fd;
+
+    char *home = getenv("HOME");
+
+    char *file = malloc(strlen(getenv("HOME")) + strlen("/.superkbrc") + 1);
+
+    strcpy(file, home);
+    strcat(file, "/.superkbrc");
+
+    fd = fopen(file, "r");
+    if (!fd)
+    {
+        fprintf(stderr, "Couldn't open config file: %s\n", file);
+        return EXIT_FAILURE;
+    }
+
+    read_config(fd);
+    fclose(fd);
+
     superkb_load(dpy, kbwin_init, kbwin_map, kbwin_unmap, kbwin_event,
                  "en", XStringToKeysym("Super_R"),
                  XStringToKeysym("Super_L"), __Superkb_Action);
-    add_binding(XStringToKeysym("n"), 0, AT_COMMAND, "/usr/bin/gedit", "/usr/share/pixmaps/gedit-icon.png");
-    add_binding(XStringToKeysym("t"), 0, AT_COMMAND, "/usr/X11R6/bin/xterm", "/usr/share/pixmaps/gedit-icon.png");
-    add_binding(XStringToKeysym("c"), 0, AT_COMMAND, "/usr/bin/gcalctool", "/usr/share/pixmaps/gnome-calc2.png");
+
     superkb_start();
 
     return EXIT_SUCCESS;

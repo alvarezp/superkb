@@ -563,6 +563,9 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
     IQF(XStringToKeysym(glyph), 0, buf, buf_n);
     if (strcmp(buf, "") != 0) {
         k = &_kb->geom->shapes[key->shape_ndx].bounds;
+
+        LoadAndDrawImage(dpy, gc, w, scale*(left + key->gap)+8, scale*(top)+8, scale*(k->x2-k->x1)-8, scale*(k->y2-k->y1)-8, buf, buf_n);
+
         /* FIXME: These +- 8 are fixed now, which means they are resolution
            dependant. This is wrong. */
         /* FIXME: Key label vertical position is miscalculated. */
@@ -580,7 +583,6 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
                     XDrawString(dpy, w, gc, scale*ax, scale*ay, glyph,
                                 1);
 
-        LoadAndDrawImage(dpy, gc, w, scale*(left + key->gap)+8, scale*(top)+8, scale*(k->x2-k->x1)-8, scale*(k->y2-k->y1)-8, buf, buf_n);
     } else {
                 XSetForeground(dpy, gc, (160 << 16) + (160 << 8) + (176));
                 if (strlen(kss) == 1) {
