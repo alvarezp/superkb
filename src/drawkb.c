@@ -581,7 +581,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
                                 angle, section_left, section_top, &ax,
                                 &ay);
                     XDrawString(dpy, w, gc, scale*ax, scale*ay, glyph,
-                                1);
+                                strlen(glyph));
 
     } else {
                 XSetForeground(dpy, gc, (160 << 16) + (160 << 8) + (176));

@@ -214,7 +214,7 @@ void superkb_start()
                    XKeysymToString(XKeycodeToKeysym
                                    (inst.dpy, ev.xkey.keycode, 0)));
 
-            __Action(XKeycodeToKeysym(inst.dpy, ev.xkey.keycode, 0), ev.xkey.state);
+            __Action(ev.xkey.keycode, ev.xkey.state);
 
 
         } else {
