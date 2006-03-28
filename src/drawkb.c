@@ -564,7 +564,10 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
     if (strcmp(buf, "") != 0) {
         k = &_kb->geom->shapes[key->shape_ndx].bounds;
 
-        LoadAndDrawImage(dpy, gc, w, scale*(left + key->gap)+8, scale*(top)+8, scale*(k->x2-k->x1)-8, scale*(k->y2-k->y1)-8, buf, buf_n);
+        RotatePoint((left + key->gap+8), (top+8), 
+                    angle, section_left, section_top, &ax,
+                    &ay);
+        LoadAndDrawImage(dpy, gc, w, scale*ax, scale*ay, scale*(k->x2-k->x1)-8, scale*(k->y2-k->y1)-8, buf, buf_n);
 
         /* FIXME: These +- 8 are fixed now, which means they are resolution
            dependant. This is wrong. */
