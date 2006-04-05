@@ -12,6 +12,8 @@
 #include <sys/time.h>
 #include <errno.h>
 
+extern double drawkb_delay;
+
 void superkb_start();
 
 int superkb_load(Display *display,

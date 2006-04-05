@@ -56,7 +56,6 @@ enum action_type {
     AT_FUNCTION
 };
 
-
 /* key_bindings is a dynamic list of keybindings */
 struct key_bindings {
     KeyCode keycode;            /* Like in XKeyEvent. */
@@ -362,6 +361,11 @@ void handle_line(char *line, int linesize) {
             fprintf(stderr, "Ignoring bad CVER: %d\n", atoi(token_array[1]));
         }
     } else if (cver == 0) {
+
+        if (!strcmp(token_array[0], "DELAY") && tok_index == 2) {
+            drawkb_delay = atof(token_array[1]);
+            return;
+        }
 
         /* FIXME: There might not exist token_array[1]. */
         if (!strcmp(token_array[0], "KEY") && !strcmp(token_array[1], "COMMAND"))

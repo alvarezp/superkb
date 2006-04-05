@@ -19,6 +19,8 @@
 
 #include "superkb.h"
 
+double drawkb_delay = 0;
+
 void (*__Action)(KeyCode keycode, unsigned int state);
 
 struct _kbwin {
@@ -57,7 +59,19 @@ timerdiff(struct timeval *dst, struct timeval *tv0, struct timeval *tv1)
         dst->tv_sec = tv1->tv_sec - tv0->tv_sec;
     } else {
         dst->tv_usec = tv1->tv_usec - tv0->tv_usec + 1000000;
-        dst->tv_sec = tv1->tv_sec - tv0->tv_usec - 1;
+        dst->tv_sec = tv1->tv_sec - tv0->tv_sec - 1;
+    }
+}
+
+static void
+timer_sub(struct timeval *tv1, struct timeval *tv0)
+{
+    if (tv1->tv_usec >= tv0->tv_usec) {
+        tv1->tv_usec = tv1->tv_usec - tv0->tv_usec;
+        tv1->tv_sec = tv1->tv_sec - tv0->tv_sec;
+    } else {
+        tv1->tv_usec = tv1->tv_usec - tv0->tv_usec + 1000000;
+        tv1->tv_sec = tv1->tv_sec - tv0->tv_sec - 1;
     }
 }
 
@@ -114,6 +128,15 @@ void sighandler(int sig)
     }
 }
 
+enum to_index {
+  TO_CONFIG = 0,
+  TO_DRAWKB = 1
+};
+
+#define to_n 2
+
+struct timeval to[to_n];
+
 void superkb_start()
 {
     /* Solicitar los eventos */
@@ -124,12 +147,15 @@ void superkb_start()
         XGrabKey(inst.dpy, inst.key2, AnyModifier, inst.rootwin, True,
                  GrabModeAsync, GrabModeAsync);
 
-    struct timeval to = { 0, 0 };
     int ignore_release = 0;
     int saved_autorepeat_mode = 0;
 
     /* Counter, in case user presses both Supers and releases only one. */
     int super_was_active = 0;
+
+    /* Initialize timeouts to be inactive. */
+    timerclear(&to[TO_DRAWKB]);
+    timerclear(&to[TO_CONFIG]);
 
     while (1) {
 
@@ -137,28 +163,79 @@ void superkb_start()
         struct timeval hold_end;
         XEvent ev;
         int XNEWT_ret;
+        int i;
+        int to_reason;
 
         /* Decide wether to use XNextEvent or my own XNextEventWithTimeout
          * and do accordingly. If WithTimeout was used, substract the
          * time actually elapsed to the set timeout. */
-        if (!timerisset(&to)) {
+
+        for (i = 0; i < to_n; i++) {
+            if (timerisset(&to[i])) {
+                to_reason = i;
+                break;
+            }
+        }
+
+        if (i == to_n) {
             XNEWT_ret = XNextEventWithTimeout(inst.dpy, &ev, NULL);
         } else {
             gettimeofday(&hold_start, NULL);
 
-            XNEWT_ret = XNextEventWithTimeout(inst.dpy, &ev, &to);
+            for (i = to_reason + 1; i < to_n; i++) {
+                if (timerisset(&to[i])) {
+                    if (timercmp(&to[i], &to[to_reason], <))
+                        to_reason = i;
+                }
+            }
+
+            /* Man pages say that Linux select() modifies timeout where
+             * other implementations don't. We oughta save timeout and restore
+             * it after select().
+             */
+            struct timeval timeout_save;
+            memcpy(&timeout_save, &to[to_reason], sizeof(struct timeval));
+
+            /* I hope select() takes proper care of negative timeouts.
+             * It happens sometimes.
+             */
+            if (&to[to_reason].tv_sec > 0 &&
+                &to[to_reason].tv_usec > 0) {
+                XNEWT_ret = XNextEventWithTimeout(inst.dpy, &ev, &to[to_reason]);
+            } 
+
+            /* Restore. */
+            memcpy(&to[to_reason], &timeout_save, sizeof(struct timeval));
 
             gettimeofday(&hold_end, NULL);
-            timerdiff(&to, &hold_start, &hold_end);
+
+            struct timeval hold_time;
+            /* Update all timers */
+            timerdiff(&hold_time, &hold_start, &hold_end);
+            for (i = 0; i < to_n; i++) {
+                if (timerisset(&to[i])) {
+                    timer_sub(&to[i], &hold_time);
+                }
+            }
         }
 
         if (XNEWT_ret == -EINTR)
             break;
         if (XNEWT_ret == 0) {
             /* Timed out */
-            printf("CONFIGURE BINDING!\n");
-            timerclear(&to);
-            ignore_release = 1;
+            if (to_reason == TO_CONFIG) {
+                printf("Placeholder: key config window should pop up here.\n");
+                timerclear(&to[TO_CONFIG]);
+                ignore_release = 1;
+            }
+            if (to_reason == TO_DRAWKB) {
+                printf("Drawing keyboard.\n");
+                timerclear(&to[TO_DRAWKB]);
+
+                /* Map Window. */
+                kbwin.map(inst.dpy);
+
+            }
         } else if (ev.xany.window != inst.rootwin) {
             kbwin.event(inst.dpy, ev);
         } else if (ev.xkey.keycode == inst.key1
@@ -183,14 +260,20 @@ void superkb_start()
                 XGrabKeyboard(inst.dpy, inst.rootwin, False, GrabModeAsync,
                               GrabModeAsync, CurrentTime);
 
-                /* Map Window. */
-                kbwin.map(inst.dpy);
-
+                if (drawkb_delay > 0) {
+                    to[TO_DRAWKB].tv_sec = (int) drawkb_delay;
+                    to[TO_DRAWKB].tv_usec = (int) ((drawkb_delay - to[TO_DRAWKB].tv_sec) * 1000000);
+                } else {
+                    /* Map Window. */
+                    kbwin.map(inst.dpy);
+                }
             } else if (ev.type == KeyRelease) {
+
                 if (--super_was_active)
                     continue;
 
-                timerclear(&to);
+                timerclear(&to[TO_DRAWKB]);
+                timerclear(&to[TO_CONFIG]);
 
                 /* Restore saved_autorepeat_mode. */
                 XKeyboardControl xkbc;
@@ -202,14 +285,14 @@ void superkb_start()
                 kbwin.unmap(inst.dpy);
             }
         } else if (ev.type == KeyPress) {
-            to.tv_sec = 3;
-            to.tv_usec = 0;
-        } else if (ev.type == KeyRelease && !ignore_release &&
-                   super_was_active > 0) {
+            to[TO_CONFIG].tv_sec = 3;
+            to[TO_CONFIG].tv_usec = 0;
+        } else if ((ev.type == KeyRelease && !ignore_release &&
+                   super_was_active > 0) || (ev.type == KeyRelease)) {
             /* User might have asked for binding configuration, so ignore key
              * release. That's what ignore_release is for.
              */
-            timerclear(&to);
+            timerclear(&to[TO_CONFIG]);
             printf("KeyRelease: %s\n",
                    XKeysymToString(XKeycodeToKeysym
                                    (inst.dpy, ev.xkey.keycode, 0)));
