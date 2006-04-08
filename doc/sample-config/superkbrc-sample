@@ -1,0 +1,5 @@
+CVER 0
+DELAY 0.75
+KEY COMMAND "n" 0 "/usr/bin/gedit" "/usr/share/pixmaps/gedit-icon.png"
+KEY COMMAND "F9" 0 "/usr/bin/opera" "/usr/share/pixmaps/opera.xpm"
+KEY COMMAND "F12" 0 "/usr/bin/gnome-terminal -x bash -" "/usr/share/pixmaps/gnome-terminal.png"
