@@ -29,8 +29,6 @@ force:
 install:
 	$(MAKE)
 	cp superkb /usr/bin
-	-[ ! -f ~/.superkbrc ] && cp ../doc/sample-config/superkbrc-sample ~/.superkbrc
-
 
 .PHONY : uninstall
 uninstall:
