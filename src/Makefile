@@ -25,6 +25,17 @@ force:
 	$(MAKE) clean
 	$(MAKE)
 
+.PHONY : install
+install:
+	$(MAKE)
+	cp superkb /usr/bin
+	-[ ! -f ~/.superkbrc ] && cp ../doc/sample-config/superkbrc-sample ~/.superkbrc
+
+
+.PHONY : uninstall
+uninstall:
+	[ -f /usr/bin/superkb ] && rm /usr/bin/superkb
+
 .PHONY : clean
 clean:
 	-/bin/rm -f $(OBJS) $(APP)
