@@ -14,7 +14,6 @@
 #include <errno.h>
 #include <string.h>
 #include <stdio.h>
-#include <signal.h>
 #include <sys/time.h>
 
 #include "superkb.h"
@@ -48,8 +47,6 @@ XEvent sigev;
 struct _kbwin kbwin = { NULL, NULL, NULL, NULL };
 struct config conf = { "", 0, 0 };
 struct instance inst = { 0, 0, NULL, 0 };
-
-struct sigaction action;
 
 static void
 timerdiff(struct timeval *dst, struct timeval *tv0, struct timeval *tv1)
@@ -118,14 +115,6 @@ XNextEventWithTimeout(Display * display, XEvent * event_return,
 
     XNextEvent(display, event_return);
     return 1;
-}
-
-void sighandler(int sig)
-{
-    switch (sig) {
-    case SIGUSR1:
-        break;
-    }
 }
 
 enum to_index {
@@ -322,12 +311,6 @@ superkb_load(Display *display,
 
     __Action = f;
     inst.dpy = display;
-
-    /* SIGUSR1: Exit. */
-    action.sa_handler = sighandler;
-    sigemptyset(&action.sa_mask);
-    action.sa_flags = 0;
-    sigaction(SIGUSR1, &action, NULL);
 
     /* FIXME: Validate parameters. */
 

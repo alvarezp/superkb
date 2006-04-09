@@ -24,9 +24,12 @@
 #include <string.h>
 #include <limits.h>
 #include <stdio.h>
+#include <signal.h>
 
 #include "superkb.h"
 #include "drawkb.h"
+
+struct sigaction action;
 
 Window kbwin;
 Window confwin;
@@ -414,10 +417,25 @@ void read_config(FILE *file) {
     return;
 }
 
+void sighandler(int sig)
+{
+    switch (sig) {
+    case SIGUSR1:
+        break;
+    }
+}
+
 int main()
 {
 
     g_type_init();
+
+    /* SIGUSR1: Exit. */
+    action.sa_handler = sighandler;
+    sigemptyset(&action.sa_mask);
+    action.sa_flags = 0;
+    sigaction(SIGUSR1, &action, NULL);
+    sigaction(SIGSEGV, &action, NULL);
 
     /* 2. Connect to display. */
     if (!(dpy = XOpenDisplay(NULL)))
