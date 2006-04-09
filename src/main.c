@@ -435,7 +435,6 @@ int main()
     sigemptyset(&action.sa_mask);
     action.sa_flags = 0;
     sigaction(SIGUSR1, &action, NULL);
-    sigaction(SIGSEGV, &action, NULL);
 
     /* 2. Connect to display. */
     if (!(dpy = XOpenDisplay(NULL)))
