@@ -218,7 +218,6 @@ void superkb_start()
                 ignore_release = 1;
             }
             if (to_reason == TO_DRAWKB) {
-                printf("Drawing keyboard.\n");
                 timerclear(&to[TO_DRAWKB]);
 
                 /* Map Window. */

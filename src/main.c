@@ -1,4 +1,4 @@
-/* License: GPL v2. */
+    /* License: GPL v2. */
 /* To be compiled with:
  *    gcc -o superkb proto.c -ansi -lX11 -L/usr/X11/lib
  */
@@ -53,7 +53,6 @@ int cver = 0;
 #define list_add_element(x, xn, y) {x = (y *)realloc(x, (++(xn))*sizeof(y));}
 #define list_rmv_element(x, xn, y) {x = (y *)realloc(x, (--(xn))*sizeof(y));}
 
-
 enum action_type {
     AT_COMMAND = 1,
     AT_FUNCTION
@@ -75,6 +74,14 @@ struct key_bindings {
 } *key_bindings = NULL;
 
 unsigned int key_bindings_n = 0;
+
+int fatal_error(const char * format, ...) {
+    va_list args;
+    va_start (args, format);
+    fprintf(stderr, format, args);
+    abort();
+    return 0;
+}
 
 void IconQuery(KeySym keysym, unsigned int state, char buf[], int buf_n)
 {
@@ -278,10 +285,9 @@ char *get_line(FILE *in, char *buf, int *bufSize, int *isEof) {
     buf = realloc(buf, *bufSize * sizeof(*buf));
 
     while((c = fgetc(in)) != EOF && (c != '\n')) {
-        if (ferror(in)) {
-            fprintf(stderr, "Error reading from file\n");
-            exit(1);
-        }
+
+        ferror(in) && fatal_error("Error reading from file\n");
+
         if (i == *bufSize) {
             buf = realloc(buf, sizeof(char) * *bufSize * 2);
             *bufSize *= 2;
@@ -437,28 +443,26 @@ int main()
     sigaction(SIGUSR1, &action, NULL);
 
     /* 2. Connect to display. */
-    if (!(dpy = XOpenDisplay(NULL)))
-    {
-        fprintf(stderr, "Couldn't open display.\n");
-        return EXIT_FAILURE;
-    }
+    dpy = XOpenDisplay(NULL);
+    (!dpy) && fatal_error("superkb: Couldn't open display.\n");
 
     /* Read the mock config file */
     FILE *fd;
 
     char *home = getenv("HOME");
+    char *file;
 
-    char *file = malloc(strlen(getenv("HOME")) + strlen("/.superkbrc") + 1);
-
-    strcpy(file, home);
-    strcat(file, "/.superkbrc");
+    if (home) {
+        file = malloc(strlen(getenv("HOME")) + strlen("/.superkbrc") + 1);
+        strcpy(file, home);
+        !file && fatal_error("superkb: Not enough memory\n");
+        strcat(file, "/.superkbrc");
+    } else {
+        file = ".superkbrc";
+    }
 
     fd = fopen(file, "r");
-    if (!fd)
-    {
-        fprintf(stderr, "Couldn't open config file: %s\n", file);
-        return EXIT_FAILURE;
-    }
+    (!fd) && fatal_error("superkb: Couldn't open cofig file: %s\n", file);
 
     read_config(fd);
     fclose(fd);

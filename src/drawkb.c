@@ -31,6 +31,7 @@
 
 IconQueryFunc IQF;
 
+char *fontname;
 Font F;
 
 int g_size;
@@ -573,7 +574,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
            dependant. This is wrong. */
         /* FIXME: Key label vertical position is miscalculated. */
                     fs = XLoadQueryScalableFont(dpy, 0,
-                                                "-*-bitstream vera sans-bold-r-*-*-0-0-*-*-*-0-iso10646-*",
+                                                fontname,
                                                 400*scale);
         
                 XSetFont(dpy, gc, fs->fid);
@@ -591,19 +592,19 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
                 if (strlen(kss) == 1) {
                     //glyph[0] = toupper(glyph[0]);
                     size = scale * 600;
-                    fs = XLoadQueryScalableFont(dpy, 0,
-                                                "-*-bitstream vera sans-bold-r-*-*-0-0-*-*-*-0-iso10646-*",
+                   fs = XLoadQueryScalableFont(dpy, 0,
+                                                fontname,
                                                 g_size);
                     tw = XTextWidth(fs, glyph, strlen(glyph));
                 } else {
                     size = scale * 300;
                     do {
                         fs = XLoadQueryScalableFont(dpy, 0,
-                                                    "-*-bitstream vera sans-bold-r-*-*-0-0-*-*-*-0-iso10646-*",
+                                                    fontname,
                                                     size);
                         if (!fs) {
                             printf("Could not load font: %s",
-                                   "-*-bitstream vera sans-bold-r-*-*-0-0-*-*-*-0-iso10646-*");
+                                   fontname);
                             exit(EXIT_FAILURE);
                         }
 
@@ -751,6 +752,8 @@ KbDrawKeyboard(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
     WorkaroundBoundsBug(dpy, _kb);
 
+    fontname = "-*-bitstream vera sans-bold-r-*-*-0-0-*-*-*-0-iso10646-*";
+
     /* Determine font size */
     int norm_h = 0, norm_w = 0;
 
@@ -788,16 +791,24 @@ KbDrawKeyboard(Display * dpy, Drawable w, GC gc, unsigned int angle,
     }
 
     if (norm_h == norm_w == 0) {
-        printf("COULDNT FIND NORM\n");
+        printf("superkb: Couldn't find norm.\n");
         return;
     }
 
     /* 2. Determine max point size that fits in norm_w and norm_h. */
-    XFontStruct *fs;
     int max_w, max_h;
-    fs = XLoadQueryScalableFont(dpy, 0,
-                                "-*-bitstream vera sans-bold-r-*-*-0-0-*-*-*-0-iso10646-*",
-                                1000);
+
+    XFontStruct *fs;
+    fs = XLoadQueryScalableFont(dpy, 0, fontname, 1000);
+    if (!fs) {
+        fontname = "-*-helvetica-bold-r-*-*-0-0-*-*-*-0-iso10646-*";
+        fs = XLoadQueryScalableFont(dpy, 0, fontname, 1000);
+    }
+
+    if (!fs) {
+        printf("You need the Bitstream Vera Sans or Helvetica font. Sorry.\n");
+        exit(EXIT_FAILURE);
+    }
 
     max_w =
         norm_w * scale * 1000 / (fs->max_bounds.rbearing -
