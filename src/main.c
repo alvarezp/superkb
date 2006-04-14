@@ -434,6 +434,16 @@ void sighandler(int sig)
 int main()
 {
 
+    printf("\nsuperkb: Welcome. This program is under development.\n"
+      "\n"
+      "It's strongly recommended to set the following under xorg.conf:\n"
+      "  Option \"AllowDeactivateGrabs\" \"On\"\n"
+      "  Option \"AllowClosedownGrabs\" \"On\"\n"
+      "\n"
+      "With these, if case the program fails while drawing the keyboard, you\n"
+      "will be able to kill it by pressing Ctrl-Alt-*, and restore Autorepeat\n"
+      "with 'xset r on'.\n\n");
+
     g_type_init();
 
     /* SIGUSR1: Exit. */
