@@ -801,12 +801,15 @@ KbDrawKeyboard(Display * dpy, Drawable w, GC gc, unsigned int angle,
     XFontStruct *fs;
     fs = XLoadQueryScalableFont(dpy, 0, fontname, 1000);
     if (!fs) {
-        fontname = "-*-helvetica-bold-r-*-*-0-0-*-*-*-0-iso10646-*";
+        fontname = malloc(500);
+        XSetFontNameToScalable(_kb->geom->label_font, fontname, 500);
         fs = XLoadQueryScalableFont(dpy, 0, fontname, 1000);
     }
 
     if (!fs) {
-        printf("You need the Bitstream Vera Sans or Helvetica font. Sorry.\n");
+        printf("You need the Bitstream Vera Sans or (at least) the ugly"
+          "fallback font. Sorry. Try getting autorepeat back with"
+          "xset r on\n");
         exit(EXIT_FAILURE);
     }
 
