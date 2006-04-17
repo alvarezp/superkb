@@ -801,6 +801,7 @@ KbDrawKeyboard(Display * dpy, Drawable w, GC gc, unsigned int angle,
     XFontStruct *fs;
     fs = XLoadQueryScalableFont(dpy, 0, fontname, 1000);
     if (!fs) {
+        printf("Reverting.\n");
         fontname = malloc(500);
         XSetFontNameToScalable(_kb->geom->label_font, fontname, 500);
         fs = XLoadQueryScalableFont(dpy, 0, fontname, 1000);

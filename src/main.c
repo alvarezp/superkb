@@ -1,4 +1,4 @@
-    /* License: GPL v2. */
+/* License: GPL v2. */
 /* To be compiled with:
  *    gcc -o superkb proto.c -ansi -lX11 -L/usr/X11/lib
  */
@@ -472,7 +472,7 @@ int main()
     }
 
     fd = fopen(file, "r");
-    (!fd) && fatal_error("superkb: Couldn't open cofig file: %s\n", file);
+    (!fd) && fatal_error("superkb: Couldn't open config file: %s\n", file);
 
     read_config(fd);
     fclose(fd);
