@@ -1,0 +1,10 @@
+IMAGELIB gdkpixbuf
+FONT "-*-bitstream vera sans-bold-r-*-*-*-*-*-*-*-*-*-*"
+BACKGROUND 59500 59500 59500
+FOREGROUND 2000 2000 2000
+KEY COMMAND "c" 0 /usr/bin/gcalctool /usr/share/icons/gnome/48x48/apps/gnome-calculator.png
+KEY COMMAND "i" 0 /usr/bin/firefox /usr/share/pixmaps/mozilla-firefox.png
+KEY COMMAND "n" 0 /usr/bin/gedit /usr/share/icons/gnome/48x48/apps/text-editor.png
+KEY COMMAND "m" 0 /usr/bin/xmms /usr/share/icons/gnome/48x48/apps/gnome-media-player.png
+KEY COMMAND "o" 0 /usr/bin/soffice /usr/share/icons/gnome/48x48/apps/openofficeorg-20-writer.png
+KEY COMMAND "Home" 0 "/usr/bin/nautilus ." /usr/share/icons/gnome/48x48/filesystems/gnome-fs-home.png

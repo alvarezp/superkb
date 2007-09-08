@@ -1,0 +1,9 @@
+To install, you should only need to:
+1. "make".
+2. As root, "make install".
+
+It should detect everything automagically.
+
+It it doesn't compile, try different values for the entries in the
+"configuration" file. Values for "PUTICON_*" can be either "y", "n" or "m", for
+"yes", "no", and "module", a la kernel.

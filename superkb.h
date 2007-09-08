@@ -1,6 +1,9 @@
-/* License: GPL. */
-/* To be compiled with:
- *    gcc -o superkb proto.c -ansi -lX11 -L/usr/X11/lib
+/*
+ * superkb.h
+ *
+ * Copyright (C) 2006, Octavio Alvarez Piza.
+ * License: GNU General Public License v2.
+ *
  */
 
 #ifndef __SUPERKB_H
@@ -12,16 +15,15 @@
 #include <sys/time.h>
 #include <errno.h>
 
-extern double drawkb_delay;
-
 void superkb_start();
 
-int superkb_load(Display *display,
-             void (*kbwin_init) (Display *),
+int superkb_init(Display *display,
+             int (*kbwin_init) (Display *),
              void (*kbwin_map) (Display *),
              void (*kbwin_unmap) (Display *),
              void (*kbwin_event) (Display *, XEvent ev),
-             const char *kblayout, KeySym key1, KeySym key2,
+             const char *kblayout, KeyCode key1, KeyCode key2,
+			 double drawkb_delay,
              void (*f)(KeyCode keycode, unsigned int state));
 
 #endif                          /* __SUPERKB_H */

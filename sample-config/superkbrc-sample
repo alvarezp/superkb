@@ -1,0 +1,6 @@
+IMAGELIB imlib2
+FONT "-*-bitstream vera sans-bold-r-*-*-*-*-*-*-*-*-*-*"
+BACKGROUND 27242 16191 11000
+FOREGROUND 65535 65535 65535
+KEY COMMAND "F9" 0 /usr/bin/opera /usr/share/opera/images/opera.xpm
+KEY COMMAND "n" 0 /usr/bin/gedit /usr/share/icons/gnome/48x48/apps/text-editor.png

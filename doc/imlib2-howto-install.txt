@@ -1,0 +1,4 @@
+wget http://easynews.dl.sourceforge.net/sourceforge/enlightenment/imlib2-1.2.2.tar.gz
+tar xvzf imlib2-1.2.2.tar.gz
+cd imlib2-1.2.2
+./configure --prefix=/usr && make && sudo make install
