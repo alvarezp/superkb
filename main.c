@@ -252,6 +252,12 @@ int main()
 		return EXIT_FAILURE;
 	}
 
+	/* Needed to avoid zombie child processes. According to
+     * http://www.faqs.org/faqs/unix-faq/faq/part3/section-13.html
+     * this is not portable.
+     */
+	signal(SIGCHLD, SIG_IGN);
+
 	/* Connect to display. */
 	dpy = XOpenDisplay(NULL);
 	if (dpy == NULL) {
