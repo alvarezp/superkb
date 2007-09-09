@@ -546,6 +546,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 	for (i = 0; i < fixed_num_keys; i++) {
 		char name[5] = "";
 		char glyph[256] = "";
+		char keystring[256] = "";
 		char *kss;
 
 		if (!strncmp(key->name.name, _kb->names->keys[i].name, 4)) {
@@ -553,6 +554,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 			KeySym ks;
 			ks = XKeycodeToKeysym(dpy, i, 0);
 			kss = XKeysymToString(ks);
+			strncpy(keystring, kss, 255);
 			if (kss) {
 				/* FIXME: Better compare integers, not strings. Fixable. */
 				if (!strcmp(kss, "dead_grave"))
@@ -651,7 +653,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 	double ax, ay;
 
-	if (drawkb_config.IQF(XStringToKeysym(glyph), 0, buf, buf_n) == EXIT_SUCCESS) {
+	if (drawkb_config.IQF(XStringToKeysym(keystring), 0, buf, buf_n) == EXIT_SUCCESS) {
 
 		k = &_kb->geom->shapes[key->shape_ndx].bounds;
 
