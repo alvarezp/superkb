@@ -30,7 +30,7 @@
 #include "drawkb.h"
 #include "superkbrc.h"
 
-#define VERSION "0.11"
+#include "version.h"
 
 struct sigaction action;
 
