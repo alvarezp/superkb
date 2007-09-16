@@ -30,6 +30,7 @@
 #define CONFIG_DEFAULT_DRAWKB_FORECOLOR_RED 2000
 #define CONFIG_DEFAULT_DRAWKB_FORECOLOR_GREEN 2000
 #define CONFIG_DEFAULT_DRAWKB_FORECOLOR_BLUE 2000
+#define CONFIG_DEFAULT_DOCUMENT_HANDLER "gnome-open"
 
 int cver = 0;
 
@@ -37,7 +38,7 @@ config_t * __config;
 Display * __dpy;
 
 void
-config_add_binding(Display *dpy, config_t *this, KeySym keysym, unsigned int state,
+config_add_binding_command(Display *dpy, config_t *this, KeySym keysym, unsigned int state,
 			  enum action_type action_type, const char *command,
 			  const char *icon)
 {
@@ -48,6 +49,27 @@ config_add_binding(Display *dpy, config_t *this, KeySym keysym, unsigned int sta
 	 this->key_bindings[this->key_bindings_n - 1].action_type = action_type;
 	this->key_bindings[this->key_bindings_n - 1].action.command = malloc(strlen(command)+1);
 	strcpy(this->key_bindings[this->key_bindings_n - 1].action.command, command);
+
+	if (icon != NULL) {
+		this->key_bindings[this->key_bindings_n - 1].icon = malloc(strlen(icon)+1);
+		strcpy(this->key_bindings[this->key_bindings_n - 1].icon, icon);
+	} else {
+		this->key_bindings[this->key_bindings_n - 1].icon = NULL;
+	}
+}
+
+void
+config_add_binding_document(Display *dpy, config_t *this, KeySym keysym, unsigned int state,
+			  enum action_type action_type, const char *document,
+			  const char *icon)
+{
+	list_add_element(this->key_bindings, this->key_bindings_n, struct key_bindings);
+	this->key_bindings[this->key_bindings_n - 1].keycode =
+		XKeysymToKeycode(dpy, keysym);
+	this->key_bindings[this->key_bindings_n - 1].state = state;
+	 this->key_bindings[this->key_bindings_n - 1].action_type = action_type;
+	this->key_bindings[this->key_bindings_n - 1].action.document = malloc(strlen(document)+1);
+	strcpy(this->key_bindings[this->key_bindings_n - 1].action.document, document);
 
 	if (icon != NULL) {
 		this->key_bindings[this->key_bindings_n - 1].icon = malloc(strlen(icon)+1);
@@ -232,6 +254,11 @@ void handle_line(char *line, int linesize) {
 			return;
 		}
 
+		if (!strcmp(token_array[0], "DOCUMENT_HANDLER") && tok_index == 2) {
+			strncpy(__config->document_handler, token_array[1], 500);
+			return;
+		}
+
 		if (!strcmp(token_array[0], "SUPERKEY1_STRING") && tok_index == 2) {
 			__config->superkb_super1 = XKeysymToKeycode(__dpy, XStringToKeysym(token_array[1]));
 			return;
@@ -288,9 +315,33 @@ void handle_line(char *line, int linesize) {
 				validated_param = (char *) token_array[5];
 			}
 
-			config_add_binding(__dpy, __config,
+			config_add_binding_command(__dpy, __config,
 				XStringToKeysym(token_array[2]), atoi(token_array[3]),
 				AT_COMMAND, token_array[4], validated_param);
+		} else if (!strcmp(token_array[0], "KEY")
+			&& !strcmp(token_array[1], "DOCUMENT")
+			&& tok_index == 6)
+		{
+			/* FIXME: Key validation missing. */
+
+			/* Check if file exists */
+
+			char *validated_param;
+			FILE *filecheck;
+			filecheck = fopen (token_array[5], "r");
+			if (filecheck == NULL)   {
+				validated_param = NULL;
+				fprintf(stderr, "superkb: Specified icon file does not exist: %s\n",
+					token_array[5]);
+				
+			} else {
+				fclose (filecheck);
+				validated_param = (char *) token_array[5];
+			}
+
+			config_add_binding_document(__dpy, __config,
+				XStringToKeysym(token_array[2]), atoi(token_array[3]),
+				AT_DOCUMENT, token_array[4], validated_param);
 		} else {
 			fprintf(stderr, "Ignoring invalid config line: '[%s]", token_array[0]);
 			for (q = 1; q < tok_index; q++) {
@@ -356,6 +407,7 @@ config_t * config_new (Display *dpy)
 	this->forecolor.red = CONFIG_DEFAULT_DRAWKB_FORECOLOR_RED;
 	this->forecolor.green = CONFIG_DEFAULT_DRAWKB_FORECOLOR_GREEN;
 	this->forecolor.blue = CONFIG_DEFAULT_DRAWKB_FORECOLOR_BLUE;
+	strcpy(this->document_handler, CONFIG_DEFAULT_DOCUMENT_HANDLER);
 
 	return this;
 

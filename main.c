@@ -205,6 +205,18 @@ void __Superkb_Action(KeyCode keycode, unsigned int state)
 					exit(EXIT_SUCCESS);
 				}
 				break;
+			case AT_DOCUMENT:
+				if (fork() == 0) {
+					char *cmdline = malloc(strlen(config->document_handler) + strlen(config->key_bindings[i].action.document) + 2);
+					if (cmdline != NULL) {
+						strcpy (cmdline, config->document_handler);
+						strcat (cmdline, " ");
+						strcat (cmdline, config->key_bindings[i].action.document);
+						system(cmdline);
+					}
+					exit(EXIT_SUCCESS);
+				}
+				break;
 			case AT_FUNCTION:
 				if (fork() == 0) {
 					/* FIXME: Value should not be NULL. */

@@ -13,7 +13,8 @@
 
 enum action_type {
     AT_COMMAND = 1,
-    AT_FUNCTION
+    AT_FUNCTION,
+	AT_DOCUMENT
 };
 
 /* key_bindings is a dynamic list of keybindings */
@@ -25,6 +26,7 @@ struct key_bindings {
     union {
         void (*function)(void *p);
         char *command;
+		char *document;
     } action;
     char *icon;
     /* FIXME: Implement startup notification. */
@@ -49,6 +51,7 @@ typedef struct {
 		int green;
 		int blue;
 	} forecolor;
+	char document_handler[500];
 } config_t;
 
 int config_load(config_t *config, Display *dpy);
