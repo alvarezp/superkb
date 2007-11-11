@@ -42,7 +42,7 @@ configuration:
 	-imlib2-config --version \
 		&& (echo "PUTICON_IMLIB2=m" >> configuration) \
 		|| (echo "PUTICON_IMLIB2=n" >> configuration)
-	@. configuration; \
+	@. ./configuration; \
 		if [ "$$PUTICON_IMLIB2 $$PUTICON_GDKPIXBUF" == "n n" ]; then \
 		echo ; \
 		echo "Error: I didn't find a suitable image library. Please install"; \
