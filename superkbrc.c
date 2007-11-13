@@ -31,6 +31,7 @@
 #define CONFIG_DEFAULT_DRAWKB_FORECOLOR_GREEN 2000
 #define CONFIG_DEFAULT_DRAWKB_FORECOLOR_BLUE 2000
 #define CONFIG_DEFAULT_DOCUMENT_HANDLER "gnome-open"
+#define CONFIG_DEFAULT_SUPERKB_SUPERKEY_REPLAY 0
 
 int cver = 0;
 
@@ -293,6 +294,15 @@ void handle_line(char *line, int linesize) {
 			return;
 		}
 
+		if (!strcmp(token_array[0], "SUPERKEY_REPLAY") && tok_index == 2) {
+			if (!strcmp(token_array[1], "1"))
+				__config->superkb_superkey_replay = 1;
+			else if (!strcmp(token_array[1], "0"))
+				__config->superkb_superkey_replay = 0;
+			else fprintf(stderr, "superkb: SUPERKEY_REPLAY value must be 1 or 0.\n");
+			return;
+		}
+
 		/* FIXME: There might not exist token_array[1]. */
 		if (!strcmp(token_array[0], "KEY")
 			&& !strcmp(token_array[1], "COMMAND")
@@ -408,6 +418,7 @@ config_t * config_new (Display *dpy)
 	this->forecolor.green = CONFIG_DEFAULT_DRAWKB_FORECOLOR_GREEN;
 	this->forecolor.blue = CONFIG_DEFAULT_DRAWKB_FORECOLOR_BLUE;
 	strcpy(this->document_handler, CONFIG_DEFAULT_DOCUMENT_HANDLER);
+	this->superkb_superkey_replay = CONFIG_DEFAULT_SUPERKB_SUPERKEY_REPLAY;
 
 	return this;
 

@@ -42,6 +42,7 @@ struct instance {
 	double drawkb_delay;
 	Display *dpy;
 	Window rootwin;
+	int superkey_replay;
 };
 
 XEvent sigev;
@@ -180,6 +181,9 @@ void superkb_start()
 		int XNEWT_ret;
 		int i;
 		int to_reason;
+		int super_replay;
+		XEvent event_save_for_replay;
+		Window event_saved_window;
 
 		/* Decide wether to use XNextEvent or my own XNextEventWithTimeout
 		 * and do accordingly. If WithTimeout was used, substract the
@@ -244,6 +248,9 @@ void superkb_start()
 				ignore_release = 1;
 			}
 			if (to_reason == TO_DRAWKB) {
+
+				super_replay = 0;
+
 				timerclear(&to[TO_DRAWKB]);
 
 				/* Map Window. */
@@ -257,8 +264,16 @@ void superkb_start()
 			if (ev.type == KeyPress) {
 				ignore_release = 0;
 
-				if (super_was_active++)
+				if (super_was_active++) {
+					super_replay = 0;
 					continue;
+				}
+
+				super_replay = inst.superkey_replay;
+				memcpy(&event_save_for_replay, &ev, sizeof(XEvent));
+
+				int revert_to_return;
+				XGetInputFocus(inst.dpy, &event_saved_window, &revert_to_return);
 
 				XKeyboardState xkbs;
 
@@ -288,6 +303,22 @@ void superkb_start()
 				timerclear(&to[TO_DRAWKB]);
 				timerclear(&to[TO_CONFIG]);
 
+				if (super_replay) {
+					/* Since Xlib only supports Replaying a key before getting the next keyboard event,
+					 * we can't really use XAllowEvents() to replay the Super key in case the user
+					 * asked to. So we try XSendEvent() with the Press from the saved event on KeyPress,
+					 * and the Release we are currently using.
+					 */
+					event_save_for_replay.xkey.window = event_saved_window;
+					ev.xkey.window = event_saved_window;
+					event_save_for_replay.xkey.subwindow = 0;
+					ev.xkey.subwindow = 0;
+
+					XSendEvent(inst.dpy, event_saved_window, 1, KeyPressMask, &event_save_for_replay);
+					XSendEvent(inst.dpy, event_saved_window, 1, KeyReleaseMask, &ev);
+					XSync(inst.dpy, True);
+				}
+
 				/* Restore saved_autorepeat_mode. */
 				XKeyboardControl xkbc;
 				/*xkbc.auto_repeat_mode = saved_autorepeat_mode; */
@@ -299,6 +330,8 @@ void superkb_start()
 
 			}
 		} else if (ev.type == KeyPress) {
+			super_replay = 0;
+
 			to[TO_CONFIG].tv_sec = 3;
 			to[TO_CONFIG].tv_usec = 0;
 		} else if ((ev.type == KeyRelease && !ignore_release &&
@@ -331,7 +364,8 @@ superkb_init(Display *display,
 			 void (*kbwin_event) (Display *, XEvent ev),
 			 const char *kblayout, KeyCode key1, KeyCode key2,
 			 double drawkb_delay,
-			 void (*f)(KeyCode keycode, unsigned int state))
+			 void (*f)(KeyCode keycode, unsigned int state),
+			 int superkey_replay)
 			 
 {
 
@@ -340,6 +374,7 @@ superkb_init(Display *display,
 	int r;
 
 	inst.drawkb_delay = drawkb_delay;
+	inst.superkey_replay = superkey_replay;
 
 	/* FIXME: Validate parameters. */
 

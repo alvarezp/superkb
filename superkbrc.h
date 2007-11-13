@@ -52,6 +52,7 @@ typedef struct {
 		int blue;
 	} forecolor;
 	char document_handler[500];
+	int superkb_superkey_replay;
 } config_t;
 
 int config_load(config_t *config, Display *dpy);
