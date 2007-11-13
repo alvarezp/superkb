@@ -32,6 +32,7 @@
 #define CONFIG_DEFAULT_DRAWKB_FORECOLOR_BLUE 2000
 #define CONFIG_DEFAULT_DOCUMENT_HANDLER "gnome-open"
 #define CONFIG_DEFAULT_SUPERKB_SUPERKEY_REPLAY 0
+#define CONFIG_DEFAULT_FEEDBACK_HANDLER "xmessage -buttons '' -center -timeout 2 Launching "
 
 int cver = 0;
 
@@ -41,7 +42,7 @@ Display * __dpy;
 void
 config_add_binding_command(Display *dpy, config_t *this, KeySym keysym, unsigned int state,
 			  enum action_type action_type, const char *command,
-			  const char *icon)
+			  const char *icon, const char *feedback_string)
 {
 	list_add_element(this->key_bindings, this->key_bindings_n, struct key_bindings);
 	this->key_bindings[this->key_bindings_n - 1].keycode =
@@ -57,12 +58,19 @@ config_add_binding_command(Display *dpy, config_t *this, KeySym keysym, unsigned
 	} else {
 		this->key_bindings[this->key_bindings_n - 1].icon = NULL;
 	}
+
+	if (feedback_string != NULL) {
+		this->key_bindings[this->key_bindings_n - 1].feedback_string = malloc(strlen(feedback_string)+1);
+		strcpy(this->key_bindings[this->key_bindings_n - 1].feedback_string, feedback_string);
+	} else {
+		this->key_bindings[this->key_bindings_n - 1].feedback_string = NULL;
+	}
 }
 
 void
 config_add_binding_document(Display *dpy, config_t *this, KeySym keysym, unsigned int state,
 			  enum action_type action_type, const char *document,
-			  const char *icon)
+			  const char *icon, const char *feedback_string)
 {
 	list_add_element(this->key_bindings, this->key_bindings_n, struct key_bindings);
 	this->key_bindings[this->key_bindings_n - 1].keycode =
@@ -77,6 +85,13 @@ config_add_binding_document(Display *dpy, config_t *this, KeySym keysym, unsigne
 		strcpy(this->key_bindings[this->key_bindings_n - 1].icon, icon);
 	} else {
 		this->key_bindings[this->key_bindings_n - 1].icon = NULL;
+	}
+
+	if (feedback_string != NULL) {
+		this->key_bindings[this->key_bindings_n - 1].feedback_string = malloc(strlen(feedback_string)+1);
+		strcpy(this->key_bindings[this->key_bindings_n - 1].feedback_string, feedback_string);
+	} else {
+		this->key_bindings[this->key_bindings_n - 1].feedback_string = NULL;
 	}
 }
 
@@ -303,10 +318,15 @@ void handle_line(char *line, int linesize) {
 			return;
 		}
 
+		if (!strcmp(token_array[0], "FEEDBACK_HANDLER") && tok_index == 2) {
+			strncpy(__config->feedback_handler, token_array[1], 500);
+			return;
+		}
+
 		/* FIXME: There might not exist token_array[1]. */
 		if (!strcmp(token_array[0], "KEY")
 			&& !strcmp(token_array[1], "COMMAND")
-			&& tok_index == 6)
+			&& (tok_index == 6 || tok_index == 7))
 		{
 			/* FIXME: Key validation missing. */
 
@@ -327,10 +347,10 @@ void handle_line(char *line, int linesize) {
 
 			config_add_binding_command(__dpy, __config,
 				XStringToKeysym(token_array[2]), atoi(token_array[3]),
-				AT_COMMAND, token_array[4], validated_param);
+				AT_COMMAND, token_array[4], validated_param, tok_index == 7 ? token_array[6] : NULL);
 		} else if (!strcmp(token_array[0], "KEY")
 			&& !strcmp(token_array[1], "DOCUMENT")
-			&& tok_index == 6)
+			&& (tok_index == 6 || tok_index == 7))
 		{
 			/* FIXME: Key validation missing. */
 
@@ -351,7 +371,7 @@ void handle_line(char *line, int linesize) {
 
 			config_add_binding_document(__dpy, __config,
 				XStringToKeysym(token_array[2]), atoi(token_array[3]),
-				AT_DOCUMENT, token_array[4], validated_param);
+				AT_DOCUMENT, token_array[4], validated_param, tok_index == 7 ? token_array[6] : NULL);
 		} else {
 			fprintf(stderr, "Ignoring invalid config line: '[%s]", token_array[0]);
 			for (q = 1; q < tok_index; q++) {
@@ -419,6 +439,7 @@ config_t * config_new (Display *dpy)
 	this->forecolor.blue = CONFIG_DEFAULT_DRAWKB_FORECOLOR_BLUE;
 	strcpy(this->document_handler, CONFIG_DEFAULT_DOCUMENT_HANDLER);
 	this->superkb_superkey_replay = CONFIG_DEFAULT_SUPERKB_SUPERKEY_REPLAY;
+	strcpy(this->feedback_handler, CONFIG_DEFAULT_FEEDBACK_HANDLER);
 
 	return this;
 

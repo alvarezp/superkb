@@ -201,12 +201,32 @@ void __Superkb_Action(KeyCode keycode, unsigned int state)
 			switch (config->key_bindings[i].action_type) {
 			case AT_COMMAND:
 				if (fork() == 0) {
+					if (config->key_bindings[i].feedback_string) {
+						char *cmdline = malloc(strlen(config->feedback_handler) + strlen(config->key_bindings[i].feedback_string) + 4);
+						if (cmdline != NULL) {
+							strcpy (cmdline, config->feedback_handler);
+							strcat (cmdline, " ");
+							strcat (cmdline, config->key_bindings[i].feedback_string);
+							strcat (cmdline, " &");
+							system(cmdline);
+						}
+					}
 					system(config->key_bindings[i].action.command);
 					exit(EXIT_SUCCESS);
 				}
 				break;
 			case AT_DOCUMENT:
 				if (fork() == 0) {
+					if (config->key_bindings[i].feedback_string) {
+						char *cmdline = malloc(strlen(config->feedback_handler) + strlen(config->key_bindings[i].feedback_string) + 4);
+						if (cmdline != NULL) {
+							strcpy (cmdline, config->feedback_handler);
+							strcat (cmdline, " ");
+							strcat (cmdline, config->key_bindings[i].feedback_string);
+							strcat (cmdline, " &");
+							system(cmdline);
+						}
+					}
 					char *cmdline = malloc(strlen(config->document_handler) + strlen(config->key_bindings[i].action.document) + 2);
 					if (cmdline != NULL) {
 						strcpy (cmdline, config->document_handler);

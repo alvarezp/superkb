@@ -29,6 +29,7 @@ struct key_bindings {
 		char *document;
     } action;
     char *icon;
+    char *feedback_string;
     /* FIXME: Implement startup notification. */
     /* FIXME: Implement tooltips. */
 };
@@ -53,6 +54,7 @@ typedef struct {
 	} forecolor;
 	char document_handler[500];
 	int superkb_superkey_replay;
+	char feedback_handler[500];
 } config_t;
 
 int config_load(config_t *config, Display *dpy);
