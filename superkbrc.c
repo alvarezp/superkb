@@ -296,9 +296,17 @@ void handle_line(char *line, int linesize) {
 		}
 
 		if (!strcmp(token_array[0], "BACKGROUND") && tok_index == 4) {
+			
 			__config->backcolor.red = atoi(token_array[1]);
 			__config->backcolor.green = atoi(token_array[2]);
 			__config->backcolor.blue = atoi(token_array[3]);
+			if (__config->backcolor.red <= 255 &&
+				__config->backcolor.green <= 255 &&
+				__config->backcolor.blue <= 255) {
+				__config->backcolor.red *= 256;
+				__config->backcolor.green *= 256;
+				__config->backcolor.blue *= 256;
+			}
 			return;
 		}
 
@@ -306,6 +314,13 @@ void handle_line(char *line, int linesize) {
 			__config->forecolor.red = atoi(token_array[1]);
 			__config->forecolor.green = atoi(token_array[2]);
 			__config->forecolor.blue = atoi(token_array[3]);
+			if (__config->forecolor.red <= 255 &&
+				__config->forecolor.green <= 255 &&
+				__config->forecolor.blue <= 255) {
+				__config->forecolor.red *= 256;
+				__config->forecolor.green *= 256;
+				__config->forecolor.blue *= 256;
+			}
 			return;
 		}
 
