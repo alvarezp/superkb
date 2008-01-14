@@ -325,7 +325,7 @@ int main()
 
 	status = superkb_init(dpy, kbwin_init, kbwin_map, kbwin_unmap,
 		kbwin_event, "en", config->superkb_super1,
-		config->superkb_super2, config->drawkb_delay, __Superkb_Action, config->superkb_superkey_replay);
+		config->superkb_super2, config->drawkb_delay, __Superkb_Action, config->superkb_superkey_replay, config->superkb_superkey_release_cancels);
 
 	if (status != EXIT_SUCCESS) {
 		return EXIT_FAILURE;

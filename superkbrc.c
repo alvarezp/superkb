@@ -33,6 +33,7 @@
 #define CONFIG_DEFAULT_DOCUMENT_HANDLER "gnome-open"
 #define CONFIG_DEFAULT_SUPERKB_SUPERKEY_REPLAY 0
 #define CONFIG_DEFAULT_FEEDBACK_HANDLER "xmessage -buttons '' -center -timeout 2 Launching "
+#define CONFIG_DEFAULT_SUPERKB_SUPERKEY_RELEASE_CANCELS 1
 
 int cver = 0;
 
@@ -333,6 +334,15 @@ void handle_line(char *line, int linesize) {
 			return;
 		}
 
+		if (!strcmp(token_array[0], "SUPERKEY_RELEASE_CANCELS") && tok_index == 2) {
+			if (!strcmp(token_array[1], "1"))
+				__config->superkb_superkey_release_cancels = 1;
+			else if (!strcmp(token_array[1], "0"))
+				__config->superkb_superkey_release_cancels = 0;
+			else fprintf(stderr, "superkb: SUPERKEY_RELEASE_CANCELS value must be 1 or 0.\n");
+			return;
+		}
+
 		if (!strcmp(token_array[0], "FEEDBACK_HANDLER") && tok_index == 2) {
 			strncpy(__config->feedback_handler, token_array[1], 500);
 			return;
@@ -455,6 +465,7 @@ config_t * config_new (Display *dpy)
 	strcpy(this->document_handler, CONFIG_DEFAULT_DOCUMENT_HANDLER);
 	this->superkb_superkey_replay = CONFIG_DEFAULT_SUPERKB_SUPERKEY_REPLAY;
 	strcpy(this->feedback_handler, CONFIG_DEFAULT_FEEDBACK_HANDLER);
+	this->superkb_superkey_release_cancels = CONFIG_DEFAULT_SUPERKB_SUPERKEY_RELEASE_CANCELS;
 
 	return this;
 

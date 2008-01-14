@@ -20,6 +20,7 @@
 #include <sys/time.h>
 
 #include "superkb.h"
+#include "globals.h"
 
 void (*__Action)(KeyCode keycode, unsigned int state);
 
@@ -43,6 +44,7 @@ struct instance {
 	Display *dpy;
 	Window rootwin;
 	int superkey_replay;
+	int superkey_release_cancels;
 };
 
 XEvent sigev;
@@ -50,6 +52,52 @@ XEvent sigev;
 struct _kbwin kbwin = { NULL, NULL, NULL, NULL };
 struct config conf = { "", 0, 0 };
 struct instance inst = { 0, 0, 0, NULL, 0 };
+
+/* Start PRESSED KEYS STACK */
+
+typedef struct pressed_keys_element {
+	int keycode;
+	int state;
+} pressed_key_t;
+
+pressed_key_t *pressed_keys = NULL;
+int pressed_keys_n = 0;
+
+void remove_from_pressed_key_stack(int keycode, int state)
+{
+	int x;
+	int y;
+
+	for (x = pressed_keys_n-1; x >=0; x--) {
+		if (pressed_keys[x].keycode == keycode &&
+			pressed_keys[x].state == state) {
+				/* Item to be removed found. */
+				for (y = x; y < pressed_keys_n-1; y++) {
+					pressed_keys[y].keycode = pressed_keys[y+1].keycode;
+					pressed_keys[y].state = pressed_keys[y+1].state;
+				}
+				list_rmv_element(pressed_keys, pressed_keys_n, pressed_key_t);
+		}
+	}
+}
+
+void push_into_pressed_key_stack(int keycode, int state)
+{
+	list_add_element(pressed_keys, pressed_keys_n, pressed_key_t);
+	pressed_keys[pressed_keys_n-1].keycode = keycode;
+	pressed_keys[pressed_keys_n-1].state = state;
+}
+
+void clear_pressed_key_stack() {
+	if (pressed_keys != NULL) {
+		free (pressed_keys);
+		pressed_keys = NULL;
+	}
+
+	pressed_keys_n = 0;
+}
+
+/* End PRESSED KEYS STACK */
 
 static void
 timerdiff(struct timeval *dst, struct timeval *tv0, struct timeval *tv1)
@@ -143,6 +191,8 @@ void superkb_start()
 
 	int saved_key1_autorepeat_mode = 0;
 	int saved_key2_autorepeat_mode = 0;
+
+	int x;
 
 	/* Save autorepeat previous state. Then turn off. */
 
@@ -328,12 +378,20 @@ void superkb_start()
 				XUngrabKeyboard(inst.dpy, CurrentTime);
 				kbwin.unmap(inst.dpy);
 
+				for (x = 0; x < pressed_keys_n; x++) {
+					__Action(pressed_keys[x].keycode, pressed_keys[x].state);
+				}
+
+				clear_pressed_key_stack();
+
 			}
 		} else if (ev.type == KeyPress) {
 			super_replay = 0;
 
 			to[TO_CONFIG].tv_sec = 3;
 			to[TO_CONFIG].tv_usec = 0;
+
+			push_into_pressed_key_stack(ev.xkey.keycode, ev.xkey.state);
 		} else if ((ev.type == KeyRelease && !ignore_release &&
 				   super_was_active > 0) || (ev.type == KeyRelease)) {
 			/* User might have asked for binding configuration, so ignore key
@@ -346,6 +404,7 @@ void superkb_start()
 
 			__Action(ev.xkey.keycode, ev.xkey.state);
 
+			remove_from_pressed_key_stack(ev.xkey.keycode, ev.xkey.state);
 
 		} else {
 			/* According to manual, this should not be necessary. */
@@ -365,7 +424,8 @@ superkb_init(Display *display,
 			 const char *kblayout, KeyCode key1, KeyCode key2,
 			 double drawkb_delay,
 			 void (*f)(KeyCode keycode, unsigned int state),
-			 int superkey_replay)
+			 int superkey_replay,
+             int superkey_release_cancels)
 			 
 {
 
@@ -375,6 +435,7 @@ superkb_init(Display *display,
 
 	inst.drawkb_delay = drawkb_delay;
 	inst.superkey_replay = superkey_replay;
+	inst.superkey_release_cancels = superkey_release_cancels;
 
 	/* FIXME: Validate parameters. */
 

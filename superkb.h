@@ -25,6 +25,7 @@ int superkb_init(Display *display,
              const char *kblayout, KeyCode key1, KeyCode key2,
 			 double drawkb_delay,
              void (*f)(KeyCode keycode, unsigned int state),
-             int superkey_replay);
+             int superkey_replay,
+             int superkey_release_cancels);
 
 #endif                          /* __SUPERKB_H */

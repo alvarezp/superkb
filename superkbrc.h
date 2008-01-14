@@ -55,6 +55,7 @@ typedef struct {
 	char document_handler[500];
 	int superkb_superkey_replay;
 	char feedback_handler[500];
+	int superkb_superkey_release_cancels;
 } config_t;
 
 int config_load(config_t *config, Display *dpy);
