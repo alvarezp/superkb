@@ -78,17 +78,17 @@ install:
 
 .PHONY : install-app
 install-app:
-	cp $(APP) /usr/bin
+	cp $(APP) $(DESTDIR)/usr/bin
 
 .PHONY : install-shared
 install-shared:
 	mkdir -p /usr/lib/superkb
-	[ -n "$(SHARED)" ] && cp $(SHARED) /usr/lib/superkb/ || true
+	[ -n "$(SHARED)" ] && cp $(SHARED) $(DESTDIR)/usr/lib/superkb/ || true
 
 .PHONY : uninstall
 uninstall:
-	[ -f /usr/bin/superkb ] && rm /usr/bin/superkb
-	[ -d /usr/lib/superkb ] && rm -fr /usr/lib/superkb
+	[ -f /usr/bin/superkb ] && rm $(DESTDIR)/usr/bin/superkb
+	[ -d /usr/lib/superkb ] && rm -fr $(DESTDIR)/usr/lib/superkb
 
 .PHONY : clean
 clean:
