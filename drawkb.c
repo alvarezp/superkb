@@ -756,7 +756,7 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 	int i;
 	unsigned int next_piece = 0;
 
-//	KbDrawBounds(dpy, w, gc, angle, scale, left, top, _kb, &row->bounds);
+//	KbDrawBounds(dpy, w, gc, angle, scale, left + row->left, top + row->top, _kb, &row->bounds);
 
 	for (i = 0; i < row->num_keys; i++) {
 		if (!row->vertical) {
@@ -785,7 +785,7 @@ KbDrawSection(Display * dpy, Drawable w, GC gc, unsigned int angle,
 {
 	int i, p;
 
-/*  KbDrawBounds(dpy, w, gc, angle, scale, left, top, _kb, &section->bounds); */
+/*  KbDrawBounds(dpy, w, gc, angle, scale, left + section->left, top + section->top, _kb, &section->bounds); */
 
 	/* if (section->name) fprintf(stderr, "Drawing section: %s\n", XGetAtomName(dpy,
 	   section->name)); */
