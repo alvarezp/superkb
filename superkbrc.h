@@ -10,6 +10,7 @@
 #define __CONFIG_H
 
 #include <X11/Xlib.h>
+#include "drawkb.h"
 
 enum action_type {
     AT_COMMAND = 1,
@@ -56,6 +57,7 @@ typedef struct {
 	int superkb_superkey_replay;
 	char feedback_handler[500];
 	int superkb_superkey_release_cancels;
+	painting_mode_t drawkb_painting_mode;
 } config_t;
 
 int config_load(config_t *config, Display *dpy);

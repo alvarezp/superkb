@@ -45,6 +45,7 @@ typedef struct {
 	XFontStruct fs;
 	Display *dpy;
 	IQF_t IQF;
+	painting_mode_t painting_mode;
 } drawkb_config_t;
 
 drawkb_config_t drawkb_config;
@@ -58,6 +59,7 @@ int g_size;
 double g_baseline;
 
 XColor lightcolor;
+XColor darkcolor;
 XColor foreground;
 XColor background;
 
@@ -326,6 +328,69 @@ KbDrawBounds(Display * dpy, Drawable w, GC gc, unsigned int angle,
 	memcpy(&gc, &gc_backup, sizeof(GC));
 }
 
+void DrawFilledPolygon(Display * dpy, Drawable w, GC gc, double scale,
+	unsigned int left,
+	unsigned int top,
+	unsigned int angle,
+	unsigned int rot_left,
+	unsigned int rot_top,
+	unsigned int t,
+	unsigned int l,
+	unsigned int b,
+	unsigned int r,
+	unsigned int corner_radius) {
+
+	XPoint point[8];
+	int npoints;
+	int shape;
+	int mode;
+
+	double px, py;
+
+	npoints = 8;
+	shape = Convex;
+	mode = CoordModeOrigin;
+
+	double local_corner_radius = corner_radius + 0/scale;
+
+	RotatePoint(left + l + local_corner_radius, top + t, angle,
+				rot_left, rot_top, &px, &py);
+	point[0].x = scale * px;
+	point[0].y = scale * py;
+	RotatePoint(left + r - local_corner_radius, top + t, angle,
+				rot_left, rot_top, &px, &py);
+	point[1].x = scale * px;
+	point[1].y = scale * py;
+	RotatePoint(left + r, top + t + local_corner_radius, angle,
+				rot_left, rot_top, &px, &py);
+	point[2].x = scale * px;
+	point[2].y = scale * py;
+	RotatePoint(left + r, top + b - local_corner_radius, angle,
+				rot_left, rot_top, &px, &py);
+	point[3].x = scale * px;
+	point[3].y = scale * py;
+	RotatePoint(left + r - local_corner_radius, top + b, angle,
+				rot_left, rot_top, &px, &py);
+	point[4].x = scale * px;
+	point[4].y = scale * py;
+	RotatePoint(left + l + local_corner_radius, top + b, angle,
+				rot_left, rot_top, &px, &py);
+	point[5].x = scale * px;
+	point[5].y = scale * py;
+	RotatePoint(left + l, top + b - local_corner_radius, angle,
+				rot_left, rot_top, &px, &py);
+	point[6].x = scale * px;
+	point[6].y = scale * py;
+	RotatePoint(left + l, top + t + local_corner_radius, angle,
+				rot_left, rot_top, &px, &py);
+	point[7].x = scale * px;
+	point[7].y = scale * py;
+
+
+	XFillPolygon(dpy, w, gc, point, npoints, shape, mode);
+
+}
+
 /* Graphic context should have already been set. */
 void
 KbDrawShape(Display * dpy, Drawable w, GC gc, unsigned int angle,
@@ -340,9 +405,14 @@ KbDrawShape(Display * dpy, Drawable w, GC gc, unsigned int angle,
 	int i;
 	int t, l, b, r;
 	int j;
+	int shapes_to_paint = 1;
 
-	for (i = 0; i < (is_key ? 1 : shape->num_outlines); i++) {
+	if (drawkb_config.painting_mode == FULL_SHAPE) shapes_to_paint = shape->num_outlines;
+
+	for (i = 0; i < (is_key ? shapes_to_paint : shape->num_outlines); i++) {
 		source = &shape->outlines[i];
+
+		double corner_radius = source->corner_radius + 1/scale;
 
 		XSetLineAttributes(dpy, gc, LINE_WIDTH, LineSolid, CapButt, JoinMiter);
 
@@ -373,67 +443,113 @@ KbDrawShape(Display * dpy, Drawable w, GC gc, unsigned int angle,
 			break;
 		}
 		if (source->num_points <= 2) {
+
 			double ax, ay, bx, by;
 			double arch, arcw, arcs, arce;
 
-			RotatePoint(left + l + source->corner_radius, top + t, angle,
+			unsigned long color;
+
+if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == FLAT_KEY) {
+
+			if ( i % 2 == 0 )
+				color = darkcolor.pixel;
+			else
+				color = background.pixel;
+
+			XSetForeground(dpy, gc, color);
+
+			is_key ? DrawFilledPolygon(dpy, w, gc, scale, left, top, angle, rot_left, rot_top, t, l, b, r, corner_radius) : 0;
+
+			RotateArc(left + l - 1/scale, top + t - 1/scale, 2 * corner_radius + LINE_WIDTH/scale + 2/scale,
+					  2 * corner_radius + LINE_WIDTH/scale + 2/scale, 5760, 5759, angle,
+					  rot_left, rot_top, &ax, &ay, &arcw, &arch, &arcs,
+					  &arce);
+			XFillArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+					 scale * arch, arcs, arce);
+
+			RotateArc(left + r - 2 * corner_radius - LINE_WIDTH/scale, top + t - 1/scale,
+					  2 * corner_radius + LINE_WIDTH/scale, 2 * corner_radius + LINE_WIDTH/scale + 2/scale,
+					  0, 5759, angle, rot_left, rot_top, &ax, &ay, &arcw,
+					  &arch, &arcs, &arce);
+			XFillArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+					 scale * arch, arcs, arce);
+
+			RotateArc(left + r - 2 * corner_radius - LINE_WIDTH/scale,
+					  top + b - 2 * corner_radius - LINE_WIDTH/scale,
+					  2 * corner_radius + LINE_WIDTH/scale, 2 * corner_radius + LINE_WIDTH/scale,
+					  17280, 5759, angle, rot_left, rot_top, &ax, &ay,
+					  &arcw, &arch, &arcs, &arce);
+			XFillArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+					 scale * arch, arcs, arce);
+
+			RotateArc(left + l - 1/scale, top + b - 2 * corner_radius - LINE_WIDTH/scale,
+					  2 * corner_radius + LINE_WIDTH/scale + 2/scale, 2 * corner_radius + LINE_WIDTH/scale,
+					  11521, 5759, angle, rot_left, rot_top, &ax, &ay,
+					  &arcw, &arch, &arcs, &arce);
+			XFillArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+					 scale * arch, arcs, arce);
+
+} else {
+			XSetForeground(dpy, gc, foreground.pixel);
+			RotatePoint(left + l + corner_radius, top + t, angle,
 						rot_left, rot_top, &ax, &ay);
-			RotatePoint(left + r - source->corner_radius, top + t, angle,
+			RotatePoint(left + r - corner_radius, top + t, angle,
 						rot_left, rot_top, &bx, &by);
 			XDrawLine(dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
 					  scale * (by));
 
-			RotateArc(left + l, top + t, 2 * source->corner_radius + LINE_WIDTH/scale,
-					  2 * source->corner_radius + LINE_WIDTH/scale, 5760, 5760, angle,
+			RotateArc(left + l - 1/scale, top + t - 1/scale, 2 * corner_radius + LINE_WIDTH/scale + 2/scale,
+					  2 * corner_radius + LINE_WIDTH/scale + 2/scale, 5760, 5759, angle,
 					  rot_left, rot_top, &ax, &ay, &arcw, &arch, &arcs,
 					  &arce);
 			XDrawArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
-					 scale * arch, arcs, arce);
+					 scale * arch, arcs, arce); 
 
-			RotatePoint(left + r, top + t + source->corner_radius, angle,
+			RotatePoint(left + r, top + t + corner_radius, angle,
 						rot_left, rot_top, &ax, &ay);
-			RotatePoint(left + r, top + b - source->corner_radius, angle,
+			RotatePoint(left + r, top + b - corner_radius, angle,
 						rot_left, rot_top, &bx, &by);
 			XDrawLine(dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
-					  scale * (by));
+					  scale * (by)); 
 
-			RotateArc(left + r - 2 * source->corner_radius - LINE_WIDTH/scale, top + t,
-					  2 * source->corner_radius + LINE_WIDTH/scale, 2 * source->corner_radius + LINE_WIDTH/scale,
-					  0, 5760, angle, rot_left, rot_top, &ax, &ay, &arcw,
+			RotateArc(left + r - 2 * corner_radius - LINE_WIDTH/scale, top + t - 1/scale,
+					  2 * corner_radius + LINE_WIDTH/scale, 2 * corner_radius + LINE_WIDTH/scale + 2/scale,
+					  0, 5759, angle, rot_left, rot_top, &ax, &ay, &arcw,
 					  &arch, &arcs, &arce);
 			XDrawArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
-					 scale * arch, arcs, arce);
+					 scale * arch, arcs, arce); 
 
-			RotatePoint(left + r - source->corner_radius, top + b, angle,
+			RotatePoint(left + r - corner_radius, top + b, angle,
 						rot_left, rot_top, &ax, &ay);
-			RotatePoint(left + l + source->corner_radius, top + b, angle,
+			RotatePoint(left + l + corner_radius, top + b, angle,
 						rot_left, rot_top, &bx, &by);
 
 			XDrawLine(dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
+					  scale * (by)); 
+
+			RotateArc(left + r - 2 * corner_radius - LINE_WIDTH/scale,
+					  top + b - 2 * corner_radius - LINE_WIDTH/scale,
+					  2 * corner_radius + LINE_WIDTH/scale, 2 * corner_radius + LINE_WIDTH/scale,
+					  17280, 5759, angle, rot_left, rot_top, &ax, &ay,
+					  &arcw, &arch, &arcs, &arce);
+			XDrawArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+					 scale * arch, arcs, arce); 
+
+			RotatePoint(left + l, top + b - corner_radius, angle,
+						rot_left, rot_top, &ax, &ay);
+			RotatePoint(left + l, top + t + corner_radius, angle,
+						rot_left, rot_top, &bx, &by);
+			XDrawLine(dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
 					  scale * (by));
 
-			RotateArc(left + r - 2 * source->corner_radius - LINE_WIDTH/scale,
-					  top + b - 2 * source->corner_radius - LINE_WIDTH/scale,
-					  2 * source->corner_radius + LINE_WIDTH/scale, 2 * source->corner_radius + LINE_WIDTH/scale,
-					  17280, 5760, angle, rot_left, rot_top, &ax, &ay,
+			RotateArc(left + l - 1/scale, top + b - 2 * corner_radius - LINE_WIDTH/scale,
+					  2 * corner_radius + LINE_WIDTH/scale + 2/scale, 2 * corner_radius + LINE_WIDTH/scale,
+					  11521, 5759, angle, rot_left, rot_top, &ax, &ay,
 					  &arcw, &arch, &arcs, &arce);
 			XDrawArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
 					 scale * arch, arcs, arce);
 
-			RotatePoint(left + l, top + b - source->corner_radius, angle,
-						rot_left, rot_top, &ax, &ay);
-			RotatePoint(left + l, top + t + source->corner_radius, angle,
-						rot_left, rot_top, &bx, &by);
-			XDrawLine(dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
-					  scale * (by));
-
-			RotateArc(left + l, top + b - 2 * source->corner_radius - LINE_WIDTH/scale,
-					  2 * source->corner_radius + LINE_WIDTH/scale, 2 * source->corner_radius + LINE_WIDTH/scale,
-					  11520, 5760, angle, rot_left, rot_top, &ax, &ay,
-					  &arcw, &arch, &arcs, &arce);
-			XDrawArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
-					 scale * arch, arcs, arce);
-
+}
 			
 
 		}
@@ -537,6 +653,8 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 				left + key->gap, top, _kb,
 				&_kb->geom->shapes[key->shape_ndx],
 				&_kb->geom->colors[key->color_ndx], True);
+
+	XSetForeground(dpy, gc, foreground.pixel);
 
 	/* This is to work around an XKB apparent bug. */
 	fixed_num_keys = _kb->names->num_keys;
@@ -653,9 +771,14 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 	double ax, ay;
 
+	if (drawkb_config.painting_mode == FULL_SHAPE) {
+		XkbComputeShapeTop(&_kb->geom->shapes[key->shape_ndx], k);
+	} else {
+		k = &_kb->geom->shapes[key->shape_ndx].bounds;
+	}
+
 	if (drawkb_config.IQF(XStringToKeysym(keystring), 0, buf, buf_n) == EXIT_SUCCESS) {
 
-		k = &_kb->geom->shapes[key->shape_ndx].bounds;
 
 		/* FIXME: Key label vertical position is miscalculated. */
 		fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, 400*scale);
@@ -679,8 +802,8 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 		/* FIXME: These +- 8 are fixed now, which means they are resolution
 		   dependant. This is wrong. */
 
-		RotatePoint(left + key->gap +
-					(5 /*- (XTextWidth(fs, glyph, strlen(glyph)))*/)/LINE_WIDTH/scale,
+		RotatePoint(left + key->gap + k->x1 +
+					(1/*5 - (XTextWidth(fs, glyph, strlen(glyph)))*/)/LINE_WIDTH/scale,
 					(top + (fs->max_bounds.ascent) / scale),
 					angle, section_left, section_top, &ax,
 					&ay);
@@ -732,7 +855,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 					XDrawString(dpy, w, gc, scale*ax, scale*ay, glyph,
 								1);
 				} else {
-					RotatePoint(left + key->gap + 4/scale,
+					RotatePoint(left + key->gap + k->x1 + 4/scale,
 								top +  LINE_WIDTH/scale + (b->y2 - 4/scale) * g_baseline,
 								angle, section_left, section_top, &ax,
 								&ay);
@@ -858,6 +981,11 @@ void drawkb_draw(Display * dpy, Drawable d, GC gc, unsigned int width, unsigned 
 	lightcolor.blue = ((background.blue - foreground.blue) * 0.8) + foreground.blue;
 	XAllocColor(dpy, XDefaultColormap(dpy, 0), &lightcolor);
 
+	darkcolor.red = ((background.red - 0) * 0.8);
+	darkcolor.green = ((background.green - 0) * 0.8);
+	darkcolor.blue = ((background.blue - 0) * 0.8);
+	XAllocColor(dpy, XDefaultColormap(dpy, 0), &darkcolor);
+
 	XkbGeometryPtr kbgeom = kbdesc->geom;
 
 	/* Get what scale should drawkb work with, according to drawable's
@@ -942,10 +1070,12 @@ int Init_Font(const char *font)
 
 
 int drawkb_init(Display *dpy, const char *imagelib, const char *font,
-	IQF_t IQF, float scale)
+	IQF_t IQF, painting_mode_t painting_mode, float scale)
 {
 
 	drawkb_config.IQF = IQF;
+
+	drawkb_config.painting_mode = painting_mode;
 
 	drawkb_config.dpy = dpy;
 

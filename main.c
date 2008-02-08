@@ -167,7 +167,7 @@ int kbwin_init(Display * dpy)
 
 	XFlush(dpy);
 
-	r = drawkb_init(dpy, config->drawkb_imagelib, config->drawkb_font, IconQuery, scale);
+	r = drawkb_init(dpy, config->drawkb_imagelib, config->drawkb_font, IconQuery, config->drawkb_painting_mode, scale);
 
 	if (r != EXIT_SUCCESS) {
 		return EXIT_FAILURE;

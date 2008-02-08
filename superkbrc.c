@@ -34,6 +34,7 @@
 #define CONFIG_DEFAULT_SUPERKB_SUPERKEY_REPLAY 0
 #define CONFIG_DEFAULT_FEEDBACK_HANDLER "xmessage -buttons '' -center -timeout 2 Launching "
 #define CONFIG_DEFAULT_SUPERKB_SUPERKEY_RELEASE_CANCELS 1
+#define CONFIG_DEFAULT_DRAWKB_PAINTING_MODE FULL_SHAPE
 
 int cver = 0;
 
@@ -343,6 +344,17 @@ void handle_line(char *line, int linesize) {
 			return;
 		}
 
+		if (!strcmp(token_array[0], "DRAWKB_PAINTING_MODE") && tok_index == 2) {
+			if (!strcmp(token_array[1], "FULL_SHAPE"))
+				__config->drawkb_painting_mode = FULL_SHAPE;
+			else if (!strcmp(token_array[1], "BASE_OUTLINE_ONLY"))
+				__config->drawkb_painting_mode = BASE_OUTLINE_ONLY;
+			else if (!strcmp(token_array[1], "FLAT_KEY"))
+				__config->drawkb_painting_mode = FLAT_KEY;
+			else fprintf(stderr, "superkb: DRAWKB_PAINTING_MODE value must be one of: FULL_SHAPE, BASE_OUTLINE_ONLY, FLAT_KEY.\n");
+			return;
+		}
+
 		if (!strcmp(token_array[0], "FEEDBACK_HANDLER") && tok_index == 2) {
 			strncpy(__config->feedback_handler, token_array[1], 500);
 			return;
@@ -466,6 +478,7 @@ config_t * config_new (Display *dpy)
 	this->superkb_superkey_replay = CONFIG_DEFAULT_SUPERKB_SUPERKEY_REPLAY;
 	strcpy(this->feedback_handler, CONFIG_DEFAULT_FEEDBACK_HANDLER);
 	this->superkb_superkey_release_cancels = CONFIG_DEFAULT_SUPERKB_SUPERKEY_RELEASE_CANCELS;
+	this->drawkb_painting_mode = CONFIG_DEFAULT_DRAWKB_PAINTING_MODE;
 
 	return this;
 
