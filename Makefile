@@ -20,7 +20,7 @@ cflags-$(PUTICON_IMLIB2) += $(shell imlib2-config --cflags)
 SHELL=/bin/sh
 CC=gcc
 CFLAGS=-Wall $(syms-y) $(cflags-y) $(cflags-m) -ggdb
-OBJS=superkb.o main.o drawkb.o superkbrc.o imagelib.o $(obj-y)
+OBJS=superkb.o main.o drawkb.o superkbrc.o imagelib.o debug.o $(obj-y)
 LDPARAMS=-lX11 -lm -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
 
 #My variables

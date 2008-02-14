@@ -29,6 +29,8 @@
 #include "superkb.h"
 #include "drawkb.h"
 #include "superkbrc.h"
+#include "globals.h"
+#include "debug.h"
 
 #include "version.h"
 
@@ -257,8 +259,55 @@ void sighandler(int sig)
 	}
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+
+	int c;
+	int errflg = 0;
+	int help = 0;
+	extern char *optarg;
+	extern int optind, optopt;
+
+	running_debug_level = 0;
+
+	while ((c = getopt(argc, argv, ":d:h")) != -1) {
+		switch(c) {
+		case 'd':
+			/* FIXME: doesn't check if it is really an integer */
+			running_debug_level = atoi(optarg);
+			break;
+		case 'h':
+			/* FIXME: doesn't check if it is really an integer */
+			help++;
+			break;
+		case ':':
+			/* -d level is optional, defaults to 1. */
+			if (optopt == 'd') {
+				running_debug_level++;
+			} else {
+				fprintf(stderr,
+					"superkb: option -%c requires an argument\n", optopt);
+				exit(EXIT_FAILURE);
+			}
+			break;
+		case '?':
+			fprintf(stderr,	"superkb: unrecognized option: -%c\n", optopt);
+			exit(EXIT_FAILURE);
+			break;
+		}
+	}
+	if (errflg || help) {
+		fprintf(stderr, "usage: superkb [options]\n");
+		fprintf(stderr, "\n");
+		fprintf(stderr, "Options:\n");
+		fprintf(stderr, "	-d level   Show debug messages up to the specified verbosity level.\n");
+		fprintf(stderr, "	-h         Shows this help.\n");
+		fprintf(stderr, "\n");
+		if (help)
+			exit(EXIT_SUCCESS);	
+		else 
+			exit(EXIT_FAILURE);
+	}
 
 	int status;
 
@@ -273,6 +322,8 @@ int main()
 		"to kill it by pressing Ctrl-Alt-*, and restore Autorepeat with "
 			"'xset r on'.\n\n"
 	);
+
+	debug(1, "*** Debugging has been set to verbosity level %d.\n\n", running_debug_level);
 
 	/* Set SIGUSR1 handler. */
 	action.sa_handler = sighandler;
