@@ -21,6 +21,7 @@
 
 #include "superkb.h"
 #include "globals.h"
+#include "debug.h"
 
 void (*__Action)(KeyCode keycode, unsigned int state);
 
@@ -218,6 +219,7 @@ void superkb_start()
 
 	/* Counter, in case user presses both Supers and releases only one. */
 	int super_was_active = 0;
+	debug (2, "[ar] super_was_active has been initialized to %d.\n", super_was_active);
 
 	/* Initialize timeouts to be inactive. */
 	timerclear(&to[TO_DRAWKB]);
@@ -293,7 +295,7 @@ void superkb_start()
 		if (XNEWT_ret == 0) {
 			/* Timed out */
 			if (to_reason == TO_CONFIG) {
-				printf("Placeholder: key config window should pop up here.\n");
+				debug(9, "[kc] Placeholder: key config window should pop up here.\n");
 				timerclear(&to[TO_CONFIG]);
 				ignore_release = 1;
 			}
@@ -314,10 +316,16 @@ void superkb_start()
 			if (ev.type == KeyPress) {
 				ignore_release = 0;
 
+				debug(1, "[sk] Super key has been pressed, code: %d, name: %s.\n", ev.xkey.keycode,
+					XKeysymToString(XKeycodeToKeysym(inst.dpy, ev.xkey.keycode, 0)));
+
 				if (super_was_active++) {
 					super_replay = 0;
+					debug(2, "[sa] super_was_active increased to %d, not taking action.\n", super_was_active);
 					continue;
 				}
+
+				debug(2, "[sa] super_was_active increased to %d, taking action.\n", super_was_active);
 
 				super_replay = inst.superkey_replay;
 				memcpy(&event_save_for_replay, &ev, sizeof(XEvent));
@@ -331,9 +339,13 @@ void superkb_start()
 				XGetKeyboardControl(inst.dpy, &xkbs);
 				saved_autorepeat_mode = xkbs.global_auto_repeat;
 
+				debug(1, "[ar] AutoRepeat state has been saved: %d.\n", saved_autorepeat_mode);
+
 				XKeyboardControl xkbc;
 				xkbc.auto_repeat_mode = AutoRepeatModeOff;
 				XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode, &xkbc);
+
+				debug(1, "[ar] AutoRepeat state has been turned off.\n");
 
 				/* Grab the keyboard. */
 				XGrabKeyboard(inst.dpy, inst.rootwin, False, GrabModeAsync,
@@ -348,8 +360,16 @@ void superkb_start()
 				}
 			} else if (ev.type == KeyRelease) {
 
-				if (--super_was_active)
+				debug(1, "[sk] Super key has been released, code: %d, name: %s.\n", ev.xkey.keycode,
+					XKeysymToString(XKeycodeToKeysym(inst.dpy, ev.xkey.keycode, 0)));
+
+				if (--super_was_active) {
+					debug(2, "[sa] super_was_active decreased to %d, ignoring release.\n", super_was_active);
 					continue;
+				}
+
+				debug(2, "[sa] super_was_active decreased to %d, taking action.\n", super_was_active);
+
 				timerclear(&to[TO_DRAWKB]);
 				timerclear(&to[TO_CONFIG]);
 
@@ -367,6 +387,7 @@ void superkb_start()
 					XSendEvent(inst.dpy, event_saved_window, 1, KeyPressMask, &event_save_for_replay);
 					XSendEvent(inst.dpy, event_saved_window, 1, KeyReleaseMask, &ev);
 					XSync(inst.dpy, True);
+					debug(1, "[sr] Super key has been replayed\n");
 				}
 
 				/* Restore saved_autorepeat_mode. */
@@ -375,14 +396,23 @@ void superkb_start()
 				xkbc.auto_repeat_mode = AutoRepeatModeOn;
 				XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode, &xkbc);
 
+				debug(1, "[ar] AutoRepeat has been restored to: %d\n", saved_autorepeat_mode);
+
 				XUngrabKeyboard(inst.dpy, CurrentTime);
 				kbwin.unmap(inst.dpy);
 
 				for (x = 0; x < pressed_keys_n; x++) {
 					__Action(pressed_keys[x].keycode, pressed_keys[x].state);
+
+					debug(1, "[ac] Due to Super key release, executed action for key code = %d, name: %s\n", pressed_keys[x].keycode, 
+						XKeysymToString(XKeycodeToKeysym
+							(inst.dpy, pressed_keys[x].keycode, 0)));
+
 				}
 
 				clear_pressed_key_stack();
+
+				debug(1, "---------------------------------------------\n");
 
 			}
 		} else if (ev.type == KeyPress) {
@@ -398,11 +428,12 @@ void superkb_start()
 			 * release. That's what ignore_release is for.
 			 */
 			timerclear(&to[TO_CONFIG]);
-			printf("KeyRelease: %s\n",
+			__Action(ev.xkey.keycode, ev.xkey.state);
+
+			debug(1, "[ac] Due to bound key release, executed action for key code = %d, name: %s\n", ev.xkey.keycode, 
 				   XKeysymToString(XKeycodeToKeysym
 								   (inst.dpy, ev.xkey.keycode, 0)));
-
-			__Action(ev.xkey.keycode, ev.xkey.state);
+			debug(2, "     ... and because super_was_active value was > 0: %d\n", super_was_active);
 
 			remove_from_pressed_key_stack(ev.xkey.keycode, ev.xkey.state);
 
