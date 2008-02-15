@@ -423,7 +423,7 @@ void superkb_start()
 
 			push_into_pressed_key_stack(ev.xkey.keycode, ev.xkey.state);
 		} else if ((ev.type == KeyRelease && !ignore_release &&
-				   super_was_active > 0) || (ev.type == KeyRelease)) {
+				   super_was_active > 0)) {
 			/* User might have asked for binding configuration, so ignore key
 			 * release. That's what ignore_release is for.
 			 */
