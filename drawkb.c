@@ -63,6 +63,56 @@ XColor darkcolor;
 XColor foreground;
 XColor background;
 
+typedef struct {
+	char *keystring;
+	char *keylabel;
+} keystrings_t;
+
+keystrings_t keystrings[] = {
+	{ "dead_grave",               "`" },
+	{ "dead_acute",               "'" },
+	{ "grave",                    "`" },
+	{ "apostrophe",               "'" },
+	{ "space",                    "" },
+	{ "Escape",                   "Esc" },
+	{ "comma",                    "," },
+	{ "period",                   "." },
+	{ "slash",                    "/" },
+	{ "minus",                    "-" },
+	{ "equal",                    "=" },
+	{ "Caps_Lock",                "Caps Lock" },
+	{ "Shift_L",                  "Shift" },
+	{ "Shift_R",                  "Shift" },
+	{ "semicolon",                ";" },
+	{ "BackSpace",                "Backspace" },
+	{ "Return",                   "Enter" },
+	{ "Control_L",                "Ctrl" },
+	{ "Control_R",                "Ctrl" },
+	{ "Alt_L",                    "Alt" },
+	{ "KP_Enter",                 "Enter" },
+	{ "KP_Add",                   "+" },
+	{ "KP_Subtract",              "-" },
+	{ "KP_Multiply",              "*" },
+	{ "KP_Divide",                "/" },
+	{ "Num_Lock",                 "Num Lock" },
+	{ "KP_Home",                  "Home" },
+	{ "KP_End",                   "End" },
+	{ "KP_Prior",                 "PgUp" },
+	{ "KP_Up",                    "Up" },
+	{ "KP_Down",                  "Down" },
+	{ "KP_Left",                  "Left" },
+	{ "KP_Right",                 "Right" },
+	{ "KP_Next",                  "Next" },
+	{ "KP_Begin",                 "Begin" },
+	{ "KP_Insert",                "Ins" },
+	{ "KP_Delete",                "Del" },
+	{ "Scroll_Lock",              "Scroll Lock" },
+	{ "bracketleft",              "[" },
+	{ "bracketright",             "]" },
+	{ "backslash",                "\\" },
+	{ "", "" }
+};
+
 /* FIXME: Same problem as XLoadQueryScalableFont(). It doesn't check
  * for i < 500*sizeof(char).
  */
@@ -674,89 +724,12 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 			kss = XKeysymToString(ks);
 			strncpy(keystring, kss, 255);
 			if (kss) {
-				/* FIXME: Better compare integers, not strings. Fixable. */
-				if (!strcmp(kss, "dead_grave"))
-					kss = "`";
-				if (!strcmp(kss, "dead_acute"))
-					kss = "'";
-				if (!strcmp(kss, "grave"))
-					kss = "`";
-				if (!strcmp(kss, "apostrophe"))
-					kss = "'";
-				if (!strcmp(kss, "space"))
-					kss = "";
-				if (!strcmp(kss, "Escape"))
-					kss = "Esc";
-				if (!strcmp(kss, "comma"))
-					kss = ",";
-				if (!strcmp(kss, "period"))
-					kss = ".";
-				if (!strcmp(kss, "slash"))
-					kss = "/";
-				if (!strcmp(kss, "minus"))
-					kss = "-";
-				if (!strcmp(kss, "equal"))
-					kss = "=";
-				if (!strcmp(kss, "Caps_Lock"))
-					kss = "Caps Lock";
-				if (!strcmp(kss, "Shift_L"))
-					kss = "Shift";
-				if (!strcmp(kss, "Shift_R"))
-					kss = "Shift";
-				if (!strcmp(kss, "semicolon"))
-					kss = ";";
-				if (!strcmp(kss, "BackSpace"))
-					kss = "Backspace";
-				if (!strcmp(kss, "Return"))
-					kss = "Enter";
-				if (!strcmp(kss, "Control_L"))
-					kss = "Ctrl";
-				if (!strcmp(kss, "Control_R"))
-					kss = "Ctrl";
-				if (!strcmp(kss, "Alt_L"))
-					kss = "Alt";
-				if (!strcmp(kss, "KP_Enter"))
-					kss = "Enter";
-				if (!strcmp(kss, "KP_Add"))
-					kss = "+";
-				if (!strcmp(kss, "KP_Subtract"))
-					kss = "-";
-				if (!strcmp(kss, "KP_Multiply"))
-					kss = "*";
-				if (!strcmp(kss, "KP_Divide"))
-					kss = "/";
-				if (!strcmp(kss, "Num_Lock"))
-					kss = "Num Lock";
-				if (!strcmp(kss, "KP_Home"))
-					kss = "Home";
-				if (!strcmp(kss, "KP_End"))
-					kss = "End";
-				if (!strcmp(kss, "KP_Prior"))
-					kss = "PgUp";
-				if (!strcmp(kss, "KP_Up"))
-					kss = "Up";
-				if (!strcmp(kss, "KP_Down"))
-					kss = "Down";
-				if (!strcmp(kss, "KP_Left"))
-					kss = "Left";
-				if (!strcmp(kss, "KP_Right"))
-					kss = "Right";
-				if (!strcmp(kss, "KP_Next"))
-					kss = "Next";
-				if (!strcmp(kss, "KP_Begin"))
-					kss = "Begin";
-				if (!strcmp(kss, "KP_Insert"))
-					kss = "Ins";
-				if (!strcmp(kss, "KP_Delete"))
-					kss = "Del";
-				if (!strcmp(kss, "Scroll_Lock"))
-					kss = "Scroll Lock";
-				if (!strcmp(kss, "bracketleft"))
-					kss = "[";
-				if (!strcmp(kss, "bracketright"))
-					kss = "]";
-				if (!strcmp(kss, "backslash"))
-					kss = "\\";
+				int i = 0;
+				while (strcmp((keystrings[i]).keystring, "") != 0) {
+					if (!strcmp(kss, (keystrings[i]).keystring))
+						kss = (keystrings[i]).keylabel;
+					i++;
+				}
 				strncpy(glyph, kss, 255);
 
 				/* "b" is just to abbreviate the otherwise long code. */
