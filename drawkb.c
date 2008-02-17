@@ -854,6 +854,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 				XSetForeground(dpy, gc, foreground.pixel);
 			}
 		}
+			break;
 	}
   }
 }
