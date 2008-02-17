@@ -94,7 +94,7 @@ keystrings_t keystrings[] = {
 	{ "KP_Subtract",              "-" },
 	{ "KP_Multiply",              "*" },
 	{ "KP_Divide",                "/" },
-	{ "Num_Lock",                 "Num Lock" },
+	{ "Num_Lock",                 "NumLk" },
 	{ "KP_Home",                  "Home" },
 	{ "KP_End",                   "End" },
 	{ "KP_Prior",                 "PgUp" },
@@ -106,12 +106,31 @@ keystrings_t keystrings[] = {
 	{ "KP_Begin",                 "Begin" },
 	{ "KP_Insert",                "Ins" },
 	{ "KP_Delete",                "Del" },
-	{ "Scroll_Lock",              "Scroll Lock" },
+	{ "Scroll_Lock",              "ScrLk" },
 	{ "bracketleft",              "[" },
 	{ "bracketright",             "]" },
+	{ "braceleft",                "{" },
+	{ "braceright",               "}" },
 	{ "backslash",                "\\" },
+	{ "ntilde",                   "ñ" },
+	{ "plus",                     "+" },
+	{ "ISO_Level3_Shift",         "AltGr" },
+	{ "Insert",                   "Ins" },
+	{ "Delete",                   "Del" },
+	{ "Prior",                    "PgUp" },
+	{ "Next",                     "PgDn" },
 	{ "", "" }
 };
+
+char *LookupKeylabelFromKeystring(char *kss) {
+	int i = 0;
+	while (strcmp((keystrings[i]).keystring, "") != 0) {
+		if (!strcmp(kss, (keystrings[i]).keystring))
+			return (keystrings[i]).keylabel;
+		i++;
+	}
+	return kss;
+}
 
 /* FIXME: Same problem as XLoadQueryScalableFont(). It doesn't check
  * for i < 500*sizeof(char).
@@ -724,12 +743,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 			kss = XKeysymToString(ks);
 			strncpy(keystring, kss, 255);
 			if (kss) {
-				int i = 0;
-				while (strcmp((keystrings[i]).keystring, "") != 0) {
-					if (!strcmp(kss, (keystrings[i]).keystring))
-						kss = (keystrings[i]).keylabel;
-					i++;
-				}
+				kss = LookupKeylabelFromKeystring(kss);
 				strncpy(glyph, kss, 255);
 
 				/* "b" is just to abbreviate the otherwise long code. */
