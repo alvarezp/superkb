@@ -756,107 +756,107 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 				unsigned int tw;
 				unsigned int size;
 
-	double ax, ay;
+				double ax, ay;
 
-	if (drawkb_config.painting_mode == FULL_SHAPE) {
-		XkbComputeShapeTop(&_kb->geom->shapes[key->shape_ndx], k);
-	} else {
-		k = &_kb->geom->shapes[key->shape_ndx].bounds;
-	}
-
-	if (drawkb_config.IQF(XStringToKeysym(keystring), 0, buf, buf_n) == EXIT_SUCCESS) {
-
-
-		/* FIXME: Key label vertical position is miscalculated. */
-		fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, 400*scale);
-
-		XSetFont(dpy, gc, fs->fid);
-
-		if (strcmp(buf, "") != 0) {
-
-			int size = (k->x2-k->x1)-4/scale;
-			if (k->y2-k->y1-(4+fs->max_bounds.ascent-fs->max_bounds.descent)/scale < size)
-				size = k->y2-k->y1-(4+fs->max_bounds.ascent-fs->max_bounds.descent)/scale;
-
-			RotatePoint((left + key->gap + k->x2 - size - 4), (top + k->y2 - size - 4), 
-						angle, section_left, section_top, &ax,
-						&ay);
-
-			PutIcon(w, scale*ax, scale*ay, scale*size, scale*size, buf);
-
-		}
-
-		/* FIXME: These +- 8 are fixed now, which means they are resolution
-		   dependant. This is wrong. */
-
-		RotatePoint(left + key->gap + k->x1 +
-					(1/*5 - (XTextWidth(fs, glyph, strlen(glyph)))*/)/LINE_WIDTH/scale,
-					(top + (fs->max_bounds.ascent) / scale),
-					angle, section_left, section_top, &ax,
-					&ay);
-		XDrawString(dpy, w, gc, scale*ax, scale*ay, glyph,
-					strlen(glyph));
-
-
-	} else {
-				XSetForeground(dpy, gc, lightcolor.pixel);
-				if (strlen(kss) == 1) {
-
-					//glyph[0] = toupper(glyph[0]);
-					size = scale * 600;
-				   fs = XLoadQueryScalableFont(dpy, 0,
-												drawkb_config.font,
-												g_size);
-					tw = XTextWidth(fs, glyph, strlen(glyph));
+				if (drawkb_config.painting_mode == FULL_SHAPE) {
+					XkbComputeShapeTop(&_kb->geom->shapes[key->shape_ndx], k);
 				} else {
-					size = scale * 300;
-					do {
-						fs = XLoadQueryScalableFont(dpy, 0,
-													drawkb_config.font,
-													size);
-						if (!fs) {
-							fprintf(stderr, "Could not load font: %s, %d\n",
-								   drawkb_config.font, size);
-							exit(EXIT_FAILURE);
-						}
-
-						tw = XTextWidth(fs, kss, strlen(kss));
-						size -= 3;
-					}
-					while (tw > scale * (b->x2 - b->x1));
+					k = &_kb->geom->shapes[key->shape_ndx].bounds;
 				}
-				size += 3;
-				F = fs->fid;
 
-				XSetFont(dpy, gc, F);
+				if (drawkb_config.IQF(XStringToKeysym(keystring), 0, buf, buf_n) == EXIT_SUCCESS) {
 
-				/* FIXME: Text position works properly, but text prints unrotated. */
 
-				/* FIXME: Vertical position is miscalculated. */
-				if (strlen(kss) == 1) {
-					RotatePoint((left + key->gap + (b->x1 + b->x2) / 2) -
-								tw / 2 / scale,
-								top + b->y1 + LINE_WIDTH/scale + (b->y2 - b->y1) * g_baseline,
+					/* FIXME: Key label vertical position is miscalculated. */
+					fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, 400*scale);
+
+					XSetFont(dpy, gc, fs->fid);
+
+					if (strcmp(buf, "") != 0) {
+
+						int size = (k->x2-k->x1)-4/scale;
+						if (k->y2-k->y1-(4+fs->max_bounds.ascent-fs->max_bounds.descent)/scale < size)
+							size = k->y2-k->y1-(4+fs->max_bounds.ascent-fs->max_bounds.descent)/scale;
+
+						RotatePoint((left + key->gap + k->x2 - size - 4), (top + k->y2 - size - 4), 
+									angle, section_left, section_top, &ax,
+									&ay);
+
+						PutIcon(w, scale*ax, scale*ay, scale*size, scale*size, buf);
+
+					}
+
+					/* FIXME: These +- 8 are fixed now, which means they are resolution
+					   dependant. This is wrong. */
+
+					RotatePoint(left + key->gap + k->x1 +
+								(1/*5 - (XTextWidth(fs, glyph, strlen(glyph)))*/)/LINE_WIDTH/scale,
+								(top + (fs->max_bounds.ascent) / scale),
 								angle, section_left, section_top, &ax,
 								&ay);
 					XDrawString(dpy, w, gc, scale*ax, scale*ay, glyph,
-								1);
-				} else {
-					RotatePoint(left + key->gap + k->x1 + 4/scale,
-								top +  LINE_WIDTH/scale + (b->y2 - 4/scale) * g_baseline,
-								angle, section_left, section_top, &ax,
-								&ay);
-					XDrawString(dpy, w, gc, scale * (ax), scale * (ay),
-								kss, strlen(kss));
-				}
+								strlen(glyph));
 
-				XFreeFontInfo(NULL, fs, 1);
-				XSetForeground(dpy, gc, foreground.pixel);
+
+				} else {
+					XSetForeground(dpy, gc, lightcolor.pixel);
+					if (strlen(kss) == 1) {
+
+						//glyph[0] = toupper(glyph[0]);
+						size = scale * 600;
+					   fs = XLoadQueryScalableFont(dpy, 0,
+													drawkb_config.font,
+													g_size);
+						tw = XTextWidth(fs, glyph, strlen(glyph));
+					} else {
+						size = scale * 300;
+						do {
+							fs = XLoadQueryScalableFont(dpy, 0,
+														drawkb_config.font,
+														size);
+							if (!fs) {
+								fprintf(stderr, "Could not load font: %s, %d\n",
+									   drawkb_config.font, size);
+								exit(EXIT_FAILURE);
+							}
+
+							tw = XTextWidth(fs, kss, strlen(kss));
+							size -= 3;
+						}
+						while (tw > scale * (b->x2 - b->x1));
+					}
+					size += 3;
+					F = fs->fid;
+
+					XSetFont(dpy, gc, F);
+
+					/* FIXME: Text position works properly, but text prints unrotated. */
+
+					/* FIXME: Vertical position is miscalculated. */
+					if (strlen(kss) == 1) {
+						RotatePoint((left + key->gap + (b->x1 + b->x2) / 2) -
+									tw / 2 / scale,
+									top + b->y1 + LINE_WIDTH/scale + (b->y2 - b->y1) * g_baseline,
+									angle, section_left, section_top, &ax,
+									&ay);
+						XDrawString(dpy, w, gc, scale*ax, scale*ay, glyph,
+									1);
+					} else {
+						RotatePoint(left + key->gap + k->x1 + 4/scale,
+									top +  LINE_WIDTH/scale + (b->y2 - 4/scale) * g_baseline,
+									angle, section_left, section_top, &ax,
+									&ay);
+						XDrawString(dpy, w, gc, scale * (ax), scale * (ay),
+									kss, strlen(kss));
+					}
+
+					XFreeFontInfo(NULL, fs, 1);
+					XSetForeground(dpy, gc, foreground.pixel);
+				}
 			}
-		}
 			break;
+		}
 	}
-  }
 }
 
 void
