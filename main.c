@@ -262,6 +262,7 @@ void sighandler(int sig)
 int main(int argc, char *argv[])
 {
 
+	int cancel_after_ready = 0;
 	int c;
 	int errflg = 0;
 	int help = 0;
@@ -270,8 +271,11 @@ int main(int argc, char *argv[])
 
 	running_debug_level = 0;
 
-	while ((c = getopt(argc, argv, ":d:h")) != -1) {
+	while ((c = getopt(argc, argv, ":0d:h")) != -1) {
 		switch(c) {
+		case '0':
+			cancel_after_ready++;
+			break;
 		case 'd':
 			/* FIXME: doesn't check if it is really an integer */
 			running_debug_level = atoi(optarg);
@@ -300,6 +304,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "usage: superkb [options]\n");
 		fprintf(stderr, "\n");
 		fprintf(stderr, "Options:\n");
+		fprintf(stderr, "	-0         Quit when Superkb is ready (for timing and debuggin).\n");
 		fprintf(stderr, "	-d level   Show debug messages up to the specified verbosity level.\n");
 		fprintf(stderr, "	-h         Shows this help.\n");
 		fprintf(stderr, "\n");
@@ -382,7 +387,8 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	superkb_start();
+	if (!cancel_after_ready)
+		superkb_start();
 
 	return EXIT_SUCCESS;
 }
