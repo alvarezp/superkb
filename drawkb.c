@@ -938,8 +938,8 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 			strncpy(glyph, kss, 255);
 
 			/* Calculate label + icon box bounds */
-			int labelbox_border = 0;
-			int labelbox_margin = 1;
+			int labelbox_border = 0 / scale;
+			int labelbox_margin = 2 / scale;
 
 			XkbBoundsRec kr, *k = &kr;
 			
