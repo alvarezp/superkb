@@ -974,6 +974,8 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 				key_data[key_data_n-1].size = size_unbound_char;
 			} else {
 				/* This is a multiple char unbound key. */
+				labelbox.x1 += 4 / scale;
+				labelbox.x2 -= 4 / scale;
 				AdjustSize(dpy, labelbox, glyph, 0.25, scale, &size_unbound_string);
 				key_data[key_data_n-1].size = size_unbound_string;
 			}
