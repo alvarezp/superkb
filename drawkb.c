@@ -801,7 +801,11 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 
 				} else {
-					XSetForeground(dpy, gc, lightcolor.pixel);
+					if (drawkb_config.painting_mode == FLAT_KEY) {
+						XSetForeground(dpy, gc, background.pixel);
+					} else {
+						XSetForeground(dpy, gc, lightcolor.pixel);
+					}
 
 					fs = XLoadQueryScalableFont(dpy, 0,
 												drawkb_config.font,
@@ -1086,9 +1090,9 @@ void drawkb_draw(Display * dpy, Drawable d, GC gc, unsigned int width, unsigned 
 	lightcolor.blue = ((background.blue - foreground.blue) * 0.8) + foreground.blue;
 	XAllocColor(dpy, XDefaultColormap(dpy, 0), &lightcolor);
 
-	darkcolor.red = ((background.red - 0) * 0.8);
-	darkcolor.green = ((background.green - 0) * 0.8);
-	darkcolor.blue = ((background.blue - 0) * 0.8);
+	darkcolor.red = ((background.red - 0) * 0.7);
+	darkcolor.green = ((background.green - 0) * 0.7);
+	darkcolor.blue = ((background.blue - 0) * 0.7);
 	XAllocColor(dpy, XDefaultColormap(dpy, 0), &darkcolor);
 
 	XkbGeometryPtr kbgeom = kbdesc->geom;
