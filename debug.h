@@ -11,6 +11,13 @@
 
 void debug(int level, char *fmt, ...);
 
+typedef enum {
+	KEYBOARD_ACTIONS = 1,
+	VARIABLE_CHANGE_VALUES,
+	FUNCTION_CALLS,
+	VARIABLE_PRINT
+} debug_levels_t;
+
 extern int running_debug_level;
 
 #endif
