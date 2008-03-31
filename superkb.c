@@ -143,12 +143,12 @@ XNextEventWithTimeout(Display * display, XEvent * event_return,
 	fd_set fd;
 	int r;
 
+	XFlush(display);
+
 	if (QLength(display) > 0) {
 		XNextEvent(display, event_return);
 		return 1;
 	}
-
-	XFlush(display);
 
 	FD_ZERO(&fd);
 	FD_SET(XConnectionNumber(display), &fd);
