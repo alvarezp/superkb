@@ -25,7 +25,7 @@ ldlibs-y += $(shell pkg-config xrender --libs)
 #Special variables
 SHELL=/bin/sh
 CC=gcc
-CFLAGS=-Wall $(syms-y) $(cflags-y) $(cflags-m) -ggdb
+CFLAGS=-Wall $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb
 OBJS=superkb.o main.o drawkb.o superkbrc.o imagelib.o debug.o $(obj-y)
 LDPARAMS=-lX11 -lm -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
 

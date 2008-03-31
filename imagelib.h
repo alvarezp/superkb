@@ -18,7 +18,7 @@ typedef struct {
 	imagelib_init_t init;
 } imagelib_compiled_in_t;
 
-void Imagelib_GetValues(char *buf, long buf_n);
+void Imagelib_GetValues(char *buf, unsigned long buf_n);
 imagelib_image_t * NewImage();
 int  LoadImage(imagelib_image_t *this, const char *fn);
 void ResizeImage(imagelib_image_t *this, int width, int height);

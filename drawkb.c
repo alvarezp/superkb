@@ -753,7 +753,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 		  XkbDescPtr _kb, XkbKeyPtr key, key_data_t key_data)
 {
 
-	int fixed_num_keys;
+	unsigned int fixed_num_keys;
 	unsigned long i;
 
 	char buf[1024]="";
@@ -913,7 +913,7 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 		  XkbDescPtr _kb, XkbRowPtr row)
 {
 
-	int i;
+	unsigned int i;
 	unsigned int next_piece = 0;
 
 	XkbBoundsRec labelbox;
@@ -925,14 +925,14 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 	int size_unbound_string = 0;
 
 	/* This is to work around an XKB apparent bug. */
-	int fixed_num_keys = _kb->names->num_keys;
+	unsigned int fixed_num_keys = _kb->names->num_keys;
 	if (!fixed_num_keys)
 		fixed_num_keys = 256;
 
-	int j;
+	unsigned int j;
 
 	key_data_t *key_data = NULL;
-	int key_data_n = 0;
+	unsigned int key_data_n = 0;
 
 	for (j = 0; j < row->num_keys; j++) {
 		XkbKeyPtr key = &row->keys[j];

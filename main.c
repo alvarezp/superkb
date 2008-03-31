@@ -68,10 +68,11 @@ int fatal_error(const char * format, ...) {
 
 int IconQuery(KeySym keysym, unsigned int state, char buf[], int buf_n)
 {
-	int i;
+	unsigned int i;
 	for (i = 0; i < config->key_bindings_n; i++)
 	{
-		if (keysym == XKeycodeToKeysym(dpy, config->key_bindings[i].keycode, 0)) {
+		if (keysym == XKeycodeToKeysym(dpy, config->key_bindings[i].keycode, 0) &&
+			state == config->key_bindings[i].state) {
 			if (config->key_bindings[i].icon != NULL) {
 				strncpy(buf, config->key_bindings[i].icon, buf_n);
 			} else {
@@ -195,7 +196,7 @@ int kbwin_init(Display * dpy)
 
 void __Superkb_Action(KeyCode keycode, unsigned int state)
 {
-	int i;
+	unsigned int i;
 	for (i = 0; i < config->key_bindings_n; i++) {
 		if (config->key_bindings[i].keycode == keycode &&
 		  config->key_bindings[i].state ==

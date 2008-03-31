@@ -47,7 +47,7 @@ struct {
 	imagelib_freeimage_t FreeImage;
 } image;
 
-void Imagelib_GetValues(char *buf, long buf_n)
+void Imagelib_GetValues(char *buf, unsigned long buf_n)
 {
 	imagelib_compiled_in_t *p;
 

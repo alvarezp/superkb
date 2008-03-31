@@ -52,7 +52,7 @@ XEvent sigev;
 
 struct _kbwin kbwin = { NULL, NULL, NULL, NULL };
 struct config conf = { "", 0, 0 };
-struct instance inst = { 0, 0, 0, NULL, 0 };
+struct instance inst = { 0, 0, 0, NULL, 0, 0, 0 };
 
 /* Start PRESSED KEYS STACK */
 
