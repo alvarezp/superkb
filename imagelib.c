@@ -123,6 +123,8 @@ int Init_Imagelib(Display *dpy, const char *userlib)
 		fprintf(stderr, "(superkb: %s)\n\n", dlerror());
 	}
 
+	free(fn);
+
 	/* ++ Try 2: Query X for WM and use try the best for it. */
 
 	/* It's not ready yet, though.
