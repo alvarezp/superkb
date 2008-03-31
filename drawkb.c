@@ -29,9 +29,13 @@
 #include <dlfcn.h>
 
 #include <X11/Xlib.h>
+#include <X11/Xft/Xft.h>
+#include <X11/Xft/XftCompat.h>
 
 #include <X11/XKBlib.h>
 #include <X11/extensions/XKBgeom.h>
+
+#include <X11/extensions/Xrender.h>
 
 #include "drawkb.h"
 #include "imagelib.h"
@@ -42,11 +46,15 @@
 
 #define pxl (1 / scale)
 
+#define DEFAULT_SCREEN(dpy) (DefaultScreen(dpy))
+#define DEFAULT_VISUAL(dpy) (DefaultVisual(dpy, DEFAULT_SCREEN(dpy)))
+#define DEFAULT_COLORMAP(dpy) (DefaultColormap(dpy, DEFAULT_SCREEN(dpy)))
+
 double __scale;
 
 typedef struct {
 	char font[500];
-	XFontStruct fs;
+	XftFont * fs;
 	Display *dpy;
 	IQF_t IQF;
 	painting_mode_t painting_mode;
@@ -66,6 +74,15 @@ XColor lightcolor;
 XColor darkcolor;
 XColor foreground;
 XColor background;
+
+XftColor xftlightcolor;
+XftColor xftdarkcolor;
+XftColor xftbackground;
+XftColor xftforeground;
+
+XftColor *current;
+
+XftDraw *dw = NULL;
 
 typedef struct {
 	char *keystring;
@@ -145,6 +162,12 @@ char *LookupKeylabelFromKeystring(char *kss) {
 	return kss;
 }
 
+int MyXftTextWidth(Display *dpy, XftFont *fs, const char *s, int len) {
+	XGlyphInfo xgi;
+	XftTextExtents8(dpy, fs, (unsigned char *) s, len, &xgi);
+	return xgi.xOff;
+}
+
 /* FIXME: Same problem as XLoadQueryScalableFont(). It doesn't check
  * for i < 500*sizeof(char).
  */
@@ -197,7 +220,7 @@ int XSetFontNameToScalable(const char *name, char *newname, int newname_n)
 /* TAKEN FROM O'REILLY XLIB PROGRAMMING MANUAL.
  *
  * This routine is passed a scalable font name and a point size.  It returns
- * an XFontStruct for the given font scaled to the specified size and the
+ * an XftFont * for the given font scaled to the specified size and the
  * exact resolution of the screen.  The font name is assumed to be a
  * well-formed XLFD name, and to have pixel size, point size, and average
  * width fields of "0" and arbitrary x-resolution and y-resolution fields.
@@ -206,10 +229,10 @@ int XSetFontNameToScalable(const char *name, char *newname, int newname_n)
  *
  * FIXME: It doesn't check for i < 500*sizeof(char).
  */
-XFontStruct *XLoadQueryScalableFont(Display * dpy, int screen, char *name,
+XftFont *XLoadQueryScalableFont(Display * dpy, int screen, char *name,
 	int size)
 {
-	XFontStruct *fs;
+	XftFont *fs;
 	int i, j, field;
 	char newname[500];		  /* big enough for a long font name */
 	int res_x, res_y;		   /* resolution values for this screen */
@@ -259,11 +282,11 @@ XFontStruct *XLoadQueryScalableFont(Display * dpy, int screen, char *name,
 	/* if there aren't 14 hyphens, it isn't a well formed name */
 	if (field != 14)
 		return NULL;
-	fs = XLoadQueryFont(dpy, newname);
+	fs = XftFontOpenXlfd(dpy, 0, newname);
 	return fs;
 }
 
-int drawkb_set_font(const char * font)
+int drawkb_set_font(Display *dpy, const char * font)
 {
 
 	/* FIXME: Validate font name. */
@@ -280,13 +303,13 @@ int drawkb_set_font(const char * font)
 	strcpy(drawkb_config.font, font);
 	return EXIT_SUCCESS;
 
-	XFontStruct *fs;
+	XftFont *fs;
 	fs = XLoadQueryScalableFont(drawkb_config.dpy, 0, drawkb_config.font, 1000);
 	if (fs) {
 		return EXIT_SUCCESS;
 	}
 
-	XFreeFontInfo(NULL, fs, 0);
+	XftFontClose(dpy, fs);
 }
 
 void drawkb_set_dpy(Display *dpy)
@@ -535,10 +558,13 @@ KbDrawShape(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == FLAT_KEY) {
 
-			if ( i % 2 == 0 )
+			if ( i % 2 == 0 ) {
 				color = darkcolor.pixel;
-			else
+				current = &xftdarkcolor;
+			} else {
 				color = background.pixel;
+				current = &xftbackground;
+			}
 
 			XSetForeground(dpy, gc, color);
 
@@ -575,6 +601,7 @@ if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == 
 
 } else {
 			XSetForeground(dpy, gc, foreground.pixel);
+			current = &xftforeground;
 			RotatePoint(left + l + corner_radius, top + t, angle,
 						rot_left, rot_top, &ax, &ay);
 			RotatePoint(left + r - corner_radius, top + t, angle,
@@ -644,11 +671,13 @@ if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == 
 }
 
 void
-KbDrawDoodad(Display * dpy, Drawable w, GC gc, unsigned int angle,
+KbDrawDoodad(Display * dpy, Drawable w, GC gc, /*XftFont *f, */unsigned int angle,
 			 double scale, unsigned int left, unsigned int top,
 			 XkbDescPtr _kb, XkbDoodadPtr doodad)
 {
+
 	XSetForeground(dpy, gc, lightcolor.pixel);
+	current = &xftlightcolor;
 	switch (doodad->any.type) {
 	case XkbOutlineDoodad:
 		KbDrawShape(dpy, w, gc, angle + doodad->shape.angle,
@@ -667,9 +696,7 @@ KbDrawDoodad(Display * dpy, Drawable w, GC gc, unsigned int angle,
 					&_kb->geom->colors[doodad->shape.color_ndx], False);
 		break;
 	case XkbTextDoodad:
-		XDrawString(dpy, w, gc, scale * (left + doodad->text.left),
-					scale * (top + doodad->text.top) + 6,
-					doodad->text.text, strlen(doodad->text.text));
+/*		XftDrawString8(dw, current, NULL, scale * (left + doodad->text.left), scale * (top + doodad->text.top) + 6, (unsigned char *)doodad->text.text, strlen(doodad->text.text));*/
 		break;
 	case XkbIndicatorDoodad:
 		KbDrawShape(dpy, w, gc, angle + doodad->indicator.angle,
@@ -691,6 +718,7 @@ KbDrawDoodad(Display * dpy, Drawable w, GC gc, unsigned int angle,
 		break;
 	}
 	XSetForeground(dpy, gc, foreground.pixel);
+	current = &xftforeground;
 }
 
 int PutIcon(Drawable kbwin, int x, int y, int width, int height, const char *fn)
@@ -725,8 +753,6 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 		  XkbDescPtr _kb, XkbKeyPtr key, key_data_t key_data)
 {
 
-	Font F;
-
 	int fixed_num_keys;
 	unsigned long i;
 
@@ -739,6 +765,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 				&_kb->geom->colors[key->color_ndx], True);
 
 	XSetForeground(dpy, gc, foreground.pixel);
+	current = &xftforeground;
 
 	/* This is to work around an XKB apparent bug. */
 	fixed_num_keys = _kb->names->num_keys;
@@ -762,7 +789,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 				kss = LookupKeylabelFromKeystring(kss);
 				strncpy(glyph, kss, 255);
 
-				XFontStruct *fs;
+				XftFont *fs;
 				unsigned int tw;
 
 				double ax, ay;
@@ -772,14 +799,12 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 					/* FIXME: Key label vertical position is miscalculated. */
 					fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, key_data.size);
 
-					XSetFont(dpy, gc, fs->fid);
-
 					if (strcmp(buf, "") != 0) {
 
 						int size = key_data.labelbox.x2 - key_data.labelbox.x1;
 
-						if (key_data.labelbox.y2 - key_data.labelbox.y1 - (fs->max_bounds.ascent + 1) * pxl < size) 
-							size = key_data.labelbox.y2 - key_data.labelbox.y1 - (fs->max_bounds.ascent + 1) * pxl;
+						if (key_data.labelbox.y2 - key_data.labelbox.y1 - (fs->ascent + 1) * pxl < size) 
+							size = key_data.labelbox.y2 - key_data.labelbox.y1 - (fs->ascent + 1) * pxl;
 
 						RotatePoint((left + key_data.labelbox.x2 - size),
 									(top + key_data.labelbox.y2 - size),
@@ -793,47 +818,47 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 					}
 
 					RotatePoint(left + key_data.labelbox.x1,
-								(top + key_data.labelbox.y1 + fs->max_bounds.ascent / scale),
+								(top + key_data.labelbox.y1 + fs->ascent / scale),
 								angle, section_left, section_top, &ax,
 								&ay);
-					XDrawString(dpy, w, gc, scale*ax, scale*ay, glyph,
+
+					XftDrawString8(dw, current, fs, scale*ax, scale*ay, (unsigned char *)glyph,
 								strlen(glyph));
 
 
 				} else {
 					if (drawkb_config.painting_mode == FLAT_KEY) {
 						XSetForeground(dpy, gc, background.pixel);
+						current = &xftbackground;
 					} else {
 						XSetForeground(dpy, gc, lightcolor.pixel);
+						current = &xftlightcolor;
 					}
 
 					fs = XLoadQueryScalableFont(dpy, 0,
 												drawkb_config.font,
 												key_data.size);
-					F = fs->fid;
-
-					XSetFont(dpy, gc, F);
-
 					if (strlen(kss) == 1) {
-						tw = XTextWidth(fs, glyph, strlen(glyph));
+						tw = MyXftTextWidth(dpy, fs, glyph, strlen(glyph));
 						RotatePoint((left + (key_data.labelbox.x1 + key_data.labelbox.x2) / 2) -
 									tw / 2 / scale,
 									top + key_data.labelbox.y1 + (key_data.labelbox.y2 - key_data.labelbox.y1) * g_baseline,
 									angle, section_left, section_top, &ax,
 									&ay);
-						XDrawString(dpy, w, gc, scale*ax, scale*ay, glyph,
+						XftDrawString8(dw, current, fs, scale*ax, scale*ay, (unsigned char *)glyph,
 									1);
 					} else {
 						RotatePoint(left + key_data.labelbox.x1,
 									top + key_data.labelbox.y1 + (key_data.labelbox.y2 - key_data.labelbox.y1) * g_baseline,
 									angle, section_left, section_top, &ax,
 									&ay);
-						XDrawString(dpy, w, gc, scale * (ax), scale * (ay),
-									kss, strlen(kss));
+						XftDrawString8(dw, current, fs, scale * (ax), scale * (ay),
+									(unsigned char *)kss, strlen(kss));
 					}
 
-					XFreeFontInfo(NULL, fs, 1);
+					XftFontClose(dpy, fs);
 					XSetForeground(dpy, gc, foreground.pixel);
+					current = &xftforeground;
 				}
 			}
 			break;
@@ -847,7 +872,7 @@ void AdjustSize(Display *dpy, XkbBoundsRec labelbox, const char *glyph, double i
 	int labelbox_width = labelbox.x2 - labelbox.x1;
 	int labelbox_height = labelbox.y2 - labelbox.y1;
 
-	XFontStruct *fs;
+	XftFont *fs;
 
 	debug (10, " --> AdjustSize (labelbox(x1=%d, y1=%d, x2=%d, y2=%d), glyph=%s, initial_key_height_percent=%lf, scale=%lf, size=%d\n", labelbox.x1, labelbox.y1, labelbox.x2, labelbox.y2, glyph, initial_key_height_percent, scale, *size);
 
@@ -856,9 +881,9 @@ void AdjustSize(Display *dpy, XkbBoundsRec labelbox, const char *glyph, double i
 
 		fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, *size);
 
-		while (XTextWidth(fs, glyph, strlen(glyph)) <= (int) labelbox_width*scale
-			&& fs->max_bounds.ascent <= labelbox_height*initial_key_height_percent*scale) {
-			XFreeFont(dpy, fs);
+		while (MyXftTextWidth(dpy, fs, glyph, strlen(glyph)) <= (int) labelbox_width*scale
+			&& fs->ascent <= labelbox_height*initial_key_height_percent*scale) {
+			XftFontClose(dpy, fs);
 			(*size)++;
 			fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, *size);
 			debug (10, "Iterating in %s:%d\n", __FILE__, __LINE__);
@@ -870,14 +895,14 @@ void AdjustSize(Display *dpy, XkbBoundsRec labelbox, const char *glyph, double i
 	debug (10, " ::: AdjustSize interim size value: %d\n", *size);
 
 	/* Reduce the *size point by point as less as possible. */
-	while (XTextWidth(fs, glyph, strlen(glyph)) > (int) labelbox_width*scale) {
-		XFreeFont(dpy, fs);
+	while (MyXftTextWidth(dpy, fs, glyph, strlen(glyph)) > (int) labelbox_width*scale) {
+		XftFontClose(dpy, fs);
 		(*size)--;
 		fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, *size);
 		debug (10, "Iterating in %s:%d\n", __FILE__, __LINE__);
 	}
 
-	XFreeFont(dpy, fs);
+	XftFontClose(dpy, fs);
 
 	debug (10, " <-- AdjustSize final size value: %d\n", *size);
 }
@@ -1000,7 +1025,8 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 			next_piece +=
 				_kb->geom->shapes[row->keys[i].shape_ndx].bounds.x2 + row->keys[i].gap;
 		} else {
-			KbDrawKey(dpy, w, gc, angle, left, top, scale,
+			KbDrawKey(dpy, w, gc, 
+angle, left, top, scale,
 					  left + row->left, top + row->top + next_piece + row->keys[i].gap,
 					  _kb, &row->keys[i], key_data[i]);
 			next_piece +=
@@ -1078,24 +1104,52 @@ void drawkb_draw(Display * dpy, Drawable d, GC gc, unsigned int width, unsigned 
 
 	float scale;
 
+	dw = XftDrawCreate (dpy, d, DEFAULT_VISUAL(dpy), DEFAULT_COLORMAP(dpy));
+
 	XGCValues xgcv;
 	XGetGCValues(dpy, gc, GCForeground | GCBackground, &xgcv);
 
 	background.pixel = xgcv.background;
 	foreground.pixel = xgcv.foreground;
 
-	XQueryColor(dpy, XDefaultColormap(dpy, 0), &background);
-	XQueryColor(dpy, XDefaultColormap(dpy, 0), &foreground);
+	XQueryColor(dpy, DEFAULT_COLORMAP(dpy), &background);
+	XQueryColor(dpy, DEFAULT_COLORMAP(dpy), &foreground);
 
 	lightcolor.red = ((background.red - foreground.red) * 0.8) + foreground.red;
 	lightcolor.green = ((background.green - foreground.green) * 0.8) + foreground.green;
 	lightcolor.blue = ((background.blue - foreground.blue) * 0.8) + foreground.blue;
-	XAllocColor(dpy, XDefaultColormap(dpy, 0), &lightcolor);
+	XAllocColor(dpy, DEFAULT_COLORMAP(dpy), &lightcolor);
 
 	darkcolor.red = ((background.red - 0) * 0.7);
 	darkcolor.green = ((background.green - 0) * 0.7);
 	darkcolor.blue = ((background.blue - 0) * 0.7);
-	XAllocColor(dpy, XDefaultColormap(dpy, 0), &darkcolor);
+	XAllocColor(dpy, DEFAULT_COLORMAP(dpy), &darkcolor);
+
+	XRenderColor xr;
+
+	xr.red = background.red;
+	xr.green = background.green;
+	xr.blue = background.blue;
+	xr.alpha = 0xffff;
+	XftColorAllocValue(dpy, DEFAULT_VISUAL(dpy), DEFAULT_COLORMAP(dpy), &xr, &xftbackground);
+
+	xr.red = foreground.red;
+	xr.green = foreground.green;
+	xr.blue = foreground.blue;
+	xr.alpha = 0xffff;
+	XftColorAllocValue(dpy, DEFAULT_VISUAL(dpy), DEFAULT_COLORMAP(dpy), &xr, &xftforeground);
+
+	xr.red = darkcolor.red;
+	xr.green = darkcolor.green;
+	xr.blue = darkcolor.blue;
+	xr.alpha = 0xffff;
+	XftColorAllocValue(dpy, DEFAULT_VISUAL(dpy), DEFAULT_COLORMAP(dpy), &xr, &xftdarkcolor);
+
+	xr.red = lightcolor.red;
+	xr.green = lightcolor.green;
+	xr.blue = lightcolor.blue;
+	xr.alpha = 0xffff;
+	XftColorAllocValue(dpy, DEFAULT_VISUAL(dpy), DEFAULT_COLORMAP(dpy), &xr, &xftlightcolor);
 
 	XkbGeometryPtr kbgeom = kbdesc->geom;
 
@@ -1147,7 +1201,7 @@ int Init_Font(const char *font)
 		/* FIXME: Validate font. */
 		XSetFontNameToScalable(drawkb_config.font, drawkb_config.font, 500);
 
-		XFontStruct *fs;
+		XftFont *fs;
 		fs = XLoadQueryScalableFont(drawkb_config.dpy, 0, drawkb_config.font, 1000);
 
 		if (fs) {
@@ -1165,7 +1219,7 @@ int Init_Font(const char *font)
 	if (kbdesc->geom->label_font) {
 		XSetFontNameToScalable(kbdesc->geom->label_font, drawkb_config.font, 500);
 
-		XFontStruct *fs;
+		XftFont *fs;
 		fs = XLoadQueryScalableFont(drawkb_config.dpy, 0, drawkb_config.font, 1000);
 		if (fs) {
 			return EXIT_SUCCESS;
@@ -1209,87 +1263,21 @@ int drawkb_init(Display *dpy, const char *imagelib, const char *font,
 			" + You did not use the complete font name, as in\n"
 				"	\"-*-bitstream vera sans-bold-r-*-*-*-*-*-*-*-*-*-*\"\n"
 			" + You did not quote the name and the name contains spaces.\n"
-			" + The font doesn't exist. Try using xfontsel to find a suitable "
+			" + The font doesn't exist. Try using XftFont *sel to find a suitable "
 				"font.\n", font);
 		return EXIT_FAILURE;
 	}
 
-	/* Determine font size for NORM. */
-	int norm_h = 0, norm_w = 0;
-
-	/* NORM is an XKB shape describing "normal" keys, like alphanumeric
-	 * characters. */
-
-	/* 1. Get NORM with and height. */
-
-	/* Iterate through all shapes. */
-	int i,j;
-	for (i = 0; i < kbdesc->geom->num_shapes; i++) {
-		XkbShapePtr s;		  /* shapes[i] */
-
-		s = &kbdesc->geom->shapes[i];
-		if (strncmp(XGetAtomName(dpy, s->name), "NORM", 4) != 0)
-			continue; /* Loop until NORM is found. */
-
-		/* A NORM found and stored at "s". */
-		/* s->outlines[0] == bounding box */
-		if (s->outlines[0].num_points == 1) {
-			norm_h = s->outlines[0].points[0].y;
-			norm_w = s->outlines[0].points[0].x;
-		} else if (s->outlines[0].num_points == 2) {
-			norm_h =
-				s->outlines[0].points[1].y - s->outlines[0].points[0].y;
-			norm_w =
-				s->outlines[0].points[1].x - s->outlines[0].points[0].x;
-		} else {
-			norm_h = 0;
-			norm_w = 0;
-			for (j = 1; j < s->outlines[0].num_points; j++) {
-				if (s->outlines[0].points[j].y -
-					s->outlines[0].points[j - 1].y > norm_h)
-					norm_h =
-						s->outlines[0].points[j].y -
-						s->outlines[0].points[j - 1].y;
-				if (s->outlines[0].points[j].x -
-					s->outlines[0].points[j - 1].x > norm_w)
-					norm_w =
-						s->outlines[0].points[j].x -
-						s->outlines[0].points[j - 1].x;
-			}
-		}
-	}
-
-	if (norm_h == 0 && norm_w == 0) {
-		fprintf(stderr, "superkb: Couldn't find NORM shape. Couldn't determine font size for NORM shape.\n");
-		return EXIT_FAILURE;
-	}
-
-	/* 2. Determine max point size that fits in norm_w and norm_h. */
-	int max_w, max_h;
-
-	XFontStruct *fs;
+	XftFont *fs;
 	fs = XLoadQueryScalableFont(drawkb_config.dpy, 0, drawkb_config.font, 1000);
 	if (!fs) {
 		fprintf(stderr, "superkb: Couldn't XLoadQueryScalableFont. This shouldn't have happened.\n");
 		return EXIT_FAILURE;
 	}
 
-	max_w =
-		norm_w * scale * 1000 / (fs->max_bounds.rbearing -
-								 fs->max_bounds.lbearing);
-	max_h =
-		norm_h * scale * 1000 / (fs->max_bounds.ascent +
-								 fs->max_bounds.descent);
-
-	if (max_w < max_h) {
-		g_size = max_w;
-	} else {
-		g_size = max_h;
-	}
-
 	g_baseline =
-		(float) fs->max_bounds.ascent / (fs->max_bounds.ascent +
-										 fs->max_bounds.descent);
+		(float) fs->ascent / (fs->ascent +
+										 fs->descent);
 
 	WorkaroundBoundsBug(dpy, kbdesc);
 
