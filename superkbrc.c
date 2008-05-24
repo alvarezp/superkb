@@ -515,7 +515,7 @@ int config_load(config_t *this, Display *dpy)
 
 	fd = fopen(file, "r");
 	if (!fd) {
-		fprintf(stderr, "superkb: Couldn't open config file: %s.\n", file);
+		fprintf(stderr, "superkb: Couldn't open config file: %s\n", file);
 		return EXIT_FAILURE;
 	}
 

@@ -355,7 +355,18 @@ int main(int argc, char *argv[])
 	}
 
 	config = config_new(dpy);
-	config_load(config, dpy);
+	if (config_load(config, dpy) == EXIT_FAILURE) {
+		fprintf(stderr, "\n");
+		fprintf(stderr, "== Make sure the .superkbrc file exists in your $HOME "
+			"directory. ==\n");
+		fprintf(stderr, "\n");
+		fprintf(stderr, "There is a sample configuration located at the "
+			"following URL:\n");
+		fprintf(stderr, "http://alvarezp.ods.org/blog/files/superkbrc.sample"
+			"\n");
+		fprintf(stderr, "\n");
+		return EXIT_FAILURE;
+	}
 
 	/* Init XKB extension. */
 	status = XkbQueryExtension(dpy, NULL, NULL, NULL, NULL, NULL);

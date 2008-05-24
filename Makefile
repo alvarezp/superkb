@@ -36,10 +36,53 @@ SHARED=$(obj-m:.o=.so)
 .PHONY : all
 all:
 	$(MAKE) configuration
-	$(MAKE) $(APP) $(SHARED)
+	$(MAKE) check_dep
+	$(MAKE) $(SHARED) $(APP)
 
 $(APP): $(OBJS)
 	$(CC) $(LDPARAMS) -o $(APP) $(OBJS)
+	@[ -f superkb ] && { \
+		echo ; \
+		echo "Superkb has been successfully compiled!"; \
+		echo ; \
+		echo "Please proceed to installation by issuing 'make install' as"; \
+		echo "root."; \
+		echo ; \
+		echo "(If you wish to use the program without installing, edit the"; \
+		echo "'configuration' file and replace '=m' values with '=y' and"; \
+		echo "recompile.)"; \
+		echo ; \
+	}
+
+.PHONY : check_dep
+check_dep:
+	@pkg-config xft renderproto xrender --exists > /dev/null || { \
+		echo ; \
+		echo "ERROR: Superkb needs the following packages:"; \
+		echo "       * xft"; \
+		echo "       * renderproto"; \
+		echo "       * xrender"; \
+		echo ; \
+		echo "       In addition, it needs their development headers"; \
+		echo "       in order to compile."; \
+		echo ; \
+		echo "       Please install them according to your distribution"; \
+		echo "       instructions. You will need to do it as root."; \
+		echo ; \
+		echo "       For example:"; \
+		echo ; \
+		echo "       Fedora: yum install libXft libXft-devel librender \\"; \
+		echo "                   xorg-x11-proto-devel"; \
+		echo "       Debian: apt-get install libxft2 libxft-dev \\"; \
+		echo "                   x11proto-render-dev \\"; \
+		echo "                   libxrender1 libxrender-dev"; \
+		echo "       Ubuntu: apt-get install libxft2 libxft-dev \\"; \
+		echo "                   x11proto-render-dev \\"; \
+		echo "                   libxrender1 libxrender-dev"; \
+		echo ; \
+		rm configuration; \
+		false ; \
+	}
 
 configuration:
 	-pkg-config gdk-pixbuf-xlib-2.0 --exists > /dev/null \
@@ -51,9 +94,21 @@ configuration:
 	@. ./configuration; \
 		if [ "$$PUTICON_IMLIB2 $$PUTICON_GDKPIXBUF" == "n n" ]; then \
 		echo ; \
-		echo "Error: I didn't find a suitable image library. Please install"; \
-		echo "       either Gdk-pixbuf-xlib or Imlib2. You might want to"; \
-		echo "       install them from source."; \
+		echo "ERROR: Superkb needs either gdk-pixbuf-xlib or imlib2."; \
+		echo "       In addition, it needs their development headers"; \
+		echo "       in order to compile."; \
+		echo ; \
+		echo "       Please install them according to your distribution"; \
+		echo "       instructions. You will need to do it as root."; \
+		echo ; \
+		echo "       For example:"; \
+		echo ; \
+		echo "       Fedora: yum install imlib2 imlib2-devel"; \
+		echo "       Debian: apt-get install libimlib2 libimlib2-dev"; \
+		echo "       Ubuntu: apt-get install libimlib2 libimlib2-dev"; \
+		echo ; \
+		rm configuration; \
+		false ; \
 		fi
 
 superkb.o: superkb.h
@@ -79,12 +134,28 @@ force:
 
 .PHONY : install
 install:
-	$(MAKE) install-app
 	$(MAKE) install-shared
+	$(MAKE) install-app
 
 .PHONY : install-app
 install-app:
 	cp $(APP) $(DESTDIR)/usr/bin
+	@[ -f ${DESTDIR}/usr/bin/superkb ] && { \
+		echo ; \
+		echo "Superkb has been successfully installed!"; \
+		echo ; \
+		echo "You will now need a .superkbrc configuration file in your home"; \
+		echo "directory. (Not root's home directory, but yours.)"; \
+		echo ; \
+		echo "There are sample files under the sample-config directory, but"; \
+		echo "the most complete sample is located in the following URL:"; \
+		echo ; \
+		echo "http://alvarezp.ods.org/blog/files/superkbrc.sample"; \
+		echo ; \
+		echo "Once you have done that, issue the 'superkb' command."; \
+		echo ; \
+	}
+
 
 .PHONY : install-shared
 install-shared:
