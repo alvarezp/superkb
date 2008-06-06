@@ -31,18 +31,25 @@
 #include "superkbrc.h"
 #include "globals.h"
 #include "debug.h"
-
 #include "version.h"
+
+/* Conditionally includes X11/extensions/Xinerama.h */
+#include "xinerama-support.h"
+
+#define WINH(i) (kbgeom->width_mm * scale[i])
+#define WINV(i) (kbgeom->width_mm * scale[i])
 
 struct sigaction action;
 
-Window kbwin;
-Pixmap kbwin_backup;
-GC kbwin_gc;
+XineramaScreenInfo *xinerama_screens=NULL;
+int xinerama_screens_n=0;
+Window *kbwin=NULL;
+Pixmap *kbwin_backup=NULL;
+GC *kbwin_gc=NULL;
 
 config_t *config;
 
-double scale;
+double *scale;
 
 Window prev_kbwin_focus;
 int prev_kbwin_revert;
@@ -54,9 +61,6 @@ XkbGeometryPtr kbgeom;
 
 XColor background;
 XColor foreground;
-
-int winv;
-int winh;
 
 int fatal_error(const char * format, ...) {
 	va_list args;
@@ -87,13 +91,18 @@ int IconQuery(KeySym keysym, unsigned int state, char buf[], int buf_n)
 void kbwin_event(Display * dpy, XEvent ev)
 {
 
+	int i;
 	if (ev.type == Expose) {
-/*		drawkb_draw(dpy, kbwin, kbwin_gc, DisplayWidth(dpy, 0), DisplayHeight(dpy, 0), kbdesc);*/
-		XCopyArea(dpy, kbwin_backup, kbwin, kbwin_gc, 0, 0, winh, winv, 0, 0);
+/*		drawkb_draw(dpy, kbwin[i], kbwin_gc[i], DisplayWidth(dpy, 0), DisplayHeight(dpy, 0), kbdesc);*/
+		for (i=0; i < xinerama_screens_n; i++) {
+			XCopyArea(dpy, kbwin_backup[i], kbwin[i], kbwin_gc[i], 0, 0, WINH(i), WINV(i), 0, 0);
+		}
 		XFlush(dpy);
 	} else if (ev.type == VisibilityNotify &&
 			   ev.xvisibility.state != VisibilityUnobscured) {
-		XRaiseWindow(dpy, kbwin);
+		for (i=0; i < xinerama_screens_n; i++) {
+			XRaiseWindow(dpy, kbwin[i]);
+		}
 	}
 
 }
@@ -101,21 +110,24 @@ void kbwin_event(Display * dpy, XEvent ev)
 void kbwin_map(Display * dpy)
 {
 	/* XGetInputFocus(dpy, &prev_kbwin_focus, &prev_kbwin_revert); */
-	XMapWindow(dpy, kbwin);
+	int i;
+	for (i=0; i < xinerama_screens_n; i++) {
+		XMapWindow(dpy, kbwin[i]);
+	}
 }
 
 void kbwin_unmap(Display * dpy)
 {
-	XUnmapWindow(dpy, kbwin);
+	int i;
+	for (i=0; i < xinerama_screens_n; i++) {
+		XUnmapWindow(dpy, kbwin[i]);
+	}
 	/* XSetInputFocus(dpy, prev_kbwin_focus, prev_kbwin_revert, CurrentTime); */
 }
 
 int kbwin_init(Display * dpy)
 {
 	int r;
-
-	winv = DisplayHeight(dpy, 0);
-	winh = DisplayWidth(dpy, 0);
 
 	/* Initialize Window and pixmap to back it up. */
 
@@ -133,59 +145,81 @@ int kbwin_init(Display * dpy)
 	XAllocColor(dpy, XDefaultColormap(dpy, 0), &background);
 	XAllocColor(dpy, XDefaultColormap(dpy, 0), &foreground);
 
-	/* Get what scale should drawkb work with, according to drawable's
-	 * width and height. */
-	double scalew = (float) winh / kbgeom->width_mm;
-	double scaleh = (float) winv / kbgeom->height_mm;
-
-	/* Work with the smallest scale. */
-	if (scalew < scaleh) {
-		scale = scalew;
-	} else { /* scalew >= scaleh */
-		scale = scaleh;
-	}
-	
-	winv = kbgeom->height_mm * scale;
-	winh = kbgeom->width_mm * scale;
-
-	/* Create window. */
-	kbwin = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
-							(DisplayWidth(dpy, 0) - winh) / 2,
-							(DisplayHeight(dpy, 0) - winv) / 2, winh, winv,
-							0, 0, (background.pixel));
-
-	kbwin_gc = XCreateGC(dpy, kbwin, 0, NULL);
-
-	XSetForeground(dpy, kbwin_gc, foreground.pixel);
-	XSetBackground(dpy, kbwin_gc, background.pixel);
-
 	XSetWindowAttributes attr;
 	attr.override_redirect = True;
 
-	XChangeWindowAttributes(dpy, kbwin, CWOverrideRedirect, &attr);
+	/* Create one windows per Xinerama screen. */
 
-	XSetTransientForHint(dpy, kbwin, DefaultRootWindow(dpy));
+	XineramaScreenInfo *xsi;
 
-	XSelectInput(dpy, kbwin, ExposureMask | VisibilityChangeMask);
+	int i;
+	kbwin = malloc(xinerama_screens_n * sizeof(Window));
+	kbwin_backup = malloc(xinerama_screens_n * sizeof(Pixmap));
+	scale = malloc(xinerama_screens_n * sizeof(double));
+	kbwin_gc = malloc(xinerama_screens_n * sizeof(GC));
+	for (i = 0; i < xinerama_screens_n; i++) {
+
+		int winv;
+		int winh;
+
+		/* Just as little shortcut. */
+		xsi = &xinerama_screens[i];
+
+		/* Get what scale should drawkb work with, according to drawable's
+		 * width and height. */
+		winv = xsi->height;
+		winh = xsi->width;
+
+		double scalew = (float) winh / kbgeom->width_mm;
+		double scaleh = (float) winv / kbgeom->height_mm;
+
+		/* Work with the smallest scale. */
+		if (scalew < scaleh) {
+			scale[i] = scalew;
+		} else { /* scalew >= scaleh */
+			scale[i] = scaleh;
+		}
+		
+		winv = kbgeom->height_mm * scale[i];
+		winh = kbgeom->width_mm * scale[i];
+
+		kbwin[i] = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
+								(xsi->width - winh) / 2,
+								(xsi->height - winv) / 2, winh, winv,
+								0, 0, (background.pixel));
+
+		kbwin_gc[i] = XCreateGC(dpy, kbwin[i], 0, NULL);
+
+		XSetForeground(dpy, kbwin_gc[i], foreground.pixel);
+		XSetBackground(dpy, kbwin_gc[i], background.pixel);
+
+		XChangeWindowAttributes(dpy, kbwin[i], CWOverrideRedirect, &attr);
+
+		XSetTransientForHint(dpy, kbwin[i], DefaultRootWindow(dpy));
+
+		XSelectInput(dpy, kbwin[i], ExposureMask | VisibilityChangeMask);
+
+		r = drawkb_init(dpy, config->drawkb_imagelib, config->drawkb_font, IconQuery, config->drawkb_painting_mode, scale[i]);
+
+		if (r != EXIT_SUCCESS) {
+			return EXIT_FAILURE;
+		}
+
+		kbwin_backup[i] = XCreatePixmap(dpy, kbwin[i], winh, winv, DefaultDepth(dpy, DefaultScreen(dpy)));
+
+		XSetForeground(dpy, kbwin_gc[i], background.pixel);
+
+		XFillRectangle(dpy, kbwin_backup[i], kbwin_gc[i], 0, 0, winh, winv);
+
+		XSetForeground(dpy, kbwin_gc[i], foreground.pixel);
+		XSetBackground(dpy, kbwin_gc[i], background.pixel);
+
+		drawkb_draw(dpy, kbwin_backup[i], kbwin_gc[i], winh, winv, kbdesc);
+
+	}
 
 	XFlush(dpy);
 
-	r = drawkb_init(dpy, config->drawkb_imagelib, config->drawkb_font, IconQuery, config->drawkb_painting_mode, scale);
-
-	if (r != EXIT_SUCCESS) {
-		return EXIT_FAILURE;
-	}
-
-	kbwin_backup = XCreatePixmap(dpy, kbwin, winh, winv, DefaultDepth(dpy, DefaultScreen(dpy)));
-
-	XSetForeground(dpy, kbwin_gc, background.pixel);
-
-	XFillRectangle(dpy, kbwin_backup, kbwin_gc, 0, 0, winh, winv);
-
-	XSetForeground(dpy, kbwin_gc, foreground.pixel);
-	XSetBackground(dpy, kbwin_gc, background.pixel);
-
-	drawkb_draw(dpy, kbwin_backup, kbwin_gc, winh, winv, kbdesc);
 
 	if (r == EXIT_FAILURE)
 		fprintf(stderr, "superkb: Failed to initialize drawkb. Quitting.\n");
@@ -390,6 +424,8 @@ int main(int argc, char *argv[])
 			"information. Quitting.\n");
 		return EXIT_FAILURE;
 	}
+
+	get_xinerama_screens(dpy, &xinerama_screens, &xinerama_screens_n);
 
 	status = superkb_init(dpy, kbwin_init, kbwin_map, kbwin_unmap,
 		kbwin_event, "en", config->superkb_super1,

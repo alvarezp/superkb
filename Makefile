@@ -22,11 +22,13 @@ ldlibs-y += $(shell pkg-config xft --libs)
 cflags-y += $(shell pkg-config renderproto --cflags)
 ldlibs-y += $(shell pkg-config xrender --libs)
 
+ldlibs-y += $(shell pkg-config xinerama --libs)
+
 #Special variables
 SHELL=/bin/sh
 CC=gcc
 CFLAGS=-Wall $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb
-OBJS=superkb.o main.o drawkb.o superkbrc.o imagelib.o debug.o $(obj-y)
+OBJS=superkb.o main.o drawkb.o superkbrc.o imagelib.o debug.o xinerama-support.o $(obj-y)
 LDPARAMS=-lX11 -lm -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
 
 #My variables
