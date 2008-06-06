@@ -25,7 +25,7 @@
 
 void (*__Action)(KeyCode keycode, unsigned int state);
 
-struct _kbwin {
+struct _superkb_kbwin {
 	int (*init) (Display *);
 	void (*map) (Display *);
 	void (*unmap) (Display *);
@@ -50,7 +50,7 @@ struct instance {
 
 XEvent sigev;
 
-struct _kbwin kbwin = { NULL, NULL, NULL, NULL };
+struct _superkb_kbwin superkb_kbwin = { NULL, NULL, NULL, NULL };
 struct config conf = { "", 0, 0 };
 struct instance inst = { 0, 0, 0, NULL, 0, 0, 0 };
 
@@ -306,11 +306,11 @@ void superkb_start()
 				timerclear(&to[TO_DRAWKB]);
 
 				/* Map Window. */
-				kbwin.map(inst.dpy);
+				superkb_kbwin.map(inst.dpy);
 
 			}
 		} else if (ev.xany.window != inst.rootwin) {
-			kbwin.event(inst.dpy, ev);
+			superkb_kbwin.event(inst.dpy, ev);
 		} else if (ev.xkey.keycode == inst.key1
 				   || ev.xkey.keycode == inst.key2) {
 			if (ev.type == KeyPress) {
@@ -356,7 +356,7 @@ void superkb_start()
 					to[TO_DRAWKB].tv_usec = (int) ((inst.drawkb_delay - to[TO_DRAWKB].tv_sec) * 1000000);
 				} else {
 					/* Map Window. */
-					kbwin.map(inst.dpy);
+					superkb_kbwin.map(inst.dpy);
 				}
 			} else if (ev.type == KeyRelease) {
 
@@ -399,7 +399,7 @@ void superkb_start()
 				debug(1, "[ar] AutoRepeat has been restored to: %d\n", saved_autorepeat_mode);
 
 				XUngrabKeyboard(inst.dpy, CurrentTime);
-				kbwin.unmap(inst.dpy);
+				superkb_kbwin.unmap(inst.dpy);
 
 				for (x = 0; x < pressed_keys_n; x++) {
 					__Action(pressed_keys[x].keycode, pressed_keys[x].state);
@@ -448,10 +448,10 @@ void superkb_start()
 
 int
 superkb_init(Display *display,
-			 int (*kbwin_init) (Display *),
-			 void (*kbwin_map) (Display *),
-			 void (*kbwin_unmap) (Display *),
-			 void (*kbwin_event) (Display *, XEvent ev),
+			 int (*superkb_kbwin_init) (Display *),
+			 void (*superkb_kbwin_map) (Display *),
+			 void (*superkb_kbwin_unmap) (Display *),
+			 void (*superkb_kbwin_event) (Display *, XEvent ev),
 			 const char *kblayout, KeyCode key1, KeyCode key2,
 			 double drawkb_delay,
 			 void (*f)(KeyCode keycode, unsigned int state),
@@ -471,10 +471,10 @@ superkb_init(Display *display,
 	/* FIXME: Validate parameters. */
 
 	/* Set configuration values. Parameters should be already validated. */
-	kbwin.init = kbwin_init;
-	kbwin.map = kbwin_map;
-	kbwin.unmap = kbwin_unmap;
-	kbwin.event = kbwin_event;
+	superkb_kbwin.init = superkb_kbwin_init;
+	superkb_kbwin.map = superkb_kbwin_map;
+	superkb_kbwin.unmap = superkb_kbwin_unmap;
+	superkb_kbwin.event = superkb_kbwin_event;
 	strcpy(conf.kblayout, kblayout);
 	conf.key1 = key1;
 	conf.key2 = key2;
@@ -489,7 +489,7 @@ superkb_init(Display *display,
 	inst.dpy = display;
 
 	/* Create the keyboard window. */
-	r = kbwin.init(inst.dpy);
+	r = superkb_kbwin.init(inst.dpy);
 	if (r == EXIT_FAILURE)
 		return EXIT_FAILURE;
 
