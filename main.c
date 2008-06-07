@@ -165,6 +165,8 @@ int kbwin_init(Display * dpy)
 		/* Just as little shortcut. */
 		xsi = &xinerama_screens[i];
 
+		debug (3, "Preparing screen #%d: %d, %d, %d, %d\n", i, xsi->x_org, xsi->y_org, xsi->width, xsi->height);
+
 		/* Get what scale should drawkb work with, according to drawable's
 		 * width and height. */
 		winv = xsi->height;
@@ -184,8 +186,8 @@ int kbwin_init(Display * dpy)
 		winh = kbgeom->width_mm * scale[i];
 
 		kbwin[i] = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
-								(xsi->width - winh) / 2,
-								(xsi->height - winv) / 2, winh, winv,
+								(xsi->width - winh) / 2 + xsi->x_org,
+								(xsi->height - winv) / 2 + xsi->y_org, winh, winv,
 								0, 0, (background.pixel));
 
 		kbwin_gc[i] = XCreateGC(dpy, kbwin[i], 0, NULL);
