@@ -58,12 +58,13 @@ $(APP): $(OBJS)
 
 .PHONY : check_dep
 check_dep:
-	@pkg-config xft renderproto xrender --exists > /dev/null || { \
+	@pkg-config xft renderproto xrender xinerama --exists > /dev/null || { \
 		echo ; \
-		echo "ERROR: Superkb needs the following packages:"; \
+		echo "ERROR: Superkb needs the development version of the following packages:"; \
 		echo "       * xft"; \
 		echo "       * renderproto"; \
 		echo "       * xrender"; \
+		echo "       * xinerama"; \
 		echo ; \
 		echo "       In addition, it needs their development headers"; \
 		echo "       in order to compile."; \
@@ -74,12 +75,14 @@ check_dep:
 		echo "       For example:"; \
 		echo ; \
 		echo "       Fedora: yum install libXft libXft-devel librender \\"; \
-		echo "                   xorg-x11-proto-devel"; \
+		echo "                   xorg-x11-proto-devel libXinerama-devel"; \
 		echo "       Debian: apt-get install libxft2 libxft-dev \\"; \
 		echo "                   x11proto-render-dev \\"; \
+		echo "                   libxinerama1 libxinerama1-dev \\"; \
 		echo "                   libxrender1 libxrender-dev"; \
 		echo "       Ubuntu: apt-get install libxft2 libxft-dev \\"; \
 		echo "                   x11proto-render-dev \\"; \
+		echo "                   libxinerama1 libxinerama1-dev \\"; \
 		echo "                   libxrender1 libxrender-dev"; \
 		echo ; \
 		rm configuration; \
