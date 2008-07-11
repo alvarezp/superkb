@@ -153,16 +153,18 @@ XNextEventWithTimeout(Display * display, XEvent * event_return,
 	FD_ZERO(&fd);
 	FD_SET(XConnectionNumber(display), &fd);
 
-	r = select(FD_SETSIZE, &fd, NULL, NULL, to);
+	do {
+		r = select(FD_SETSIZE, &fd, NULL, NULL, to);
+	} while(r == -1 && errno == EINTR);
+
+	if (r == -1) {
+		/* Some error other than EINTR. */
+		return -errno;
+	}
 
 	if (r == 0) {
 		/* Timeout */
 		return r;
-	}
-
-	if (r == -1) {
-		/* Error. Hopefully it's EINTR. */
-		return -errno;
 	}
 
 	XNextEvent(display, event_return);
