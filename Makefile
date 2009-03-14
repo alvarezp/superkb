@@ -98,22 +98,22 @@ configuration:
 		|| (echo "PUTICON_IMLIB2=n" >> configuration)
 	@. ./configuration; \
 		if [ "$$PUTICON_IMLIB2 $$PUTICON_GDKPIXBUF" == "n n" ]; then \
-		echo ; \
-		echo "ERROR: Superkb needs either gdk-pixbuf-xlib or imlib2."; \
-		echo "       In addition, it needs their development headers"; \
-		echo "       in order to compile."; \
-		echo ; \
-		echo "       Please install them according to your distribution"; \
-		echo "       instructions. You will need to do it as root."; \
-		echo ; \
-		echo "       For example:"; \
-		echo ; \
-		echo "       Fedora: yum install imlib2 imlib2-devel"; \
-		echo "       Debian: apt-get install libimlib2 libimlib2-dev"; \
-		echo "       Ubuntu: apt-get install libimlib2 libimlib2-dev"; \
-		echo ; \
-		rm configuration; \
-		false ; \
+			echo ; \
+			echo "ERROR: Superkb needs either gdk-pixbuf-xlib or imlib2."; \
+			echo "       In addition, it needs their development headers"; \
+			echo "       in order to compile."; \
+			echo ; \
+			echo "       Please install them according to your distribution"; \
+			echo "       instructions. You will need to do it as root."; \
+			echo ; \
+			echo "       For example:"; \
+			echo ; \
+			echo "       Fedora: yum install imlib2 imlib2-devel"; \
+			echo "       Debian: apt-get install libimlib2 libimlib2-dev"; \
+			echo "       Ubuntu: apt-get install libimlib2 libimlib2-dev"; \
+			echo ; \
+			rm configuration; \
+			false ; \
 		fi
 
 superkb.o: superkb.h
