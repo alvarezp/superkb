@@ -6,8 +6,8 @@
  *
  */
 
-#ifndef __PUTICON_gdkpixbuf_PIXBUF_XLIB_H
-#define __PUTICON_gdkpixbuf_PIXBUF_XLIB_H
+#ifndef __PUTICON_GDKPIXBUF_PIXBUF_XLIB_H
+#define __PUTICON_GDKPIXBUF_PIXBUF_XLIB_H
 
 int pi_gdkpixbuf_newimage(imagelib_image_t *this);
 int pi_gdkpixbuf_loadimage(imagelib_image_t *this, const char *file);

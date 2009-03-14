@@ -23,4 +23,4 @@ typedef enum {
 int drawkb_init(Display *dpy, const char *imagelib, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale);
 void drawkb_draw(Display * dpy, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc);
 
-#endif                          /* __HINTS_H */
+#endif /* __DRAWKB_H */

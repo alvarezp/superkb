@@ -28,4 +28,4 @@ int superkb_init(Display *display,
              int superkey_replay,
              int superkey_release_cancels);
 
-#endif                          /* __SUPERKB_H */
+#endif     /* __SUPERKB_H */
