@@ -112,6 +112,7 @@ void kbwin_map(Display * dpy)
 	/* XGetInputFocus(dpy, &prev_kbwin_focus, &prev_kbwin_revert); */
 	int i;
 	for (i=0; i < xinerama_screens_n; i++) {
+		XSetTransientForHint(dpy, kbwin[i], DefaultRootWindow(dpy));
 		XMapWindow(dpy, kbwin[i]);
 	}
 }
@@ -196,8 +197,6 @@ int kbwin_init(Display * dpy)
 		XSetBackground(dpy, kbwin_gc[i], background.pixel);
 
 		XChangeWindowAttributes(dpy, kbwin[i], CWOverrideRedirect, &attr);
-
-		XSetTransientForHint(dpy, kbwin[i], DefaultRootWindow(dpy));
 
 		XSelectInput(dpy, kbwin[i], ExposureMask | VisibilityChangeMask);
 
