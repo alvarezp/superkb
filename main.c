@@ -340,7 +340,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "usage: superkb [options]\n");
 		fprintf(stderr, "\n");
 		fprintf(stderr, "Options:\n");
-		fprintf(stderr, "	-0         Quit when Superkb is ready (for timing and debuggin).\n");
+		fprintf(stderr, "	-0         Quit when Superkb is ready (for timing and debugging).\n");
 		fprintf(stderr, "	-d level   Show debug messages up to the specified verbosity level.\n");
 		fprintf(stderr, "	-h         Shows this help.\n");
 		fprintf(stderr, "\n");
