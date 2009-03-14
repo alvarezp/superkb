@@ -78,11 +78,11 @@ check_dep:
 		echo "                   xorg-x11-proto-devel libXinerama-devel"; \
 		echo "       Debian: apt-get install libxft2 libxft-dev \\"; \
 		echo "                   x11proto-render-dev \\"; \
-		echo "                   libxinerama1 libxinerama1-dev \\"; \
+		echo "                   libxinerama1 libxinerama-dev \\"; \
 		echo "                   libxrender1 libxrender-dev"; \
 		echo "       Ubuntu: apt-get install libxft2 libxft-dev \\"; \
 		echo "                   x11proto-render-dev \\"; \
-		echo "                   libxinerama1 libxinerama1-dev \\"; \
+		echo "                   libxinerama1 libxinerama-dev \\"; \
 		echo "                   libxrender1 libxrender-dev"; \
 		echo ; \
 		rm configuration; \
