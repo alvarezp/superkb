@@ -22,6 +22,12 @@ syms-$(DRAWKBLIBS_XLIB) += -DWITH_DRAWKBLIBS_XLIB
 ldlibs-$(DRAWKBLIBS_XLIB) += $(shell pkg-config x11 --libs)
 cflags-$(DRAWKBLIBS_XLIB) += $(shell pkg-config x11 --cflags)
 
+#drawkblibs/drawkblibs-cairo
+obj-$(DRAWKBLIBS_CAIRO) += drawkblibs/drawkblibs-cairo.o
+syms-$(DRAWKBLIBS_CAIRO) += -DWITH_DRAWKBLIBS_CAIRO
+ldlibs-$(DRAWKBLIBS_CAIRO) += $(shell pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --libs)
+cflags-$(DRAWKBLIBS_CAIRO) += $(shell pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --cflags)
+
 cflags-y += $(shell pkg-config xft --cflags)
 ldlibs-y += $(shell pkg-config xft --libs)
 
@@ -100,6 +106,9 @@ configuration:
 		&& (echo "PUTICON_IMLIB2=m" >> configuration) \
 		|| (echo "PUTICON_IMLIB2=n" >> configuration)
 	-echo "DRAWKBLIBS_XLIB=m" >> configuration
+	-pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --exists > /dev/null \
+		&& (echo "DRAWKBLIBS_CAIRO=m" >> configuration) \
+		|| (echo "DRAWKBLIBS_CAIRO=n" >> configuration)
 	@. ./configuration; \
 		if [ "$$PUTICON_IMLIB2 $$PUTICON_GDKPIXBUF" == "n n" ]; then \
 			echo ; \
@@ -126,6 +135,7 @@ imagelib.o: imagelib.h configuration puticon/puticon.h $(obj-y)
 drawkblib.o: drawkblib.h configuration drawkblibs/drawkblibs.h $(obj-y)
 main.o: superkb.h imagelib.h drawkblib.h superkbrc.h
 drawkblibs/drawkblibs-xlib.o: drawkblibs/drawkblibs-xlib.h configuration
+drawkblibs/drawkblibs-cairo.o: drawkblibs/drawkblibs-cairo.h drawkblib.o configuration
 puticon/puticon-imlib2.o: puticon/puticon-imlib2.h configuration
 puticon/puticon-gdkpixbuf.o: puticon/puticon-gdkpixbuf.h configuration
 

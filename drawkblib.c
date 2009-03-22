@@ -21,6 +21,7 @@
 #include "drawkblibs/drawkblibs.h"
 
 #include "drawkblibs/drawkblibs-xlib.h"
+#include "drawkblibs/drawkblibs-cairo.h"
 
 #define LIB_PREFIX "/usr/lib/"
 
@@ -28,8 +29,13 @@
 	#define drawkblibs_xlib_init NULL
 #endif
 
+#ifndef WITH_DRAWKBLIBS_CAIRO
+	#define drawkblibs_cairo_init NULL
+#endif
+
 drawkblib_compiled_in_t drawkblib_compiled_in[] = {
 	{ "xlib",    drawkblibs_xlib_init },
+	{ "cairo",   drawkblibs_cairo_init },
 	{ NULL, NULL }
 };
 

@@ -473,7 +473,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	Init_drawkblib("xlib");
+	Init_drawkblib(config->drawkb_drawkblib);
 
 	status = superkb_init(dpy, kbwin_init, kbwin_map, kbwin_unmap,
 		kbwin_event, "en", config->superkb_super1,
