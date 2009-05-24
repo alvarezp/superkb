@@ -13,8 +13,8 @@ cflags-$(PUTICON_GDKPIXBUF) += $(shell pkg-config gdk-pixbuf-xlib-2.0 --cflags)
 #puticon/puticon-imlib2 (which I prefer)
 obj-$(PUTICON_IMLIB2) += puticon/puticon-imlib2.o
 syms-$(PUTICON_IMLIB2) += -DWITH_IMLIB2
-ldlibs-$(PUTICON_IMLIB2) += $(shell imlib2-config --libs)
-cflags-$(PUTICON_IMLIB2) += $(shell imlib2-config --cflags)
+ldlibs-$(PUTICON_IMLIB2) += $(shell pkg-config imlib2 --libs)
+cflags-$(PUTICON_IMLIB2) += $(shell pkg-config imlib2 --cflags)
 
 cflags-y += $(shell pkg-config xft --cflags)
 ldlibs-y += $(shell pkg-config xft --libs)
