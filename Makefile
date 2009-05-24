@@ -157,6 +157,7 @@ install-app:
 		echo "Once you have done that, issue the 'superkb' command."; \
 		echo ; \
 	}
+	install man/superkb.1 $(DESTDIR)/usr/share/man/man1/superkb.1
 
 
 .PHONY : install-shared
