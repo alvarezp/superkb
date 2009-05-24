@@ -19,9 +19,6 @@ cflags-$(PUTICON_IMLIB2) += $(shell imlib2-config --cflags)
 cflags-y += $(shell pkg-config xft --cflags)
 ldlibs-y += $(shell pkg-config xft --libs)
 
-cflags-y += $(shell pkg-config renderproto --cflags)
-ldlibs-y += $(shell pkg-config xrender --libs)
-
 ldlibs-y += $(shell pkg-config xinerama --libs)
 
 #Special variables
