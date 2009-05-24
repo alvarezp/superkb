@@ -493,10 +493,20 @@ int config_load(config_t *this, Display *dpy)
 {
 	__dpy = dpy;
 	__config = this;
+	int system_config_read = 0;
+	int user_config_read = 0;
 
-	/* Read configuration from file. */
+	/* Override current configuration with system-wide settings. */
 	FILE *fd;
 
+	fd = fopen("/etc/superkbrc", "r");
+	if (fd) {
+		parse_config(fd);
+		fclose(fd);
+		system_config_read = 1;
+	}
+
+	/* Read configuration from user file. */
 	char *home = getenv("HOME");
 	char *file;
 
@@ -514,14 +524,17 @@ int config_load(config_t *this, Display *dpy)
 	}
 
 	fd = fopen(file, "r");
-	if (!fd) {
-		fprintf(stderr, "superkb: Couldn't open config file: %s\n", file);
-		return EXIT_FAILURE;
+	if (fd) {
+		parse_config(fd);
+		fclose(fd);
+		user_config_read = 1;
 	}
 
-	parse_config(fd);
-
-	fclose(fd);
+	if (!user_config_read && !system_config_read) {
+		fprintf(stderr, "superkb: Couldn't read any configuration file. Quitting.\n");
+		fprintf(stderr, "  System-wide configuration file should be at /etc/superkbrc.\n");
+		fprintf(stderr, "  User local configuration file should be at $HOME/.superkbrc.\n");
+	}
 
 	return EXIT_SUCCESS;
 }
