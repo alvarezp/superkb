@@ -420,7 +420,7 @@ int main(int argc, char *argv[])
 
 	status = XkbGetGeometry(dpy, kbdesc);
 	kbgeom = kbdesc->geom;
-	if (status != Success && kbgeom != NULL) {
+	if (status != Success || kbgeom != NULL) {
 		fprintf(stderr, "superkb: Could not load keyboard geometry "
 			"information. Quitting.\n");
 		return EXIT_FAILURE;
