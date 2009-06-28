@@ -397,7 +397,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "\n");
 		fprintf(stderr, "There is a sample configuration located at the "
 			"following URL:\n");
-		fprintf(stderr, "http://alvarezp.ods.org/blog/files/superkbrc.sample"
+		fprintf(stderr, "http://blog.alvarezp.org/files/superkbrc.sample"
 			"\n");
 		fprintf(stderr, "\n");
 		return EXIT_FAILURE;
