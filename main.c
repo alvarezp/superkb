@@ -415,6 +415,9 @@ int main(int argc, char *argv[])
 	if (kbdesc == NULL) {
 		fprintf(stderr, "superkb: Could not load keyboard information from "
 			"X. Quitting.\n");
+		fprintf(stderr, "\nIf using GNOME you might want to try adding a"
+			"keyboard layout and then\nremoving it, and making sure your"
+			"default layout is effectively selected as\ndefault.\n");
 		return EXIT_FAILURE;
 	}
 
@@ -423,6 +426,9 @@ int main(int argc, char *argv[])
 	if (status != Success || kbgeom == NULL) {
 		fprintf(stderr, "superkb: Could not load keyboard geometry "
 			"information. Quitting.\n");
+		fprintf(stderr, "\nIf using GNOME you might want to try adding a"
+			"keyboard layout and then\nremoving it, and making sure your"
+			"default layout is effectively selected as\ndefault.\n");
 		return EXIT_FAILURE;
 	}
 
