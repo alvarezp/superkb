@@ -386,6 +386,8 @@ int main(int argc, char *argv[])
 	dpy = XOpenDisplay(NULL);
 	if (dpy == NULL) {
 		fprintf(stderr, "superkb: Couldn't open display. Quitting.\n");
+		fprintf(stderr, "\nSuperkb must be run from inside the X Window System."
+			"\n");
 		return EXIT_FAILURE;
 	}
 

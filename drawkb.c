@@ -1248,7 +1248,9 @@ int drawkb_init(Display *dpy, const char *imagelib, const char *font,
 	{
 		char vals[500] = "";
 		Imagelib_GetValues((char *) &vals, 499);
-		fprintf(stderr, "Failed to initialize image library: %s. You might try: %s\n", imagelib, vals);
+		fprintf(stderr, "Failed to initialize image library: %s.\n\n"
+			"You might try any of the following as the value for IMAGELIB in\n"
+			"your $HOME/.superkbrc file: %s\n", imagelib, vals);
 		return EXIT_FAILURE;
 	}
 
