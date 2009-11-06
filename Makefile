@@ -16,6 +16,12 @@ syms-$(PUTICON_IMLIB2) += -DWITH_IMLIB2
 ldlibs-$(PUTICON_IMLIB2) += $(shell pkg-config imlib2 --libs)
 cflags-$(PUTICON_IMLIB2) += $(shell pkg-config imlib2 --cflags)
 
+#drawkblibs/drawkblibs-xlib
+obj-$(DRAWKBLIBS_XLIB) += drawkblibs/drawkblibs-xlib.o
+syms-$(DRAWKBLIBS_XLIB) += -DWITH_DRAWKBLIBS_XLIB
+ldlibs-$(DRAWKBLIBS_XLIB) += $(shell pkg-config x11 --libs)
+cflags-$(DRAWKBLIBS_XLIB) += $(shell pkg-config x11 --cflags)
+
 cflags-y += $(shell pkg-config xft --cflags)
 ldlibs-y += $(shell pkg-config xft --libs)
 
@@ -25,7 +31,7 @@ ldlibs-y += $(shell pkg-config xinerama --libs)
 SHELL=/bin/sh
 CC=gcc
 CFLAGS=-Wall -std=gnu99 -pedantic-errors $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC
-OBJS=superkb.o main.o drawkb.o superkbrc.o imagelib.o debug.o xinerama-support.o $(obj-y)
+OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o xinerama-support.o $(obj-y)
 LDPARAMS=-lX11 -lm -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
 
 #My variables
@@ -115,9 +121,10 @@ configuration:
 
 superkb.o: superkb.h
 superkbrc.o: superkbrc.h globals.h
-drawkb.o: drawkb.h imagelib.h
 imagelib.o: imagelib.h configuration puticon/puticon.h $(obj-y)
-main.o: superkb.h drawkb.h superkbrc.h
+drawkblib.o: drawkblib.h configuration drawkblibs/drawkblibs.h $(obj-y)
+main.o: superkb.h imagelib.h drawkblib.h superkbrc.h
+drawkblibs/drawkblibs-xlib.o: drawkblibs/drawkblibs-xlib.h configuration
 puticon/puticon-imlib2.o: puticon/puticon-imlib2.h configuration
 puticon/puticon-gdkpixbuf.o: puticon/puticon-gdkpixbuf.h configuration
 
@@ -172,7 +179,7 @@ uninstall:
 
 .PHONY : clean
 clean:
-	-/bin/rm -f $(OBJS) $(APP) $(SHARED) puticon/*.o puticon/*.so configuration
+	-/bin/rm -f $(OBJS) $(APP) */*.o */*.so 
 	-/bin/rm -f `find -name "*~"`
 	-/bin/rm -f `find -name core`
 	-/bin/rm -f `find -name "core.*"`

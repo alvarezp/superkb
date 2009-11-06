@@ -10,7 +10,7 @@
 #define __CONFIG_H
 
 #include <X11/Xlib.h>
-#include "drawkb.h"
+#include "drawkblib.h"
 
 enum action_type {
     AT_COMMAND = 1,

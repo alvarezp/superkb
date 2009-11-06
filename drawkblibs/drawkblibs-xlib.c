@@ -1,4 +1,21 @@
 /*
+ * drawkblibs-xlib.c
+ *
+ * Copyright (C) 2006, Octavio Alvarez Piza.
+ * License: GNU General Public License v2.
+ *
+ */
+
+#include <stdlib.h>
+
+#include "drawkblibs.h"
+// #include "drawkblibs-xlib.h"
+
+#ifndef WITH_DRAWKBLIBS_XLIB
+	#define drawkblibs_xlib_init Init
+#endif
+
+/*
  * drawkb.c
  *
  * Copyright (C) 2006, Octavio Alvarez Piza.
@@ -35,10 +52,10 @@
 
 #include <X11/extensions/Xrender.h>
 
-#include "drawkb.h"
-#include "imagelib.h"
-#include "debug.h"
-#include "globals.h"
+#include "../drawkblib.h"
+#include "../imagelib.h"
+#include "../debug.h"
+#include "../globals.h"
 
 #define LINE_WIDTH 2
 
@@ -121,14 +138,14 @@ keystrings_t keystrings[] = {
 	{ "braceleft",                "{" },
 	{ "braceright",               "}" },
 	{ "backslash",                "\\" },
-	{ "ntilde",                   "ñ" },
+	{ "ntilde",                   "Ã±" },
 	{ "plus",                     "+" },
 	{ "ISO_Level3_Shift",         "AltGr" },
 	{ "Insert",                   "Ins" },
 	{ "Delete",                   "Del" },
 	{ "Prior",                    "PgUp" },
 	{ "Next",                     "PgDn" },
-	{ "questiondown",             "¿" },
+	{ "questiondown",             "Â¿" },
 	{ "Print",                    "PrScr" },
 	{ "", "" }
 };
@@ -711,36 +728,12 @@ KbDrawDoodad(drawkb_p this, Drawable w, GC gc, /*XftFont *f, */unsigned int angl
 	current = &xftforeground;
 }
 
-int PutIcon(Drawable kbwin, int x, int y, int width, int height, const char *fn)
-{
-
-	void *i;
-
-	i = NewImage(fn);
-	if (i == NULL) {
-		perror("puticon");
-		return EXIT_FAILURE;
-	}
-
-	LoadImage(i, fn);
-
-	ResizeImage(i, width, height);
-
-	DrawImage(i, kbwin, x, y);
-
-	FreeImage(i);
-
-
-	return EXIT_SUCCESS;
-
-}
-
 
 void
 KbDrawKey(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 		  unsigned int section_left, unsigned int section_top,
 		  double scale, unsigned int left, unsigned int top,
-		  XkbDescPtr _kb, XkbKeyPtr key, key_data_t key_data)
+		  XkbDescPtr _kb, XkbKeyPtr key, key_data_t key_data, puticon_t PutIcon)
 {
 
 	unsigned int fixed_num_keys;
@@ -900,7 +893,7 @@ void AdjustSize(drawkb_p this, XkbBoundsRec labelbox, const char *glyph, double 
 void
 KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 		  double scale, unsigned int left, unsigned int top,
-		  XkbDescPtr _kb, XkbRowPtr row)
+		  XkbDescPtr _kb, XkbRowPtr row, puticon_t PutIcon)
 {
 
 	unsigned int i;
@@ -1011,14 +1004,14 @@ KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 			KbDrawKey(this, w, gc, angle, left, top, scale,
 					  left + row->left + next_piece + row->keys[i].gap,
 					  top + row->top,
-					  _kb, &row->keys[i], key_data[i]);
+					  _kb, &row->keys[i], key_data[i], PutIcon);
 			next_piece +=
 				_kb->geom->shapes[row->keys[i].shape_ndx].bounds.x2 + row->keys[i].gap;
 		} else {
 			KbDrawKey(this, w, gc, 
 angle, left, top, scale,
 					  left + row->left, top + row->top + next_piece + row->keys[i].gap,
-					  _kb, &row->keys[i], key_data[i]);
+					  _kb, &row->keys[i], key_data[i], PutIcon);
 			next_piece +=
 				_kb->geom->shapes[row->keys[i].shape_ndx].bounds.y2 + row->keys[i].gap;
 		}
@@ -1031,7 +1024,7 @@ angle, left, top, scale,
 void
 KbDrawSection(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 			  double scale, unsigned int left, unsigned int top,
-			  XkbDescPtr _kb, XkbSectionPtr section)
+			  XkbDescPtr _kb, XkbSectionPtr section, puticon_t PutIcon)
 {
 	int i, p;
 
@@ -1044,7 +1037,7 @@ KbDrawSection(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 		XkbComputeRowBounds(_kb->geom, section, &section->rows[i]);
 		KbDrawRow(this, w, gc, angle + section->angle, scale,
 				  left + section->left, top + section->top, _kb,
-				  &section->rows[i]);
+				  &section->rows[i], PutIcon);
 	}
 
 	for (p = 0; p <= 255; p++) {
@@ -1062,7 +1055,7 @@ void
 KbDrawComponents(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 				 double scale, unsigned int left, unsigned int top,
 				 XkbDescPtr _kb, XkbSectionPtr sections,
-				 int sections_n, XkbDoodadPtr doodads, int doodads_n)
+				 int sections_n, XkbDoodadPtr doodads, int doodads_n, puticon_t PutIcon)
 {
 	int i, p;
 
@@ -1075,8 +1068,7 @@ KbDrawComponents(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 		for (i = 0; i < sections_n; i++) {
 			if (sections[i].priority == p) {
 				KbDrawSection(this, w, gc, angle, scale, left,
-							  top, _kb, &sections[i]);
-
+							  top, _kb, &sections[i], PutIcon);
 			}
 		}
 
@@ -1089,7 +1081,7 @@ KbDrawComponents(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 	}
 }
 
-void drawkb_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc)
+void drawkb_xlib_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc, puticon_t PutIcon)
 {
 
 	float scale;
@@ -1172,7 +1164,7 @@ void drawkb_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned 
 	 * priority order. Note that priority handling is left to the function. */
 	KbDrawComponents(this, d, gc, angle, scale, left, top, kbdesc,
 					 kbdesc->geom->sections, kbdesc->geom->num_sections,
-					 kbdesc->geom->doodads, kbdesc->geom->num_doodads);
+					 kbdesc->geom->doodads, kbdesc->geom->num_doodads, PutIcon);
 
 	XFlush(dpy);
 }
@@ -1224,7 +1216,7 @@ int Init_Font(drawkb_p this, const char *font)
 	return EXIT_FAILURE;
 }
 
-drawkb_p drawkb_create(Display *dpy, const char *imagelib, const char *font,
+drawkb_p drawkb_xlib_create(Display *dpy, const char *font,
 	IQF_t IQF, painting_mode_t painting_mode, float scale)
 {
 
@@ -1235,16 +1227,6 @@ drawkb_p drawkb_create(Display *dpy, const char *imagelib, const char *font,
 	this->painting_mode = painting_mode;
 
 	this->dpy = dpy;
-
-	if (Init_Imagelib(dpy, imagelib) == EXIT_FAILURE)
-	{
-		char vals[500] = "";
-		Imagelib_GetValues((char *) &vals, 499);
-		fprintf(stderr, "Failed to initialize image library: %s.\n\n"
-			"You might try any of the following as the value for IMAGELIB in\n"
-			"your $HOME/.superkbrc file: %s\n", imagelib, vals);
-		return NULL;
-	}
 
 	/* Init_Font needs Init_Geometry to succeed, because one of
 	 * the fallback fonts is the XKB's specified font label, and
@@ -1277,5 +1259,16 @@ drawkb_p drawkb_create(Display *dpy, const char *imagelib, const char *font,
 
 	return this;
 
+}
+
+int drawkblibs_xlib_init(
+	drawkb_create_t *ret_create,
+	drawkb_draw_t *ret_draw)
+{
+
+	*ret_create = drawkb_xlib_create;
+	*ret_draw = drawkb_xlib_draw;
+
+	return EXIT_SUCCESS;
 }
 

@@ -27,7 +27,8 @@
 #include <stdarg.h>
 
 #include "superkb.h"
-#include "drawkb.h"
+#include "imagelib.h"
+#include "drawkblib.h"
 #include "superkbrc.h"
 #include "globals.h"
 #include "debug.h"
@@ -88,6 +89,30 @@ int IconQuery(KeySym keysym, unsigned int state, char buf[], int buf_n)
 		}
 	}
 	return EXIT_FAILURE;
+}
+
+int PutIcon(Drawable kbwin, int x, int y, int width, int height, const char *fn)
+{
+
+	void *i;
+
+	i = NewImage(fn);
+	if (i == NULL) {
+		perror("puticon");
+		return EXIT_FAILURE;
+	}
+
+	LoadImage(i, fn);
+
+	ResizeImage(i, width, height);
+
+	DrawImage(i, kbwin, x, y);
+
+	FreeImage(i);
+
+
+	return EXIT_SUCCESS;
+
 }
 
 void kbwin_event(Display * dpy, XEvent ev)
@@ -202,7 +227,9 @@ int kbwin_init(Display * dpy)
 
 		XSelectInput(dpy, kbwin[i], ExposureMask | VisibilityChangeMask);
 
-		draw1 = drawkb_create(dpy, config->drawkb_imagelib, config->drawkb_font, IconQuery, config->drawkb_painting_mode, scale[i]);
+		fprintf(stderr, "%p\n", (void *)dpy);
+
+		draw1 = drawkb_create(dpy, config->drawkb_font, IconQuery, config->drawkb_painting_mode, scale[i]);
 
 		if (draw1 == NULL) {
 			return EXIT_FAILURE;
@@ -217,7 +244,7 @@ int kbwin_init(Display * dpy)
 		XSetForeground(dpy, kbwin_gc[i], foreground.pixel);
 		XSetBackground(dpy, kbwin_gc[i], background.pixel);
 
-		drawkb_draw(draw1, kbwin_backup[i], kbwin_gc[i], winh, winv, kbdesc);
+		drawkb_draw(draw1, kbwin_backup[i], kbwin_gc[i], winh, winv, kbdesc, PutIcon);
 
 	}
 
@@ -437,6 +464,18 @@ int main(int argc, char *argv[])
 	}
 
 	get_xinerama_screens(dpy, &xinerama_screens, &xinerama_screens_n);
+
+	if (Init_Imagelib(dpy, config->drawkb_imagelib) == EXIT_FAILURE)
+	{
+		char vals[500] = "";
+		Imagelib_GetValues((char *) &vals, 499);
+		fprintf(stderr, "Failed to initialize image library: %s.\n\n"
+			"You might try any of the following as the value for IMAGELIB in\n"
+			"your $HOME/.superkbrc file: %s\n", config->drawkb_imagelib, vals);
+		return EXIT_FAILURE;
+	}
+
+	Init_drawkblib("xlib");
 
 	status = superkb_init(dpy, kbwin_init, kbwin_map, kbwin_unmap,
 		kbwin_event, "en", config->superkb_super1,
