@@ -119,7 +119,7 @@ drawkb.o: drawkb.h imagelib.h
 imagelib.o: imagelib.h configuration puticon/puticon.h $(obj-y)
 main.o: superkb.h drawkb.h superkbrc.h
 puticon/puticon-imlib2.o: puticon/puticon-imlib2.h configuration
-puticon/puticon-gdk-pixbuf.o: puticon/puticon-gdk-pixbuf.h configuration
+puticon/puticon-gdkpixbuf.o: puticon/puticon-gdkpixbuf.h configuration
 
 $(SHARED): %.so: %.o
 	ld $(ldlibs-m) -shared -o $@ $<
