@@ -272,8 +272,8 @@ void superkb_start()
 			/* I hope select() takes proper care of negative timeouts.
 			 * It happens sometimes.
 			 */
-			if (&to[to_reason].tv_sec > 0 &&
-				&to[to_reason].tv_usec > 0) {
+			if (to[to_reason].tv_sec > 0 &&
+				to[to_reason].tv_usec > 0) {
 				XNEWT_ret = XNextEventWithTimeout(inst.dpy, &ev, &to[to_reason]);
 			} 
 

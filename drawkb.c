@@ -568,7 +568,7 @@ if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == 
 
 			XSetForeground(dpy, gc, color);
 
-			is_key ? DrawFilledPolygon(dpy, w, gc, scale, left, top, angle, rot_left, rot_top, t, l, b, r, corner_radius) : 0;
+			is_key ? DrawFilledPolygon(dpy, w, gc, scale, left, top, angle, rot_left, rot_top, t, l, b, r, corner_radius) : (void) 0;
 
 			RotateArc(left + l - 1 * pxl, top + t - 1 * pxl, 2 * corner_radius + LINE_WIDTH * pxl + 2 * pxl,
 					  2 * corner_radius + LINE_WIDTH * pxl + 2 * pxl, 5760, 5759, angle,

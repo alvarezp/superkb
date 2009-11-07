@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <stdint.h>
 
 #include <X11/Xlib.h>
 
@@ -109,12 +110,12 @@ int Init_Imagelib(Display *dpy, const char *userlib)
 
 	void *imagelib = dlopen(fn, RTLD_LAZY);
 	if (imagelib) {
-		image.NewImage = dlsym(imagelib, "NewImage");
-		image.InitImage = dlsym(imagelib, "Init");
-		image.LoadImage = dlsym(imagelib, "LoadImage");
-		image.ResizeImage = dlsym(imagelib, "ResizeImage");
-		image.PaintImage = dlsym(imagelib, "PaintImage");
-		image.FreeImage = dlsym(imagelib, "FreeImage");
+//		image.NewImage = dlsym(imagelib, "NewImage");
+		image.InitImage = (imagelib_init_t)(intptr_t) dlsym(imagelib, "Init");
+//		image.LoadImage = dlsym(imagelib, "LoadImage");
+//		image.ResizeImage = dlsym(imagelib, "ResizeImage");
+//		image.PaintImage = dlsym(imagelib, "PaintImage");
+//		image.FreeImage = dlsym(imagelib, "FreeImage");
 		if ((image.InitImage)(dpy, &image.NewImage, &image.LoadImage,
 				&image.ResizeImage,	&image.PaintImage, &image.FreeImage) == EXIT_SUCCESS) {
 			return EXIT_SUCCESS;
