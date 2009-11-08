@@ -56,6 +56,8 @@ int prev_kbwin_revert;
 
 Display *dpy;
 
+drawkb_p draw1;
+
 XkbDescPtr kbdesc;
 XkbGeometryPtr kbgeom;
 
@@ -200,9 +202,9 @@ int kbwin_init(Display * dpy)
 
 		XSelectInput(dpy, kbwin[i], ExposureMask | VisibilityChangeMask);
 
-		r = drawkb_init(dpy, config->drawkb_imagelib, config->drawkb_font, IconQuery, config->drawkb_painting_mode, scale[i]);
+		draw1 = drawkb_create(dpy, config->drawkb_imagelib, config->drawkb_font, IconQuery, config->drawkb_painting_mode, scale[i]);
 
-		if (r != EXIT_SUCCESS) {
+		if (draw1 == NULL) {
 			return EXIT_FAILURE;
 		}
 
@@ -215,7 +217,7 @@ int kbwin_init(Display * dpy)
 		XSetForeground(dpy, kbwin_gc[i], foreground.pixel);
 		XSetBackground(dpy, kbwin_gc[i], background.pixel);
 
-		drawkb_draw(dpy, kbwin_backup[i], kbwin_gc[i], winh, winv, kbdesc);
+		drawkb_draw(draw1, kbwin_backup[i], kbwin_gc[i], winh, winv, kbdesc);
 
 	}
 
