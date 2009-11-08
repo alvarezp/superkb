@@ -1286,3 +1286,7 @@ int drawkb_init(Display *dpy, const char *imagelib, const char *font,
 	return EXIT_SUCCESS;
 
 }
+
+drawkb_p drawkb_create() {
+	return (drawkb_p) malloc(sizeof(drawkb_t));
+}

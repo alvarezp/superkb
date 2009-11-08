@@ -19,6 +19,16 @@ typedef enum {
 	FLAT_KEY
 } painting_mode_t;
 
+typedef struct {
+	Display *dpy;
+	char *imagelib;
+	char *font;
+	IQF_t IQF;
+	painting_mode_t painting_mode;
+	float scale;
+} drawkb_t, *drawkb_p;
+
+drawkb_p drawkb_create();
 
 int drawkb_init(Display *dpy, const char *imagelib, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale);
 void drawkb_draw(Display * dpy, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc);
