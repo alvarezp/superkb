@@ -229,7 +229,7 @@ int kbwin_init(Display * dpy)
 
 		fprintf(stderr, "%p\n", (void *)dpy);
 
-		draw1 = drawkb_create(dpy, config->drawkb_font, IconQuery, config->drawkb_painting_mode, scale[i]);
+		draw1 = drawkb_create(dpy, config->drawkb_font, IconQuery, config->drawkb_painting_mode, scale[i], &debug);
 
 		if (draw1 == NULL) {
 			return EXIT_FAILURE;

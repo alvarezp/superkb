@@ -16,8 +16,7 @@ struct {
 	drawkb_draw_t draw;
 } drawkblib;
 
-drawkb_p drawkb_create(Display *dpy, const char *font,
-	IQF_t IQF, painting_mode_t painting_mode, float scale);
+drawkb_p drawkb_create(Display *dpy, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale, debug_t *debug);
 
 typedef struct {
 	const char *code;

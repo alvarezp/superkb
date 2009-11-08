@@ -9,6 +9,8 @@
 #ifndef __DEBUG_H
 #define __DEBUG_H
 
+typedef void (debug_t)(int level, char *fmt, ...);
+
 void debug(int level, char *fmt, ...);
 
 typedef enum {

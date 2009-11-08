@@ -113,8 +113,8 @@ int Init_drawkblib(const char *userlib)
 
 }
 
-drawkb_p drawkb_create(Display *dpy, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale) {
-	return drawkblib.create(dpy, font, IQF, painting_mode, scale);
+drawkb_p drawkb_create(Display *dpy, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale, debug_t *debug) {
+	return drawkblib.create(dpy, font, IQF, painting_mode, scale, debug);
 }
 
 void drawkb_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc, puticon_t puticon) {

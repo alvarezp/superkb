@@ -54,7 +54,6 @@
 
 #include "../drawkblib.h"
 #include "../imagelib.h"
-#include "../debug.h"
 #include "../globals.h"
 
 #define LINE_WIDTH 2
@@ -1217,7 +1216,7 @@ int Init_Font(drawkb_p this, const char *font)
 }
 
 drawkb_p drawkb_xlib_create(Display *dpy, const char *font,
-	IQF_t IQF, painting_mode_t painting_mode, float scale)
+	IQF_t IQF, painting_mode_t painting_mode, float scale, debug_t *debug)
 {
 
 	drawkb_p this = (drawkb_p) malloc(sizeof(drawkb_t));
@@ -1227,6 +1226,8 @@ drawkb_p drawkb_xlib_create(Display *dpy, const char *font,
 	this->painting_mode = painting_mode;
 
 	this->dpy = dpy;
+
+	this->debug = debug;
 
 	/* Init_Font needs Init_Geometry to succeed, because one of
 	 * the fallback fonts is the XKB's specified font label, and

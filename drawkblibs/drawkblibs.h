@@ -15,6 +15,8 @@
 #include <X11/Xft/Xft.h>
 #include <X11/Xft/XftCompat.h>
 
+#include "../debug.h"
+
 typedef int (*IQF_t)(KeySym keysym, unsigned int state, char buf[], int buf_n);
 
 typedef enum {
@@ -29,11 +31,12 @@ typedef struct {
 	Display *dpy;
 	IQF_t IQF;
 	painting_mode_t painting_mode;
+	debug_t *debug;
 } drawkb_t, *drawkb_p;
 
 typedef int (puticon_t)(Drawable kbwin, int x, int y, int width, int height, const char *fn);
 
-typedef drawkb_p (*drawkb_create_t)(Display *dpy, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale);
+typedef drawkb_p (*drawkb_create_t)(Display *dpy, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale, debug_t debug);
 
 typedef void (*drawkb_draw_t)(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc, puticon_t puticon);
 
