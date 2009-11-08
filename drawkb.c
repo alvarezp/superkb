@@ -29,8 +29,6 @@
 #include <dlfcn.h>
 
 #include <X11/Xlib.h>
-#include <X11/Xft/Xft.h>
-#include <X11/Xft/XftCompat.h>
 
 #include <X11/XKBlib.h>
 #include <X11/extensions/XKBgeom.h>
@@ -51,16 +49,6 @@
 #define DEFAULT_COLORMAP(dpy) (DefaultColormap(dpy, DEFAULT_SCREEN(dpy)))
 
 double __scale;
-
-typedef struct {
-	char font[500];
-	XftFont * fs;
-	Display *dpy;
-	IQF_t IQF;
-	painting_mode_t painting_mode;
-} drawkb_config_t;
-
-drawkb_config_t drawkb_config;
 
 XkbDescPtr kbdesc;
 XkbGeometryPtr kb_geom;
@@ -286,25 +274,26 @@ XftFont *XLoadQueryScalableFont(Display * dpy, int screen, char *name,
 	return fs;
 }
 
-int drawkb_set_font(Display *dpy, const char * font)
+/*
+int drawkb_set_font(drawkb_p this)
 {
 
-	/* FIXME: Validate font name. */
+	// FIXME: Validate font name.
 
-	/* FILLTHEGAP: Support font-family-only values. */
+	// FILLTHEGAP: Support font-family-only values.
 
-	XSetFontNameToScalable(font, drawkb_config.font, 500);
+	XSetFontNameToScalable(font, this->font, 500);
 
 	char * ptr;
-	ptr = realloc(drawkb_config.font, strlen(font));
+	ptr = realloc(this->font, strlen(font));
 	if (!ptr)
 		return EXIT_FAILURE;
 
-	strcpy(drawkb_config.font, font);
+	strcpy(this->font, font);
 	return EXIT_SUCCESS;
 
 	XftFont *fs;
-	fs = XLoadQueryScalableFont(drawkb_config.dpy, 0, drawkb_config.font, 1000);
+	fs = XLoadQueryScalableFont(this->dpy, 0, this->font, 1000);
 	if (fs) {
 		return EXIT_SUCCESS;
 	}
@@ -312,10 +301,11 @@ int drawkb_set_font(Display *dpy, const char * font)
 	XftFontClose(dpy, fs);
 }
 
-void drawkb_set_dpy(Display *dpy)
+void drawkb_set_dpy(drawkb_p this, Display *dpy)
 {
-	drawkb_config.dpy = dpy;
+	this->dpy = dpy;
 }
+*/
 
 void WorkaroundBoundsBug(Display * dpy, XkbDescPtr _kb)
 {
@@ -500,13 +490,13 @@ void DrawFilledPolygon(Display * dpy, Drawable w, GC gc, double scale,
 
 /* Graphic context should have already been set. */
 void
-KbDrawShape(Display * dpy, Drawable w, GC gc, unsigned int angle,
+KbDrawShape(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 			unsigned int rot_left, unsigned int rot_top, double scale,
 			unsigned int left, unsigned int top,
 			XkbDescPtr _kb, XkbShapePtr shape, XkbColorPtr color,
 			Bool is_key)
 {
-/*	KbDrawBounds(dpy, w, gc, angle, scale, left, top, _kb, &shape->bounds); */
+/*	KbDrawBounds(this->dpy, w, gc, angle, scale, left, top, _kb, &shape->bounds); */
 
 	XkbOutlinePtr source;
 	int i;
@@ -514,14 +504,14 @@ KbDrawShape(Display * dpy, Drawable w, GC gc, unsigned int angle,
 	int j;
 	int shapes_to_paint = 1;
 
-	if (drawkb_config.painting_mode == FULL_SHAPE) shapes_to_paint = shape->num_outlines;
+	if (this->painting_mode == FULL_SHAPE) shapes_to_paint = shape->num_outlines;
 
 	for (i = 0; i < (is_key ? shapes_to_paint : shape->num_outlines); i++) {
 		source = &shape->outlines[i];
 
 		double corner_radius = source->corner_radius + 1 * pxl;
 
-		XSetLineAttributes(dpy, gc, LINE_WIDTH, LineSolid, CapButt, JoinMiter);
+		XSetLineAttributes(this->dpy, gc, LINE_WIDTH, LineSolid, CapButt, JoinMiter);
 
 		switch (source->num_points) {
 		case 1:
@@ -538,12 +528,12 @@ KbDrawShape(Display * dpy, Drawable w, GC gc, unsigned int angle,
 		default:
 			/* FIXME: Should also take care of angle and corner radius */
 			for (j = 0; j < source->num_points - 1; j++) {
-				XDrawLine(dpy, w, gc, scale * (left + source->points[j].x),
+				XDrawLine(this->dpy, w, gc, scale * (left + source->points[j].x),
 						  scale * (top + source->points[j].y),
 						  scale * (left + source->points[j + 1].x),
 						  scale * (top + source->points[j + 1].y));
 			}
-			XDrawLine(dpy, w, gc, scale * (left + source->points[j].x),
+			XDrawLine(this->dpy, w, gc, scale * (left + source->points[j].x),
 					  scale * (top + source->points[j].y),
 					  scale * (left + source->points[0].x),
 					  scale * (top + source->points[0].y));
@@ -556,7 +546,7 @@ KbDrawShape(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 			unsigned long color;
 
-if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == FLAT_KEY) {
+if (this->painting_mode == FULL_SHAPE || this->painting_mode == FLAT_KEY) {
 
 			if ( i % 2 == 0 ) {
 				color = darkcolor.pixel;
@@ -566,22 +556,22 @@ if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == 
 				current = &xftbackground;
 			}
 
-			XSetForeground(dpy, gc, color);
+			XSetForeground(this->dpy, gc, color);
 
-			is_key ? DrawFilledPolygon(dpy, w, gc, scale, left, top, angle, rot_left, rot_top, t, l, b, r, corner_radius) : (void) 0;
+			is_key ? DrawFilledPolygon(this->dpy, w, gc, scale, left, top, angle, rot_left, rot_top, t, l, b, r, corner_radius) : (void) 0;
 
 			RotateArc(left + l - 1 * pxl, top + t - 1 * pxl, 2 * corner_radius + LINE_WIDTH * pxl + 2 * pxl,
 					  2 * corner_radius + LINE_WIDTH * pxl + 2 * pxl, 5760, 5759, angle,
 					  rot_left, rot_top, &ax, &ay, &arcw, &arch, &arcs,
 					  &arce);
-			XFillArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+			XFillArc(this->dpy, w, gc, scale * ax, scale * ay, scale * arcw,
 					 scale * arch, arcs, arce);
 
 			RotateArc(left + r - 2 * corner_radius - LINE_WIDTH * pxl, top + t - 1 * pxl,
 					  2 * corner_radius + LINE_WIDTH * pxl, 2 * corner_radius + LINE_WIDTH * pxl + 2 * pxl,
 					  0, 5759, angle, rot_left, rot_top, &ax, &ay, &arcw,
 					  &arch, &arcs, &arce);
-			XFillArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+			XFillArc(this->dpy, w, gc, scale * ax, scale * ay, scale * arcw,
 					 scale * arch, arcs, arce);
 
 			RotateArc(left + r - 2 * corner_radius - LINE_WIDTH * pxl,
@@ -589,45 +579,45 @@ if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == 
 					  2 * corner_radius + LINE_WIDTH * pxl, 2 * corner_radius + LINE_WIDTH * pxl,
 					  17280, 5759, angle, rot_left, rot_top, &ax, &ay,
 					  &arcw, &arch, &arcs, &arce);
-			XFillArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+			XFillArc(this->dpy, w, gc, scale * ax, scale * ay, scale * arcw,
 					 scale * arch, arcs, arce);
 
 			RotateArc(left + l - 1 * pxl, top + b - 2 * corner_radius - LINE_WIDTH * pxl,
 					  2 * corner_radius + LINE_WIDTH * pxl + 2 * pxl, 2 * corner_radius + LINE_WIDTH * pxl,
 					  11521, 5759, angle, rot_left, rot_top, &ax, &ay,
 					  &arcw, &arch, &arcs, &arce);
-			XFillArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+			XFillArc(this->dpy, w, gc, scale * ax, scale * ay, scale * arcw,
 					 scale * arch, arcs, arce);
 
 } else {
-			XSetForeground(dpy, gc, foreground.pixel);
+			XSetForeground(this->dpy, gc, foreground.pixel);
 			current = &xftforeground;
 			RotatePoint(left + l + corner_radius, top + t, angle,
 						rot_left, rot_top, &ax, &ay);
 			RotatePoint(left + r - corner_radius, top + t, angle,
 						rot_left, rot_top, &bx, &by);
-			XDrawLine(dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
+			XDrawLine(this->dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
 					  scale * (by));
 
 			RotateArc(left + l - 1 * pxl, top + t - 1 * pxl, 2 * corner_radius + LINE_WIDTH * pxl + 2 * pxl,
 					  2 * corner_radius + LINE_WIDTH * pxl + 2 * pxl, 5760, 5759, angle,
 					  rot_left, rot_top, &ax, &ay, &arcw, &arch, &arcs,
 					  &arce);
-			XDrawArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+			XDrawArc(this->dpy, w, gc, scale * ax, scale * ay, scale * arcw,
 					 scale * arch, arcs, arce); 
 
 			RotatePoint(left + r, top + t + corner_radius, angle,
 						rot_left, rot_top, &ax, &ay);
 			RotatePoint(left + r, top + b - corner_radius, angle,
 						rot_left, rot_top, &bx, &by);
-			XDrawLine(dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
+			XDrawLine(this->dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
 					  scale * (by)); 
 
 			RotateArc(left + r - 2 * corner_radius - LINE_WIDTH * pxl, top + t - 1 * pxl,
 					  2 * corner_radius + LINE_WIDTH * pxl, 2 * corner_radius + LINE_WIDTH * pxl + 2 * pxl,
 					  0, 5759, angle, rot_left, rot_top, &ax, &ay, &arcw,
 					  &arch, &arcs, &arce);
-			XDrawArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+			XDrawArc(this->dpy, w, gc, scale * ax, scale * ay, scale * arcw,
 					 scale * arch, arcs, arce); 
 
 			RotatePoint(left + r - corner_radius, top + b, angle,
@@ -635,7 +625,7 @@ if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == 
 			RotatePoint(left + l + corner_radius, top + b, angle,
 						rot_left, rot_top, &bx, &by);
 
-			XDrawLine(dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
+			XDrawLine(this->dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
 					  scale * (by)); 
 
 			RotateArc(left + r - 2 * corner_radius - LINE_WIDTH * pxl,
@@ -643,21 +633,21 @@ if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == 
 					  2 * corner_radius + LINE_WIDTH * pxl, 2 * corner_radius + LINE_WIDTH * pxl,
 					  17280, 5759, angle, rot_left, rot_top, &ax, &ay,
 					  &arcw, &arch, &arcs, &arce);
-			XDrawArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+			XDrawArc(this->dpy, w, gc, scale * ax, scale * ay, scale * arcw,
 					 scale * arch, arcs, arce); 
 
 			RotatePoint(left + l, top + b - corner_radius, angle,
 						rot_left, rot_top, &ax, &ay);
 			RotatePoint(left + l, top + t + corner_radius, angle,
 						rot_left, rot_top, &bx, &by);
-			XDrawLine(dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
+			XDrawLine(this->dpy, w, gc, scale * (ax), scale * (ay), scale * (bx),
 					  scale * (by));
 
 			RotateArc(left + l - 1 * pxl, top + b - 2 * corner_radius - LINE_WIDTH * pxl,
 					  2 * corner_radius + LINE_WIDTH * pxl + 2 * pxl, 2 * corner_radius + LINE_WIDTH * pxl,
 					  11521, 5759, angle, rot_left, rot_top, &ax, &ay,
 					  &arcw, &arch, &arcs, &arce);
-			XDrawArc(dpy, w, gc, scale * ax, scale * ay, scale * arcw,
+			XDrawArc(this->dpy, w, gc, scale * ax, scale * ay, scale * arcw,
 					 scale * arch, arcs, arce);
 
 }
@@ -666,21 +656,21 @@ if (drawkb_config.painting_mode == FULL_SHAPE || drawkb_config.painting_mode == 
 		}
 	}
 
-	XFlush(dpy);
+	XFlush(this->dpy);
 
 }
 
 void
-KbDrawDoodad(Display * dpy, Drawable w, GC gc, /*XftFont *f, */unsigned int angle,
+KbDrawDoodad(drawkb_p this, Drawable w, GC gc, /*XftFont *f, */unsigned int angle,
 			 double scale, unsigned int left, unsigned int top,
 			 XkbDescPtr _kb, XkbDoodadPtr doodad)
 {
 
-	XSetForeground(dpy, gc, lightcolor.pixel);
+	XSetForeground(this->dpy, gc, lightcolor.pixel);
 	current = &xftlightcolor;
 	switch (doodad->any.type) {
 	case XkbOutlineDoodad:
-		KbDrawShape(dpy, w, gc, angle + doodad->shape.angle,
+		KbDrawShape(this, w, gc, angle + doodad->shape.angle,
 					left + doodad->shape.left, top + doodad->shape.top,
 					scale, left + doodad->shape.left,
 					top + doodad->shape.top, _kb,
@@ -688,7 +678,7 @@ KbDrawDoodad(Display * dpy, Drawable w, GC gc, /*XftFont *f, */unsigned int angl
 					&_kb->geom->colors[doodad->shape.color_ndx], False);
 		break;
 	case XkbSolidDoodad:
-		KbDrawShape(dpy, w, gc, angle + doodad->shape.angle,
+		KbDrawShape(this, w, gc, angle + doodad->shape.angle,
 					left + doodad->shape.left, top + doodad->shape.top,
 					scale, left + doodad->shape.left,
 					top + doodad->shape.top, _kb,
@@ -699,7 +689,7 @@ KbDrawDoodad(Display * dpy, Drawable w, GC gc, /*XftFont *f, */unsigned int angl
 /*		XftDrawString8(dw, current, NULL, scale * (left + doodad->text.left), scale * (top + doodad->text.top) + 6, (unsigned char *)doodad->text.text, strlen(doodad->text.text));*/
 		break;
 	case XkbIndicatorDoodad:
-		KbDrawShape(dpy, w, gc, angle + doodad->indicator.angle,
+		KbDrawShape(this, w, gc, angle + doodad->indicator.angle,
 					left + doodad->indicator.left,
 					top + doodad->indicator.top, scale,
 					left + doodad->indicator.left,
@@ -709,7 +699,7 @@ KbDrawDoodad(Display * dpy, Drawable w, GC gc, /*XftFont *f, */unsigned int angl
 					False);
 		break;
 	case XkbLogoDoodad:
-		KbDrawShape(dpy, w, gc, angle + doodad->logo.angle,
+		KbDrawShape(this, w, gc, angle + doodad->logo.angle,
 					left + doodad->logo.left, top + doodad->logo.top,
 					scale, left + doodad->logo.left,
 					top + doodad->logo.top, _kb,
@@ -717,7 +707,7 @@ KbDrawDoodad(Display * dpy, Drawable w, GC gc, /*XftFont *f, */unsigned int angl
 					&_kb->geom->colors[doodad->logo.color_ndx], False);
 		break;
 	}
-	XSetForeground(dpy, gc, foreground.pixel);
+	XSetForeground(this->dpy, gc, foreground.pixel);
 	current = &xftforeground;
 }
 
@@ -747,7 +737,7 @@ int PutIcon(Drawable kbwin, int x, int y, int width, int height, const char *fn)
 
 
 void
-KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
+KbDrawKey(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 		  unsigned int section_left, unsigned int section_top,
 		  double scale, unsigned int left, unsigned int top,
 		  XkbDescPtr _kb, XkbKeyPtr key, key_data_t key_data)
@@ -759,12 +749,12 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 	char buf[1024]="";
 	int buf_n = 1023;
 
-	KbDrawShape(dpy, w, gc, angle, section_left, section_top, scale,
+	KbDrawShape(this, w, gc, angle, section_left, section_top, scale,
 				left, top, _kb,
 				&_kb->geom->shapes[key->shape_ndx],
 				&_kb->geom->colors[key->color_ndx], True);
 
-	XSetForeground(dpy, gc, foreground.pixel);
+	XSetForeground(this->dpy, gc, foreground.pixel);
 	current = &xftforeground;
 
 	/* This is to work around an XKB apparent bug. */
@@ -782,7 +772,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 		if (!strncmp(key->name.name, _kb->names->keys[i].name, 4)) {
 			strncpy(name, _kb->names->keys[i].name, 4);
 			KeySym ks;
-			ks = XKeycodeToKeysym(dpy, i, 0);
+			ks = XKeycodeToKeysym(this->dpy, i, 0);
 			kss = XKeysymToString(ks);
 			strncpy(keystring, kss, 255);
 			if (kss) {
@@ -794,10 +784,10 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 				double ax, ay;
 
-				if (drawkb_config.IQF(XStringToKeysym(keystring), 0, buf, buf_n) == EXIT_SUCCESS) {
+				if (this->IQF(XStringToKeysym(keystring), 0, buf, buf_n) == EXIT_SUCCESS) {
 
 					/* FIXME: Key label vertical position is miscalculated. */
-					fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, key_data.size);
+					fs = XLoadQueryScalableFont(this->dpy, 0, this->font, key_data.size);
 
 					if (strcmp(buf, "") != 0) {
 
@@ -813,7 +803,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 						PutIcon(w, scale*ax, scale*ay, scale*size, scale*size, buf);
 
-					/* KbDrawBounds(dpy, w, gc, angle, scale, left, top, _kb, &(key_data.labelbox)); */
+					/* KbDrawBounds(this->dpy, w, gc, angle, scale, left, top, _kb, &(key_data.labelbox)); */
 
 					}
 
@@ -827,19 +817,19 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 
 				} else {
-					if (drawkb_config.painting_mode == FLAT_KEY) {
-						XSetForeground(dpy, gc, background.pixel);
+					if (this->painting_mode == FLAT_KEY) {
+						XSetForeground(this->dpy, gc, background.pixel);
 						current = &xftbackground;
 					} else {
-						XSetForeground(dpy, gc, lightcolor.pixel);
+						XSetForeground(this->dpy, gc, lightcolor.pixel);
 						current = &xftlightcolor;
 					}
 
-					fs = XLoadQueryScalableFont(dpy, 0,
-												drawkb_config.font,
+					fs = XLoadQueryScalableFont(this->dpy, 0,
+												this->font,
 												key_data.size);
 					if (strlen(kss) == 1) {
-						tw = MyXftTextWidth(dpy, fs, glyph, strlen(glyph));
+						tw = MyXftTextWidth(this->dpy, fs, glyph, strlen(glyph));
 						RotatePoint((left + (key_data.labelbox.x1 + key_data.labelbox.x2) / 2) -
 									tw / 2 / scale,
 									top + key_data.labelbox.y1 + (key_data.labelbox.y2 - key_data.labelbox.y1) * g_baseline,
@@ -856,8 +846,8 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 									(unsigned char *)kss, strlen(kss));
 					}
 
-					XftFontClose(dpy, fs);
-					XSetForeground(dpy, gc, foreground.pixel);
+					XftFontClose(this->dpy, fs);
+					XSetForeground(this->dpy, gc, foreground.pixel);
 					current = &xftforeground;
 				}
 			}
@@ -866,7 +856,7 @@ KbDrawKey(Display * dpy, Drawable w, GC gc, unsigned int angle,
 	}
 }
 
-void AdjustSize(Display *dpy, XkbBoundsRec labelbox, const char *glyph, double initial_key_height_percent, double scale, int *size)
+void AdjustSize(drawkb_p this, XkbBoundsRec labelbox, const char *glyph, double initial_key_height_percent, double scale, int *size)
 {
 
 	int labelbox_width = labelbox.x2 - labelbox.x1;
@@ -879,36 +869,36 @@ void AdjustSize(Display *dpy, XkbBoundsRec labelbox, const char *glyph, double i
 	if (!*size) {
 		*size = labelbox_height * initial_key_height_percent * scale;
 
-		fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, *size);
+		fs = XLoadQueryScalableFont(this->dpy, 0, this->font, *size);
 
-		while (MyXftTextWidth(dpy, fs, glyph, strlen(glyph)) <= (int) labelbox_width*scale
+		while (MyXftTextWidth(this->dpy, fs, glyph, strlen(glyph)) <= (int) labelbox_width*scale
 			&& fs->ascent <= labelbox_height*initial_key_height_percent*scale) {
-			XftFontClose(dpy, fs);
+			XftFontClose(this->dpy, fs);
 			(*size)++;
-			fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, *size);
+			fs = XLoadQueryScalableFont(this->dpy, 0, this->font, *size);
 			debug (10, "Iterating in %s:%d\n", __FILE__, __LINE__);
 		}
 	} else {
-		fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, *size);
+		fs = XLoadQueryScalableFont(this->dpy, 0, this->font, *size);
 	}
 
 	debug (10, " ::: AdjustSize interim size value: %d\n", *size);
 
 	/* Reduce the *size point by point as less as possible. */
-	while (MyXftTextWidth(dpy, fs, glyph, strlen(glyph)) > (int) labelbox_width*scale) {
-		XftFontClose(dpy, fs);
+	while (MyXftTextWidth(this->dpy, fs, glyph, strlen(glyph)) > (int) labelbox_width*scale) {
+		XftFontClose(this->dpy, fs);
 		(*size)--;
-		fs = XLoadQueryScalableFont(dpy, 0, drawkb_config.font, *size);
+		fs = XLoadQueryScalableFont(this->dpy, 0, this->font, *size);
 		debug (10, "Iterating in %s:%d\n", __FILE__, __LINE__);
 	}
 
-	XftFontClose(dpy, fs);
+	XftFontClose(this->dpy, fs);
 
 	debug (10, " <-- AdjustSize final size value: %d\n", *size);
 }
 
 void
-KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
+KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 		  double scale, unsigned int left, unsigned int top,
 		  XkbDescPtr _kb, XkbRowPtr row)
 {
@@ -918,7 +908,7 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 	XkbBoundsRec labelbox;
 
-//	KbDrawBounds(dpy, w, gc, angle, scale, left + row->left, top + row->top, _kb, &row->bounds);
+//	KbDrawBounds(this->dpy, w, gc, angle, scale, left + row->left, top + row->top, _kb, &row->bounds);
 
 	int size_bound = 0;
 	int size_unbound_char = 0;
@@ -956,7 +946,7 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 			strncpy(name, _kb->names->keys[i].name, 4);
 			KeySym ks;
-			ks = XKeycodeToKeysym(dpy, i, 0);
+			ks = XKeycodeToKeysym(this->dpy, i, 0);
 			kss = XKeysymToString(ks);
 			strncpy(keystring, kss, 255);
 
@@ -972,12 +962,12 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 			XkbBoundsRec kr, *k = &kr;
 			
-			if (drawkb_config.painting_mode == FULL_SHAPE) {
+			if (this->painting_mode == FULL_SHAPE) {
 				XkbComputeShapeTop(&_kb->geom->shapes[key->shape_ndx], k);
-			} else if (drawkb_config.painting_mode == BASE_OUTLINE_ONLY) {
+			} else if (this->painting_mode == BASE_OUTLINE_ONLY) {
 				k = &_kb->geom->shapes[key->shape_ndx].bounds;
 				labelbox_border = LINE_WIDTH * pxl;
-			} else if (drawkb_config.painting_mode == FLAT_KEY) {
+			} else if (this->painting_mode == FLAT_KEY) {
 				k = &_kb->geom->shapes[key->shape_ndx].bounds;
 			} else {
 				assert (0);
@@ -989,19 +979,19 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 			labelbox.y2 = k->y2 - labelbox_margin - labelbox_border;
 			/* End calculate label + icon box bounds */
 
-			if (drawkb_config.IQF(XStringToKeysym(keystring), 0, NULL, 0) == EXIT_SUCCESS) {
+			if (this->IQF(XStringToKeysym(keystring), 0, NULL, 0) == EXIT_SUCCESS) {
 				/* If this key is a bound key... */
-				AdjustSize(dpy, labelbox, glyph, 0.28, scale, &size_bound);
+				AdjustSize(this, labelbox, glyph, 0.28, scale, &size_bound);
 				key_data[key_data_n-1].size = size_bound;
 			} else if (strlen(glyph) == 1) {
 				/* If this key is a single char unbound key... */
-				AdjustSize(dpy, labelbox, glyph, 0.9, scale, &size_unbound_char);
+				AdjustSize(this, labelbox, glyph, 0.9, scale, &size_unbound_char);
 				key_data[key_data_n-1].size = size_unbound_char;
 			} else {
 				/* This is a multiple char unbound key. */
 				labelbox.x1 += 4 / scale;
 				labelbox.x2 -= 4 / scale;
-				AdjustSize(dpy, labelbox, glyph, 0.25, scale, &size_unbound_string);
+				AdjustSize(this, labelbox, glyph, 0.25, scale, &size_unbound_string);
 				key_data[key_data_n-1].size = size_unbound_string;
 			}
 			memcpy(&(key_data[key_data_n-1].labelbox), &labelbox, sizeof(XkbBoundsRec));
@@ -1018,14 +1008,14 @@ KbDrawRow(Display * dpy, Drawable w, GC gc, unsigned int angle,
 		assert(j < key_data_n);
 
 		if (!row->vertical) {
-			KbDrawKey(dpy, w, gc, angle, left, top, scale,
+			KbDrawKey(this, w, gc, angle, left, top, scale,
 					  left + row->left + next_piece + row->keys[i].gap,
 					  top + row->top,
 					  _kb, &row->keys[i], key_data[i]);
 			next_piece +=
 				_kb->geom->shapes[row->keys[i].shape_ndx].bounds.x2 + row->keys[i].gap;
 		} else {
-			KbDrawKey(dpy, w, gc, 
+			KbDrawKey(this, w, gc, 
 angle, left, top, scale,
 					  left + row->left, top + row->top + next_piece + row->keys[i].gap,
 					  _kb, &row->keys[i], key_data[i]);
@@ -1039,7 +1029,7 @@ angle, left, top, scale,
 }
 
 void
-KbDrawSection(Display * dpy, Drawable w, GC gc, unsigned int angle,
+KbDrawSection(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 			  double scale, unsigned int left, unsigned int top,
 			  XkbDescPtr _kb, XkbSectionPtr section)
 {
@@ -1052,7 +1042,7 @@ KbDrawSection(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 	for (i = 0; i < section->num_rows; i++) {
 		XkbComputeRowBounds(_kb->geom, section, &section->rows[i]);
-		KbDrawRow(dpy, w, gc, angle + section->angle, scale,
+		KbDrawRow(this, w, gc, angle + section->angle, scale,
 				  left + section->left, top + section->top, _kb,
 				  &section->rows[i]);
 	}
@@ -1060,7 +1050,7 @@ KbDrawSection(Display * dpy, Drawable w, GC gc, unsigned int angle,
 	for (p = 0; p <= 255; p++) {
 		for (i = 0; i < section->num_doodads; i++) {
 			if (section->doodads[i].any.priority == p) {
-				KbDrawDoodad(dpy, w, gc, angle + section->angle, scale,
+				KbDrawDoodad(this, w, gc, angle + section->angle, scale,
 							 left + section->left, top + section->top, _kb,
 							 &section->doodads[i]);
 			}
@@ -1069,7 +1059,7 @@ KbDrawSection(Display * dpy, Drawable w, GC gc, unsigned int angle,
 }
 
 void
-KbDrawComponents(Display * dpy, Drawable w, GC gc, unsigned int angle,
+KbDrawComponents(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 				 double scale, unsigned int left, unsigned int top,
 				 XkbDescPtr _kb, XkbSectionPtr sections,
 				 int sections_n, XkbDoodadPtr doodads, int doodads_n)
@@ -1084,7 +1074,7 @@ KbDrawComponents(Display * dpy, Drawable w, GC gc, unsigned int angle,
 	for (p = 0; p <= 255; p++) {
 		for (i = 0; i < sections_n; i++) {
 			if (sections[i].priority == p) {
-				KbDrawSection(dpy, w, gc, angle, scale, left,
+				KbDrawSection(this, w, gc, angle, scale, left,
 							  top, _kb, &sections[i]);
 
 			}
@@ -1092,17 +1082,19 @@ KbDrawComponents(Display * dpy, Drawable w, GC gc, unsigned int angle,
 
 		for (i = 0; i < doodads_n; i++) {
 			if (doodads[i].any.priority == p) {
-				KbDrawDoodad(dpy, w, gc, angle, scale, left,
+				KbDrawDoodad(this, w, gc, angle, scale, left,
 							 top, _kb, &doodads[i]);
 			}
 		}
 	}
 }
 
-void drawkb_draw(Display * dpy, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc)
+void drawkb_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc)
 {
 
 	float scale;
+
+	Display *dpy = this->dpy;
 
 	dw = XftDrawCreate (dpy, d, DEFAULT_VISUAL(dpy), DEFAULT_COLORMAP(dpy));
 
@@ -1173,12 +1165,12 @@ void drawkb_draw(Display * dpy, Drawable d, GC gc, unsigned int width, unsigned 
 	int angle = 0;
 
 	/* Draw top-level rectangle */
-	XDrawRectangle(drawkb_config.dpy, d, gc, left, top, scale * kbdesc->geom->width_mm,
+	XDrawRectangle(this->dpy, d, gc, left, top, scale * kbdesc->geom->width_mm,
 				   scale * kbdesc->geom->height_mm);
 
 	/* Draw each component (section or doodad) of the top-level kbdesc->geometry, in
 	 * priority order. Note that priority handling is left to the function. */
-	KbDrawComponents(drawkb_config.dpy, d, gc, angle, scale, left, top, kbdesc,
+	KbDrawComponents(this, d, gc, angle, scale, left, top, kbdesc,
 					 kbdesc->geom->sections, kbdesc->geom->num_sections,
 					 kbdesc->geom->doodads, kbdesc->geom->num_doodads);
 
@@ -1186,23 +1178,23 @@ void drawkb_draw(Display * dpy, Drawable d, GC gc, unsigned int width, unsigned 
 }
 
 /* Checks for font existance and tries to fallback if not. */
-int Init_Font(const char *font)
+int Init_Font(drawkb_p this, const char *font)
 {
 
 	if (!font) {
 		fprintf(stderr, "User didn't specify font.\n");
 	}
 
-	strncpy(drawkb_config.font, font, 499);
+	strncpy(this->font, font, 499);
 
 	/* Try 1: User drawkb_configured. */
-	if (drawkb_config.font) {
+	if (this->font) {
 
 		/* FIXME: Validate font. */
-		XSetFontNameToScalable(drawkb_config.font, drawkb_config.font, 500);
+		XSetFontNameToScalable(this->font, this->font, 500);
 
 		XftFont *fs;
-		fs = XLoadQueryScalableFont(drawkb_config.dpy, 0, drawkb_config.font, 1000);
+		fs = XLoadQueryScalableFont(this->dpy, 0, this->font, 1000);
 
 		if (fs) {
 			return EXIT_SUCCESS;
@@ -1217,10 +1209,10 @@ int Init_Font(const char *font)
 
 	/* Try 3: Fallback to XKB's. */
 	if (kbdesc->geom->label_font) {
-		XSetFontNameToScalable(kbdesc->geom->label_font, drawkb_config.font, 500);
+		XSetFontNameToScalable(kbdesc->geom->label_font, this->font, 500);
 
 		XftFont *fs;
-		fs = XLoadQueryScalableFont(drawkb_config.dpy, 0, drawkb_config.font, 1000);
+		fs = XLoadQueryScalableFont(this->dpy, 0, this->font, 1000);
 		if (fs) {
 			return EXIT_SUCCESS;
 		}
@@ -1232,17 +1224,17 @@ int Init_Font(const char *font)
 	return EXIT_FAILURE;
 }
 
-
-
-int drawkb_init(Display *dpy, const char *imagelib, const char *font,
+drawkb_p drawkb_create(Display *dpy, const char *imagelib, const char *font,
 	IQF_t IQF, painting_mode_t painting_mode, float scale)
 {
 
-	drawkb_config.IQF = IQF;
+	drawkb_p this = (drawkb_p) malloc(sizeof(drawkb_t));
 
-	drawkb_config.painting_mode = painting_mode;
+	this->IQF = IQF;
 
-	drawkb_config.dpy = dpy;
+	this->painting_mode = painting_mode;
+
+	this->dpy = dpy;
 
 	if (Init_Imagelib(dpy, imagelib) == EXIT_FAILURE)
 	{
@@ -1251,14 +1243,14 @@ int drawkb_init(Display *dpy, const char *imagelib, const char *font,
 		fprintf(stderr, "Failed to initialize image library: %s.\n\n"
 			"You might try any of the following as the value for IMAGELIB in\n"
 			"your $HOME/.superkbrc file: %s\n", imagelib, vals);
-		return EXIT_FAILURE;
+		return NULL;
 	}
 
 	/* Init_Font needs Init_Geometry to succeed, because one of
 	 * the fallback fonts is the XKB's specified font label, and
 	 * therefore, geometry must be loaded. */
 
-	if (Init_Font(font) == EXIT_FAILURE)
+	if (Init_Font(this, font) == EXIT_FAILURE)
 	{
 		fprintf(stderr, "Failed to initialize font: %s.\n"
 			"Possible causes are:\n"
@@ -1267,14 +1259,14 @@ int drawkb_init(Display *dpy, const char *imagelib, const char *font,
 			" + You did not quote the name and the name contains spaces.\n"
 			" + The font doesn't exist. Try using XftFont *sel to find a suitable "
 				"font.\n", font);
-		return EXIT_FAILURE;
+		return NULL;
 	}
 
 	XftFont *fs;
-	fs = XLoadQueryScalableFont(drawkb_config.dpy, 0, drawkb_config.font, 1000);
+	fs = XLoadQueryScalableFont(this->dpy, 0, this->font, 1000);
 	if (!fs) {
 		fprintf(stderr, "superkb: Couldn't XLoadQueryScalableFont. This shouldn't have happened.\n");
-		return EXIT_FAILURE;
+		return NULL;
 	}
 
 	g_baseline =
@@ -1283,10 +1275,7 @@ int drawkb_init(Display *dpy, const char *imagelib, const char *font,
 
 	WorkaroundBoundsBug(dpy, kbdesc);
 
-	return EXIT_SUCCESS;
+	return this;
 
 }
 
-drawkb_p drawkb_create() {
-	return (drawkb_p) malloc(sizeof(drawkb_t));
-}
