@@ -24,6 +24,7 @@
 #define CONFIG_DEFAULT_DRAWKB_DELAY 0.5
 #define CONFIG_DEFAULT_DRAWKB_FONT "-*-bitstream vera sans-bold-r-*-*-*-*-*-*-*-*-*-*"
 #define CONFIG_DEFAULT_DRAWKB_IMAGELIB "imlib2"
+#define CONFIG_DEFAULT_DRAWKB_DRAWKBLIB "xlib"
 #define CONFIG_DEFAULT_DRAWKB_BACKCOLOR_RED 12700
 #define CONFIG_DEFAULT_DRAWKB_BACKCOLOR_GREEN 12700
 #define CONFIG_DEFAULT_DRAWKB_BACKCOLOR_BLUE 12700
@@ -272,6 +273,11 @@ void handle_line(char *line, int linesize) {
 			return;
 		}
 
+		if (!strcmp(token_array[0], "DRAWKBLIB") && tok_index == 2) {
+			strncpy(__config->drawkb_drawkblib, token_array[1], 500);
+			return;
+		}
+
 		if (!strcmp(token_array[0], "DOCUMENT_HANDLER") && tok_index == 2) {
 			strncpy(__config->document_handler, token_array[1], 500);
 			return;
@@ -466,6 +472,7 @@ config_t * config_new (Display *dpy)
 	this->drawkb_delay = CONFIG_DEFAULT_DRAWKB_DELAY;
 	strcpy(this->drawkb_font, CONFIG_DEFAULT_DRAWKB_FONT);
 	strcpy(this->drawkb_imagelib, CONFIG_DEFAULT_DRAWKB_IMAGELIB);
+	strcpy(this->drawkb_drawkblib, CONFIG_DEFAULT_DRAWKB_DRAWKBLIB);
 	this->superkb_super1 = CONFIG_DEFAULT_SUPERKB_SUPER1;
 	this->superkb_super2 = CONFIG_DEFAULT_SUPERKB_SUPER2;
 	this->backcolor.red = CONFIG_DEFAULT_DRAWKB_BACKCOLOR_RED;

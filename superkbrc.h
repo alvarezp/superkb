@@ -41,6 +41,7 @@ typedef struct {
 	double drawkb_delay;
 	char drawkb_font[500];
 	char drawkb_imagelib[500];
+	char drawkb_drawkblib[500];
 	KeyCode superkb_super1;
 	KeyCode superkb_super2;
 	struct {
