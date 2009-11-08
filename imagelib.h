@@ -14,7 +14,7 @@
 #include "puticon/puticon.h"
 
 typedef struct {
-	char *code;
+	const char *code;
 	imagelib_init_t init;
 } imagelib_compiled_in_t;
 
