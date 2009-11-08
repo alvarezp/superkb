@@ -251,6 +251,7 @@ void superkb_start()
 		}
 
 		if (i == to_n) {
+			debug (4, "[xn] Calling XNextEventWithTimeout(inst.dpy, &ev, NULL)\n");
 			XNEWT_ret = XNextEventWithTimeout(inst.dpy, &ev, NULL);
 		} else {
 			gettimeofday(&hold_start, NULL);
@@ -272,8 +273,9 @@ void superkb_start()
 			/* I hope select() takes proper care of negative timeouts.
 			 * It happens sometimes.
 			 */
-			if (to[to_reason].tv_sec > 0 &&
-				to[to_reason].tv_usec > 0) {
+			if (to[to_reason].tv_sec >= 0 &&
+				to[to_reason].tv_usec >= 0) {
+				debug (4, "[xn] Calling XNextEventWithTimeout(inst.dpy, &ev, &to[to_reason]) to_reason = %d\n", to_reason);
 				XNEWT_ret = XNextEventWithTimeout(inst.dpy, &ev, &to[to_reason]);
 			} 
 
@@ -418,12 +420,15 @@ void superkb_start()
 
 			}
 		} else if (ev.type == KeyPress) {
+			debug(1, "[kp] A non-Super key was pressed.\n");
 			super_replay = 0;
 
 			to[TO_CONFIG].tv_sec = 3;
 			to[TO_CONFIG].tv_usec = 0;
+			debug(2, "[kp] TO_CONFIG timer set to 3 s.\n");
 
 			push_into_pressed_key_stack(ev.xkey.keycode, ev.xkey.state);
+			debug(2, "[kp] Pushed key to stack.\n");
 		} else if ((ev.type == KeyRelease && !ignore_release &&
 				   super_was_active > 0)) {
 			/* User might have asked for binding configuration, so ignore key
