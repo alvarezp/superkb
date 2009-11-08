@@ -78,13 +78,8 @@ int Init_drawkblib(const char *userlib)
 	for (p = &drawkblib_compiled_in[0]; p->code != NULL; p++)
 	{
 		if (strcmp(p->code, userlib) == 0 && p->initlib != NULL) {
-//			fprintf(stderr, "Before: %p, %p\n", &drawkblib.create, &drawkblib.draw);
-//			fprintf(stderr, "Before: %p, %p\n", drawkblib.create, drawkblib.draw);
 			fprintf(stderr, "Found an initlib at %p\n", (void *)(intptr_t)p->initlib);
 			p->initlib(&drawkblib.create, &drawkblib.draw);
-//			fprintf(stderr, "After : %p, %p\n", &drawkblib.create, &drawkblib.draw);
-//			fprintf(stderr, "After: %p, %p\n", drawkblib.create, drawkblib.draw);
-//			drawkblib.createlib = p->initlib;
 			return EXIT_SUCCESS;
 		}
 	}

@@ -227,8 +227,6 @@ int kbwin_init(Display * dpy)
 
 		XSelectInput(dpy, kbwin[i], ExposureMask | VisibilityChangeMask);
 
-		fprintf(stderr, "%p\n", (void *)dpy);
-
 		draw1 = drawkb_create(dpy, config->drawkb_font, IconQuery, config->drawkb_painting_mode, scale[i], &debug);
 
 		if (draw1 == NULL) {
