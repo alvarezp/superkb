@@ -99,6 +99,7 @@ configuration:
 	-imlib2-config --version > /dev/null \
 		&& (echo "PUTICON_IMLIB2=m" >> configuration) \
 		|| (echo "PUTICON_IMLIB2=n" >> configuration)
+	-echo "DRAWKBLIBS_XLIB=m" >> configuration
 	@. ./configuration; \
 		if [ "$$PUTICON_IMLIB2 $$PUTICON_GDKPIXBUF" == "n n" ]; then \
 			echo ; \
@@ -179,7 +180,7 @@ uninstall:
 
 .PHONY : clean
 clean:
-	-/bin/rm -f $(OBJS) $(APP) */*.o */*.so 
+	-/bin/rm -f $(OBJS) $(APP) */*.o */*.so configuration
 	-/bin/rm -f `find -name "*~"`
 	-/bin/rm -f `find -name core`
 	-/bin/rm -f `find -name "core.*"`
