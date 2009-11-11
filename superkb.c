@@ -208,13 +208,17 @@ void superkb_start()
 	/* FIXME: Autorepeat must be restored on end */
 
 	XKeyboardControl xkbc;
-	xkbc.key = inst.key1;
-	xkbc.auto_repeat_mode = AutoRepeatModeOff;
-	XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode | KBKey, &xkbc);
+	if (inst.key1) {
+		xkbc.key = inst.key1;
+		xkbc.auto_repeat_mode = AutoRepeatModeOff;
+		XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode | KBKey, &xkbc);
+	}
 
-	xkbc.key = inst.key2;
-	xkbc.auto_repeat_mode = AutoRepeatModeOff;
-	XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode | KBKey, &xkbc);
+	if (inst.key2) {
+		xkbc.key = inst.key2;
+		xkbc.auto_repeat_mode = AutoRepeatModeOff;
+		XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode | KBKey, &xkbc);
+	}
 
 	int ignore_release = 0;
 	int saved_autorepeat_mode = 0;
