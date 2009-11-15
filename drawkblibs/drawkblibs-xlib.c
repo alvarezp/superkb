@@ -766,9 +766,12 @@ KbDrawKey(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 			KeySym ks;
 			ks = XKeycodeToKeysym(this->dpy, i, 0);
 			kss = XKeysymToString(ks);
-			strncpy(keystring, kss, 255);
 			if (kss) {
+				strncpy(keystring, kss, 255);
 				kss = LookupKeylabelFromKeystring(kss);
+
+				if (!kss) continue;
+
 				strncpy(glyph, kss, 255);
 
 				XftFont *fs;
@@ -940,12 +943,16 @@ KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 			KeySym ks;
 			ks = XKeycodeToKeysym(this->dpy, i, 0);
 			kss = XKeysymToString(ks);
-			strncpy(keystring, kss, 255);
 
 			if (!kss)
 				continue;
 
+			strncpy(keystring, kss, 255);
 			kss = LookupKeylabelFromKeystring(kss);
+
+			if (!kss)
+				continue;
+
 			strncpy(glyph, kss, 255);
 
 			/* Calculate label + icon box bounds */
