@@ -130,7 +130,7 @@ puticon/puticon-imlib2.o: puticon/puticon-imlib2.h configuration
 puticon/puticon-gdkpixbuf.o: puticon/puticon-gdkpixbuf.h configuration
 
 $(SHARED): %.so: %.o
-	ld $(ldlibs-m) -shared -o $@ $<
+	gcc $(ldlibs-m) -shared -o $@ $<
 
 .PHONY : relink
 relink:
