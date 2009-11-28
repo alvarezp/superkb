@@ -403,22 +403,28 @@ void superkb_start(superkb_p this)
 			to[TO_CONFIG].tv_usec = 0;
 			debug(2, "[kp] TO_CONFIG timer set to 3 s.\n");
 
-			push_into_pressed_key_stack(ev.xkey.keycode, ev.xkey.state);
-			debug(2, "[kp] Pushed key to stack.\n");
+			int squashed_state = ev.xkey.state & this->state_mask;
+
+			push_into_pressed_key_stack(ev.xkey.keycode, squashed_state);
+			debug(2, "[kp] Pushed key and state to stack: %d, %d\n", ev.xkey.keycode, squashed_state);
 		} else if ((ev.type == KeyRelease && !ignore_release &&
 				   super_was_active > 0)) {
 			/* User might have asked for binding configuration, so ignore key
 			 * release. That's what ignore_release is for.
 			 */
 			timerclear(&to[TO_CONFIG]);
-			__Action(ev.xkey.keycode, ev.xkey.state);
+
+			int squashed_state = ev.xkey.state & this->state_mask;
+
+			__Action(ev.xkey.keycode, squashed_state);
 
 			debug(1, "[ac] Due to bound key release, executed action for key code = %d, name: %s\n", ev.xkey.keycode, 
 				   XKeysymToString(XKeycodeToKeysym
 								   (this->dpy, ev.xkey.keycode, 0)));
 			debug(2, "     ... and because super_was_active value was > 0: %d\n", super_was_active);
 
-			remove_from_pressed_key_stack(ev.xkey.keycode, ev.xkey.state);
+			remove_from_pressed_key_stack(ev.xkey.keycode, squashed_state);
+			debug(2, "[kp] Removed key and state to stack: %d, %d\n", ev.xkey.keycode, squashed_state);
 
 		} else {
 			/* According to manual, this should not be necessary. */
@@ -456,8 +462,8 @@ superkb_init(superkb_p this,
 			 double drawkb_delay,
 			 void (*f)(KeyCode keycode, unsigned int state),
 			 int superkey_replay,
-             int superkey_release_cancels)
-			 
+             int superkey_release_cancels,
+             int states_mask)
 {
 
 	__Action = f;
@@ -467,6 +473,7 @@ superkb_init(superkb_p this,
 	this->drawkb_delay = drawkb_delay;
 	this->superkey_replay = superkey_replay;
 	this->superkey_release_cancels = superkey_release_cancels;
+	this->state_mask = states_mask;
 
 	/* FIXME: Validate parameters. */
 

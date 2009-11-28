@@ -256,8 +256,7 @@ void __Superkb_Action(KeyCode keycode, unsigned int state)
 	unsigned int i;
 	for (i = 0; i < config->key_bindings_n; i++) {
 		if (config->key_bindings[i].keycode == keycode &&
-		  config->key_bindings[i].state ==
-		  (state & config->key_bindings[i].state)) {
+		  config->key_bindings[i].state == state) {
 			switch (config->key_bindings[i].action_type) {
 			case AT_COMMAND:
 				if (fork() == 0) {
@@ -475,7 +474,8 @@ int main(int argc, char *argv[])
 	superkb_kbwin_set(superkb, kbwin_init, kbwin_map, kbwin_unmap, kbwin_event);
 
 	status = superkb_init(superkb, dpy, "en", config->superkb_super1,
-		config->superkb_super2, config->drawkb_delay, __Superkb_Action, config->superkb_superkey_replay, config->superkb_superkey_release_cancels);
+		config->superkb_super2, config->drawkb_delay, __Superkb_Action, config->superkb_superkey_replay, config->superkb_superkey_release_cancels,
+		~config->squashed_states);
 
 	if (status != EXIT_SUCCESS) {
 		return EXIT_FAILURE;

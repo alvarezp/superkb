@@ -21,6 +21,7 @@
 
 #define CONFIG_DEFAULT_SUPERKB_SUPER1 XKeysymToKeycode(dpy, XStringToKeysym("Super_L"));
 #define CONFIG_DEFAULT_SUPERKB_SUPER2 XKeysymToKeycode(dpy, XStringToKeysym("Super_R"));
+#define CONFIG_DEFAULT_SQUASHED_STATES 82
 #define CONFIG_DEFAULT_DRAWKB_DELAY 0.5
 #define CONFIG_DEFAULT_DRAWKB_FONT "Sans Bold"
 #define CONFIG_DEFAULT_DRAWKB_IMAGELIB "imlib2"
@@ -303,6 +304,11 @@ void handle_line(char *line, int linesize) {
 			return;
 		}
 
+		if (!strcmp(token_array[0], "SQUASHED_STATES") && tok_index == 2) {
+			__config->squashed_states = atoi(token_array[1]);
+			return;
+		}
+
 		if (!strcmp(token_array[0], "BACKGROUND") && tok_index == 4) {
 			
 			__config->backcolor.red = atoi(token_array[1]);
@@ -486,6 +492,7 @@ config_t * config_new (Display *dpy)
 	strcpy(this->feedback_handler, CONFIG_DEFAULT_FEEDBACK_HANDLER);
 	this->superkb_superkey_release_cancels = CONFIG_DEFAULT_SUPERKB_SUPERKEY_RELEASE_CANCELS;
 	this->drawkb_painting_mode = CONFIG_DEFAULT_DRAWKB_PAINTING_MODE;
+	this->squashed_states = CONFIG_DEFAULT_SQUASHED_STATES;
 
 	return this;
 

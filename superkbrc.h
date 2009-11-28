@@ -59,6 +59,7 @@ typedef struct {
 	char feedback_handler[500];
 	int superkb_superkey_release_cancels;
 	painting_mode_t drawkb_painting_mode;
+	int squashed_states;
 } config_t;
 
 int config_load(config_t *config, Display *dpy);
