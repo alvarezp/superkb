@@ -15,17 +15,41 @@
 #include <sys/time.h>
 #include <errno.h>
 
-void superkb_start();
+typedef struct {
+	int (*init) (Display *);
+	void (*map) (Display *);
+	void (*unmap) (Display *);
+	void (*event) (Display *, XEvent ev);
+} kbwin_t, *kbwin_p;
 
-int superkb_init(Display *display,
-             int (*kbwin_init) (Display *),
-             void (*kbwin_map) (Display *),
-             void (*kbwin_unmap) (Display *),
-             void (*kbwin_event) (Display *, XEvent ev),
+typedef struct {
+	KeyCode key1;
+	KeyCode key2;
+	double drawkb_delay;
+	Display *dpy;
+	Window rootwin;
+	int superkey_replay;
+	int superkey_release_cancels;
+	kbwin_t kbwin;
+	char kblayout[3];
+} superkb_t, *superkb_p;
+
+void superkb_start(superkb_p this);
+
+superkb_p superkb_create(void);
+
+int superkb_init(superkb_p this,
+             Display *display,
              const char *kblayout, KeyCode key1, KeyCode key2,
 			 double drawkb_delay,
              void (*f)(KeyCode keycode, unsigned int state),
              int superkey_replay,
              int superkey_release_cancels);
+
+void superkb_kbwin_set(superkb_p this,
+			 int (*superkb_kbwin_init) (Display *),
+			 void (*superkb_kbwin_map) (Display *),
+			 void (*superkb_kbwin_unmap) (Display *),
+			 void (*superkb_kbwin_event) (Display *, XEvent ev));
 
 #endif     /* __SUPERKB_H */

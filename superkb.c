@@ -25,35 +25,6 @@
 
 void (*__Action)(KeyCode keycode, unsigned int state);
 
-struct _superkb_kbwin {
-	int (*init) (Display *);
-	void (*map) (Display *);
-	void (*unmap) (Display *);
-	void (*event) (Display *, XEvent ev);
-};
-
-struct config {
-	char kblayout[3];
-	KeySym key1;
-	KeySym key2;
-};
-
-struct instance {
-	KeyCode key1;
-	KeyCode key2;
-	double drawkb_delay;
-	Display *dpy;
-	Window rootwin;
-	int superkey_replay;
-	int superkey_release_cancels;
-};
-
-XEvent sigev;
-
-struct _superkb_kbwin superkb_kbwin = { NULL, NULL, NULL, NULL };
-struct config conf = { "", 0, 0 };
-struct instance inst = { 0, 0, 0, NULL, 0, 0, 0 };
-
 /* Start PRESSED KEYS STACK */
 
 typedef struct pressed_keys_element {
@@ -180,14 +151,14 @@ enum to_index {
 
 struct timeval to[to_n];
 
-void superkb_start()
+void superkb_start(superkb_p this)
 {
 	/* Solicitar los eventos */
-	if (inst.key1)
-		XGrabKey(inst.dpy, inst.key1, AnyModifier, inst.rootwin, True,
+	if (this->key1)
+		XGrabKey(this->dpy, this->key1, AnyModifier, this->rootwin, True,
 				 GrabModeAsync, GrabModeAsync);
-	if (inst.key2)
-		XGrabKey(inst.dpy, inst.key2, AnyModifier, inst.rootwin, True,
+	if (this->key2)
+		XGrabKey(this->dpy, this->key2, AnyModifier, this->rootwin, True,
 				 GrabModeAsync, GrabModeAsync);
 
 	XKeyboardState xkbs;
@@ -199,25 +170,25 @@ void superkb_start()
 
 	/* Save autorepeat previous state. Then turn off. */
 
-	XGetKeyboardControl(inst.dpy, &xkbs);
-	saved_key1_autorepeat_mode = (xkbs.auto_repeats[(int) inst.key1/8] & inst.key1 % 8) > 0;
+	XGetKeyboardControl(this->dpy, &xkbs);
+	saved_key1_autorepeat_mode = (xkbs.auto_repeats[(int) this->key1/8] & this->key1 % 8) > 0;
 
-	XGetKeyboardControl(inst.dpy, &xkbs);
-	saved_key2_autorepeat_mode = (xkbs.auto_repeats[(int) inst.key2/8] & inst.key2 % 8) > 0;
+	XGetKeyboardControl(this->dpy, &xkbs);
+	saved_key2_autorepeat_mode = (xkbs.auto_repeats[(int) this->key2/8] & this->key2 % 8) > 0;
 
 	/* FIXME: Autorepeat must be restored on end */
 
 	XKeyboardControl xkbc;
-	if (inst.key1) {
-		xkbc.key = inst.key1;
+	if (this->key1) {
+		xkbc.key = this->key1;
 		xkbc.auto_repeat_mode = AutoRepeatModeOff;
-		XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode | KBKey, &xkbc);
+		XChangeKeyboardControl(this->dpy, KBAutoRepeatMode | KBKey, &xkbc);
 	}
 
-	if (inst.key2) {
-		xkbc.key = inst.key2;
+	if (this->key2) {
+		xkbc.key = this->key2;
 		xkbc.auto_repeat_mode = AutoRepeatModeOff;
-		XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode | KBKey, &xkbc);
+		XChangeKeyboardControl(this->dpy, KBAutoRepeatMode | KBKey, &xkbc);
 	}
 
 	int ignore_release = 0;
@@ -255,8 +226,8 @@ void superkb_start()
 		}
 
 		if (i == to_n) {
-			debug (4, "[xn] Calling XNextEventWithTimeout(inst.dpy, &ev, NULL)\n");
-			XNEWT_ret = XNextEventWithTimeout(inst.dpy, &ev, NULL);
+			debug (4, "[xn] Calling XNextEventWithTimeout(this->dpy, &ev, NULL)\n");
+			XNEWT_ret = XNextEventWithTimeout(this->dpy, &ev, NULL);
 		} else {
 			gettimeofday(&hold_start, NULL);
 
@@ -279,8 +250,8 @@ void superkb_start()
 			 */
 			if (to[to_reason].tv_sec >= 0 &&
 				to[to_reason].tv_usec >= 0) {
-				debug (4, "[xn] Calling XNextEventWithTimeout(inst.dpy, &ev, &to[to_reason]) to_reason = %d\n", to_reason);
-				XNEWT_ret = XNextEventWithTimeout(inst.dpy, &ev, &to[to_reason]);
+				debug (4, "[xn] Calling XNextEventWithTimeout(this->dpy, &ev, &to[to_reason]) to_reason = %d\n", to_reason);
+				XNEWT_ret = XNextEventWithTimeout(this->dpy, &ev, &to[to_reason]);
 			} 
 
 			/* Restore. */
@@ -314,18 +285,19 @@ void superkb_start()
 				timerclear(&to[TO_DRAWKB]);
 
 				/* Map Window. */
-				superkb_kbwin.map(inst.dpy);
+				if (this->kbwin.map)
+					this->kbwin.map(this->dpy);
 
 			}
-		} else if (ev.xany.window != inst.rootwin) {
-			superkb_kbwin.event(inst.dpy, ev);
-		} else if (ev.xkey.keycode == inst.key1
-				   || ev.xkey.keycode == inst.key2) {
+		} else if (ev.xany.window != this->rootwin) {
+			this->kbwin.event(this->dpy, ev);
+		} else if (ev.xkey.keycode == this->key1
+				   || ev.xkey.keycode == this->key2) {
 			if (ev.type == KeyPress) {
 				ignore_release = 0;
 
 				debug(1, "[sk] Super key has been pressed, code: %d, name: %s.\n", ev.xkey.keycode,
-					XKeysymToString(XKeycodeToKeysym(inst.dpy, ev.xkey.keycode, 0)));
+					XKeysymToString(XKeycodeToKeysym(this->dpy, ev.xkey.keycode, 0)));
 
 				if (super_was_active++) {
 					super_replay = 0;
@@ -335,41 +307,41 @@ void superkb_start()
 
 				debug(2, "[sa] super_was_active increased to %d, taking action.\n", super_was_active);
 
-				super_replay = inst.superkey_replay;
+				super_replay = this->superkey_replay;
 				memcpy(&event_save_for_replay, &ev, sizeof(XEvent));
 
 				int revert_to_return;
-				XGetInputFocus(inst.dpy, &event_saved_window, &revert_to_return);
+				XGetInputFocus(this->dpy, &event_saved_window, &revert_to_return);
 
 				XKeyboardState xkbs;
 
 				/* Save autorepeat previous state. Then turn off. */
-				XGetKeyboardControl(inst.dpy, &xkbs);
+				XGetKeyboardControl(this->dpy, &xkbs);
 				saved_autorepeat_mode = xkbs.global_auto_repeat;
 
 				debug(1, "[ar] AutoRepeat state has been saved: %d.\n", saved_autorepeat_mode);
 
 				XKeyboardControl xkbc;
 				xkbc.auto_repeat_mode = AutoRepeatModeOff;
-				XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode, &xkbc);
+				XChangeKeyboardControl(this->dpy, KBAutoRepeatMode, &xkbc);
 
 				debug(1, "[ar] AutoRepeat state has been turned off.\n");
 
 				/* Grab the keyboard. */
-				XGrabKeyboard(inst.dpy, inst.rootwin, False, GrabModeAsync,
+				XGrabKeyboard(this->dpy, this->rootwin, False, GrabModeAsync,
 							  GrabModeAsync, CurrentTime);
 
-				if (inst.drawkb_delay > 0) {
-					to[TO_DRAWKB].tv_sec = (int) inst.drawkb_delay;
-					to[TO_DRAWKB].tv_usec = (int) ((inst.drawkb_delay - to[TO_DRAWKB].tv_sec) * 1000000);
+				if (this->drawkb_delay > 0) {
+					to[TO_DRAWKB].tv_sec = (int) this->drawkb_delay;
+					to[TO_DRAWKB].tv_usec = (int) ((this->drawkb_delay - to[TO_DRAWKB].tv_sec) * 1000000);
 				} else {
 					/* Map Window. */
-					superkb_kbwin.map(inst.dpy);
+					this->kbwin.map(this->dpy);
 				}
 			} else if (ev.type == KeyRelease) {
 
 				debug(1, "[sk] Super key has been released, code: %d, name: %s.\n", ev.xkey.keycode,
-					XKeysymToString(XKeycodeToKeysym(inst.dpy, ev.xkey.keycode, 0)));
+					XKeysymToString(XKeycodeToKeysym(this->dpy, ev.xkey.keycode, 0)));
 
 				if (--super_was_active) {
 					debug(2, "[sa] super_was_active decreased to %d, ignoring release.\n", super_was_active);
@@ -392,9 +364,9 @@ void superkb_start()
 					event_save_for_replay.xkey.subwindow = 0;
 					ev.xkey.subwindow = 0;
 
-					XSendEvent(inst.dpy, event_saved_window, 1, KeyPressMask, &event_save_for_replay);
-					XSendEvent(inst.dpy, event_saved_window, 1, KeyReleaseMask, &ev);
-					XSync(inst.dpy, True);
+					XSendEvent(this->dpy, event_saved_window, 1, KeyPressMask, &event_save_for_replay);
+					XSendEvent(this->dpy, event_saved_window, 1, KeyReleaseMask, &ev);
+					XSync(this->dpy, True);
 					debug(1, "[sr] Super key has been replayed\n");
 				}
 
@@ -402,19 +374,19 @@ void superkb_start()
 				XKeyboardControl xkbc;
 				/*xkbc.auto_repeat_mode = saved_autorepeat_mode; */
 				xkbc.auto_repeat_mode = AutoRepeatModeOn;
-				XChangeKeyboardControl(inst.dpy, KBAutoRepeatMode, &xkbc);
+				XChangeKeyboardControl(this->dpy, KBAutoRepeatMode, &xkbc);
 
 				debug(1, "[ar] AutoRepeat has been restored to: %d\n", saved_autorepeat_mode);
 
-				XUngrabKeyboard(inst.dpy, CurrentTime);
-				superkb_kbwin.unmap(inst.dpy);
+				XUngrabKeyboard(this->dpy, CurrentTime);
+				this->kbwin.unmap(this->dpy);
 
 				for (x = 0; x < pressed_keys_n; x++) {
 					__Action(pressed_keys[x].keycode, pressed_keys[x].state);
 
 					debug(1, "[ac] Due to Super key release, executed action for key code = %d, name: %s\n", pressed_keys[x].keycode, 
 						XKeysymToString(XKeycodeToKeysym
-							(inst.dpy, pressed_keys[x].keycode, 0)));
+							(this->dpy, pressed_keys[x].keycode, 0)));
 
 				}
 
@@ -443,26 +415,43 @@ void superkb_start()
 
 			debug(1, "[ac] Due to bound key release, executed action for key code = %d, name: %s\n", ev.xkey.keycode, 
 				   XKeysymToString(XKeycodeToKeysym
-								   (inst.dpy, ev.xkey.keycode, 0)));
+								   (this->dpy, ev.xkey.keycode, 0)));
 			debug(2, "     ... and because super_was_active value was > 0: %d\n", super_was_active);
 
 			remove_from_pressed_key_stack(ev.xkey.keycode, ev.xkey.state);
 
 		} else {
 			/* According to manual, this should not be necessary. */
-			/* XAllowEvents(inst.dpy, ReplayKeyboard, CurrentTime); */
+			/* XAllowEvents(this->dpy, ReplayKeyboard, CurrentTime); */
 		}
 
 	}
 
 }
 
-int
-superkb_init(Display *display,
+void superkb_kbwin_set(superkb_p this,
 			 int (*superkb_kbwin_init) (Display *),
 			 void (*superkb_kbwin_map) (Display *),
 			 void (*superkb_kbwin_unmap) (Display *),
-			 void (*superkb_kbwin_event) (Display *, XEvent ev),
+			 void (*superkb_kbwin_event) (Display *, XEvent ev))
+{
+	if (superkb_kbwin_init != NULL) {
+		this->kbwin.init = superkb_kbwin_init;
+	}
+	if (superkb_kbwin_map != NULL) {
+		this->kbwin.map = superkb_kbwin_map;
+	}
+	if (superkb_kbwin_unmap != NULL) {
+		this->kbwin.unmap = superkb_kbwin_unmap;
+	}
+	if (superkb_kbwin_event != NULL) {
+		this->kbwin.event = superkb_kbwin_event;
+	}
+}
+
+int
+superkb_init(superkb_p this,
+             Display *display,
 			 const char *kblayout, KeyCode key1, KeyCode key2,
 			 double drawkb_delay,
 			 void (*f)(KeyCode keycode, unsigned int state),
@@ -472,39 +461,36 @@ superkb_init(Display *display,
 {
 
 	__Action = f;
-	inst.dpy = display;
+	this->dpy = display;
 	int r;
 
-	inst.drawkb_delay = drawkb_delay;
-	inst.superkey_replay = superkey_replay;
-	inst.superkey_release_cancels = superkey_release_cancels;
+	this->drawkb_delay = drawkb_delay;
+	this->superkey_replay = superkey_replay;
+	this->superkey_release_cancels = superkey_release_cancels;
 
 	/* FIXME: Validate parameters. */
 
 	/* Set configuration values. Parameters should be already validated. */
-	superkb_kbwin.init = superkb_kbwin_init;
-	superkb_kbwin.map = superkb_kbwin_map;
-	superkb_kbwin.unmap = superkb_kbwin_unmap;
-	superkb_kbwin.event = superkb_kbwin_event;
-	strcpy(conf.kblayout, kblayout);
-	conf.key1 = key1;
-	conf.key2 = key2;
+	strcpy(this->kblayout, kblayout);
+	this->key1 = key1;
+	this->key2 = key2;
 
-	//inst.key1 = XKeysymToKeycode(inst.dpy, key1);
-	//inst.key2 = XKeysymToKeycode(inst.dpy, key2);
-	inst.key1 = key1;
-	inst.key2 = key2;
+	this->rootwin = DefaultRootWindow(this->dpy);
 
-	inst.rootwin = DefaultRootWindow(inst.dpy);
-
-	inst.dpy = display;
+	this->dpy = display;
 
 	/* Create the keyboard window. */
-	r = superkb_kbwin.init(inst.dpy);
+	r = this->kbwin.init(this->dpy);
 	if (r == EXIT_FAILURE)
 		return EXIT_FAILURE;
 
-	XFlush(inst.dpy);
+	XFlush(this->dpy);
 
 	return 0;
+}
+
+superkb_p superkb_create(void) {
+	superkb_p this = malloc(sizeof(superkb_t));
+	memset (this, 0, sizeof(superkb_t));
+	return this;
 }

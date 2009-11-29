@@ -248,12 +248,7 @@ int kbwin_init(Display * dpy)
 
 	XFlush(dpy);
 
-
-	if (r == EXIT_FAILURE)
-		fprintf(stderr, "superkb: Failed to initialize drawkb. Quitting.\n");
-
-
-	return r;
+	return EXIT_SUCCESS;
 }
 
 void __Superkb_Action(KeyCode keycode, unsigned int state)
@@ -475,8 +470,11 @@ int main(int argc, char *argv[])
 
 	Init_drawkblib(config->drawkb_drawkblib);
 
-	status = superkb_init(dpy, kbwin_init, kbwin_map, kbwin_unmap,
-		kbwin_event, "en", config->superkb_super1,
+	superkb_p superkb = superkb_create();
+
+	superkb_kbwin_set(superkb, kbwin_init, kbwin_map, kbwin_unmap, kbwin_event);
+
+	status = superkb_init(superkb, dpy, "en", config->superkb_super1,
 		config->superkb_super2, config->drawkb_delay, __Superkb_Action, config->superkb_superkey_replay, config->superkb_superkey_release_cancels);
 
 	if (status != EXIT_SUCCESS) {
@@ -484,7 +482,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (!cancel_after_ready)
-		superkb_start();
+		superkb_start(superkb);
 
 	return EXIT_SUCCESS;
 }
