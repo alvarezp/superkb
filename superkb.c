@@ -154,10 +154,10 @@ struct timeval to[to_n];
 void superkb_start(superkb_p this)
 {
 	/* Solicitar los eventos */
-	if (this->key1)
+	if (this->key1 != 0)
 		XGrabKey(this->dpy, this->key1, AnyModifier, this->rootwin, True,
 				 GrabModeAsync, GrabModeAsync);
-	if (this->key2)
+	if (this->key2 != 0)
 		XGrabKey(this->dpy, this->key2, AnyModifier, this->rootwin, True,
 				 GrabModeAsync, GrabModeAsync);
 
