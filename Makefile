@@ -178,8 +178,7 @@ install-app:
 		echo "You will now need a .superkbrc configuration file in your home"; \
 		echo "directory. (Not root's home directory, but yours.)"; \
 		echo ; \
-		echo "There are sample files under the sample-config directory, but"; \
-		echo "the most complete sample is located in the following URL:"; \
+		echo "There are sample files under the sample-config directory."; \
 		echo ; \
 		echo "Once you have done that, issue the 'superkb' command."; \
 		echo ; \
