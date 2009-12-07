@@ -1,0 +1,122 @@
+FEEDBACK_HANDLER "notify-send --urgency normal -t 2000 --icon='gtk-info' Superkb Launching\"
+
+#DELAY: Time (in seconds) the Super key must be pressed before showing
+# the on-screen hints.
+#
+#Example vlaues:
+#  DELAY 0.5
+#  DELAY 1
+#
+#Default value: 0.5
+DELAY 0.5
+
+#DRAWKB_PAINTING_MODE: Selects the key shape mode to be used when painting
+# the keyboard.
+#
+#Possible values:
+#  FULL_SHAPE = Draws all the available outlines, simulating the full physical
+#   key.
+#  BASE_OUTLINE_ONLY = Draws a hollow base outline using the foreground color.
+#  FLAT_KEY = Draws a filled dark base outline.
+#
+#Default value: FULL_SHAPE
+DRAWKB_PAINTING_MODE FLAT_KEY
+
+#SUPERKEY_REPLAY: Allows the Super key to be forwarded to the current window
+#  if it was pressed and released before the delay and if no action key was
+#  pressed.
+#
+#Possible values:
+#  1 = Enables Super key replaying to the current window.
+#  0 = Disables this behavior. Superkb steals the Super key for itself only.
+#
+#Default: 1
+SUPERKEY_REPLAY 1
+
+#SUPERKEY1_STRING and SUPERKEY1_CODE: Specify what the first Super key is to be.
+#  This is useful in laptops like the Thinkpad where there isn't a Windows key.
+#
+#Example values:
+#  SUPERKEY1_STRING F8
+#  SUPERKEY1_STRING Super_L
+#  SUPERKEY1_CODE 233
+#
+#Default value:
+#  SUPERKEY1_STRING Super_L
+SUPERKEY1_STRING Super_L
+
+#SUPERKEY2_STRING and SUPERKEY2_CODE: Specify what the second Super key is to
+#be.
+#
+#Example values:
+#  SUPERKEY2_STRING F8
+#  SUPERKEY2_STRING Super_R
+#  SUPERKEY2_CODE 233
+#
+#Default value:
+#  SUPERKEY2_STRING Super_R
+
+#SUPERKEY_RELEASE_CANCELS: Cancels whatever action is to be performed if the
+# Super key is released before the bound key.
+#
+#Possible values:
+#  0 = Actions will be done even if the Super key is released before the bound
+#   key.
+#  1 = Releasing Super key will force ignoring of currently pressed bound keys.
+#
+#Default value: 0
+SUPERKEY_RELEASE_CANCELS 0
+
+#You can use either Cairo or Xlib for drawing the keyboard. This is controlled
+#with DRAWKBLIB.
+#
+#You should change it if not using Cairo.
+#
+#Possible values:
+#  cairo
+#  xlib
+#
+#Default value: cairo
+
+#Don't use the following unless you didn't include Cairo.
+#
+#FONT "-*-bitstream vera sans-bold-r-*-*-*-*-*-*-*-*-*-*"
+#IMAGELIB imlib2
+
+#BACKGROUND, FOREGROUND: Set the colors to use when drawing the keyboard. 
+#
+#Syntax:
+#  FOREGROUND red_value green_value blue_value
+#  BACKGROUND red_value green_value blue_value
+#
+#The red, green and blue values can either be in the range 0 to 255, or
+#  0 to 65535.
+#
+#Example values:
+#  FOREGROUND 255 255 255
+#  BACKGROUND 23 110 38
+#
+#Default values:
+# BACKGROUND 40 40 40
+# FOREGROUND 220 220 220
+
+#Icons files are really not that up to date.
+
+KEY COMMAND "c" 0 /usr/bin/gcalctool /usr/share/icons/gnome/32x32/apps/accessories-calculator.png "'Calculator'"
+KEY COMMAND "n" 0 /usr/bin/gedit /usr/share/icons/gnome/32x32/apps/text-editor.png "'gedit'"
+KEY COMMAND "F10" 0 "/usr/bin/xchat" /usr/share/pixmaps/xchat.png "'XChat'"
+KEY COMMAND "F12" 0 /usr/bin/gnome-terminal /usr/share/pixmaps/gnome-terminal.png "'Terminal Emulator'"
+KEY COMMAND "Home" 0 "/usr/bin/nautilus /home/alvarezp" /usr/share/pixmaps/gnome-home.png "'Home Folder'"
+KEY COMMAND "Print" 0 "/usr/bin/gnome-screenshot" /usr/share/icons/gnome/48x48/apps/applets-screenshooter.png "'Screenshooter'" 
+KEY COMMAND "g" 0 /usr/bin/gimp /usr/share/pixmaps/gnome-gimp.png "'The Gimp'"
+KEY COMMAND "q" 0 /usr/bin/pidgin /usr/share/icons/hicolor/48x48/apps/pidgin.png "'Pidgin'"
+KEY COMMAND "Insert" 0 /usr/bin/gmrun /usr/share/icons/gnome/32x32/actions/gnome-run.png "'Application Launcher'"
+KEY COMMAND "Delete" 0 /usr/bin/gnome-system-monitor /usr/share/icons/gnome/32x32/apps/gnome-monitor.png "'System Monitor'"
+KEY COMMAND "Pause" 0 /usr/bin/hal-device-manager /usr/share/icons/gnome/48x48/apps/hwbrowser.png "'Hardware Browser"
+KEY COMMAND "l" 0 "/usr/bin/gnome-screensaver-command --lock" /usr/share/icons/gnome/32x32/actions/gnome-lockscreen.png "'Screen Locker'"
+KEY COMMAND "e" 0 "/usr/bin/evolution" /usr/share/icons/hicolor/32x32/apps/evolution.png "'Evolution'"
+KEY COMMAND "F5" 0 "/usr/bin/soffice -writer" /usr/share/icons/hicolor/32x32/apps/openofficeorg23-writer.png "'OpenOffice.org Writer'"
+KEY COMMAND "F6" 0 "/usr/bin/soffice -calc" /usr/share/icons/hicolor/32x32/apps/openofficeorg23-calc.png "'OpenOffice.org Calc'"
+KEY COMMAND "F7" 0 "/usr/bin/soffice -impress" /usr/share/icons/hicolor/32x32/apps/openofficeorg23-impress.png "'OpenOffice.org Impress'"
+KEY COMMAND "f" 0 "/usr/bin/dia" /usr/share/pixmaps/dia.xpm "'Dia'"
+KEY COMMAND "i" 0 "/usr/bin/firefox" /usr/share/pixmaps/firefox.png "'Firefox'"

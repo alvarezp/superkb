@@ -181,8 +181,6 @@ install-app:
 		echo "There are sample files under the sample-config directory, but"; \
 		echo "the most complete sample is located in the following URL:"; \
 		echo ; \
-		echo "http://blog.alvarezp.org/files/superkbrc.sample"; \
-		echo ; \
 		echo "Once you have done that, issue the 'superkb' command."; \
 		echo ; \
 	}
