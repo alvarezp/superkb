@@ -488,6 +488,13 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
+	fprintf(stderr,
+		"\n\n"
+		"Superkb is now running!\n"
+		"\n"
+		"Press and hold any of your configured Super keys to start using it.\n"
+	);
+
 	if (!cancel_after_ready)
 		superkb_start(superkb);
 
