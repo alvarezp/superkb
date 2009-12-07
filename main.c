@@ -467,7 +467,14 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	Init_drawkblib(config->drawkb_drawkblib);
+	status = Init_drawkblib(config->drawkb_drawkblib);
+	if (status == EXIT_FAILURE) {
+		char vals[500] = "";
+		Imagelib_GetValues((char *) &vals, 499);
+		fprintf(stderr, "Failed to initialize drawkb library: %s.\n\n"
+			"You might try any of the following as the value for DRAWKBLIB in\n"
+			"your $HOME/.superkbrc file: %s\n", config->drawkb_drawkblib, vals);
+	}
 
 	superkb_p superkb = superkb_create();
 
