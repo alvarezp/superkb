@@ -34,16 +34,16 @@
 #include "debug.h"
 #include "version.h"
 
-/* Conditionally includes X11/extensions/Xinerama.h */
-#include "xinerama-support.h"
+#include "screeninfo.h"
 
 #define WINH(i) (kbgeom->width_mm * scale[i])
 #define WINV(i) (kbgeom->width_mm * scale[i])
 
 struct sigaction action;
 
-XineramaScreenInfo *xinerama_screens=NULL;
-int xinerama_screens_n=0;
+screeninfo_t *screens=NULL;
+int screens_n=0;
+
 Window *kbwin=NULL;
 Pixmap *kbwin_backup=NULL;
 GC *kbwin_gc=NULL;
@@ -121,13 +121,13 @@ void kbwin_event(Display * dpy, XEvent ev)
 	int i;
 	if (ev.type == Expose) {
 /*		drawkb_draw(dpy, kbwin[i], kbwin_gc[i], DisplayWidth(dpy, 0), DisplayHeight(dpy, 0), kbdesc);*/
-		for (i=0; i < xinerama_screens_n; i++) {
+		for (i=0; i < screens_n; i++) {
 			XCopyArea(dpy, kbwin_backup[i], kbwin[i], kbwin_gc[i], 0, 0, WINH(i), WINV(i), 0, 0);
 		}
 		XFlush(dpy);
 	} else if (ev.type == VisibilityNotify &&
 			   ev.xvisibility.state != VisibilityUnobscured) {
-		for (i=0; i < xinerama_screens_n; i++) {
+		for (i=0; i < screens_n; i++) {
 			XRaiseWindow(dpy, kbwin[i]);
 		}
 	}
@@ -138,7 +138,7 @@ void kbwin_map(Display * dpy)
 {
 	/* XGetInputFocus(dpy, &prev_kbwin_focus, &prev_kbwin_revert); */
 	int i;
-	for (i=0; i < xinerama_screens_n; i++) {
+	for (i=0; i < screens_n; i++) {
 		XSetTransientForHint(dpy, kbwin[i], DefaultRootWindow(dpy));
 		XMapWindow(dpy, kbwin[i]);
 	}
@@ -147,7 +147,7 @@ void kbwin_map(Display * dpy)
 void kbwin_unmap(Display * dpy)
 {
 	int i;
-	for (i=0; i < xinerama_screens_n; i++) {
+	for (i=0; i < screens_n; i++) {
 		XUnmapWindow(dpy, kbwin[i]);
 	}
 	/* XSetInputFocus(dpy, prev_kbwin_focus, prev_kbwin_revert, CurrentTime); */
@@ -176,22 +176,22 @@ int kbwin_init(Display * dpy)
 	XSetWindowAttributes attr;
 	attr.override_redirect = True;
 
-	/* Create one windows per Xinerama screen. */
+	/* Create one windows per screen. */
 
-	XineramaScreenInfo *xsi;
+	screeninfo_t *xsi;
 
 	int i;
-	kbwin = malloc(xinerama_screens_n * sizeof(Window));
-	kbwin_backup = malloc(xinerama_screens_n * sizeof(Pixmap));
-	scale = malloc(xinerama_screens_n * sizeof(double));
-	kbwin_gc = malloc(xinerama_screens_n * sizeof(GC));
-	for (i = 0; i < xinerama_screens_n; i++) {
+	kbwin = malloc(screens_n * sizeof(Window));
+	kbwin_backup = malloc(screens_n * sizeof(Pixmap));
+	scale = malloc(screens_n * sizeof(double));
+	kbwin_gc = malloc(screens_n * sizeof(GC));
+	for (i = 0; i < screens_n; i++) {
 
 		int winv;
 		int winh;
 
 		/* Just as little shortcut. */
-		xsi = &xinerama_screens[i];
+		xsi = &screens[i];
 
 		debug (3, "Preparing screen #%d: %d, %d, %d, %d\n", i, xsi->x_org, xsi->y_org, xsi->width, xsi->height);
 
@@ -455,7 +455,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	get_xinerama_screens(dpy, &xinerama_screens, &xinerama_screens_n);
+	screeninfo_get_screens(dpy, &screens, &screens_n);
 
 	if (Init_Imagelib(dpy, config->drawkb_imagelib) == EXIT_FAILURE)
 	{

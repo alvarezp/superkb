@@ -31,13 +31,20 @@ cflags-$(DRAWKBLIBS_CAIRO) += $(shell pkg-config x11 renderproto xrender cairo c
 cflags-y += $(shell pkg-config xft --cflags)
 ldlibs-y += $(shell pkg-config xft --libs)
 
-ldlibs-y += $(shell pkg-config xinerama --libs)
+#Choose whether Xinerama will be emulated or real.
+ifeq ($(XINERAMA_SUPPORT),n)
+	obj-y += screeninfo-xlib.o
+else
+	obj-y += screeninfo-xinerama.o
+	ldlibs-y += $(shell pkg-config xinerama --libs)
+	cflags-y += $(shell pkg-config xinerama --cflags)
+endif
 
 #Special variables
 SHELL=/bin/sh
 CC=gcc
 CFLAGS=-Wall -std=gnu99 -pedantic-errors $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC
-OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o xinerama-support.o $(obj-y)
+OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o $(obj-y)
 LDPARAMS=-lX11 -lm -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
 
 #My variables
@@ -99,6 +106,9 @@ check_dep:
 	}
 
 configuration:
+	-pkg-config xinerama --exists > /dev/null \
+		&& (echo "XINERAMA_SUPPORT=y" >> configuration) \
+		|| (echo "XINERAMA_SUPPORT=n" >> configuration)
 	-pkg-config gdk-pixbuf-xlib-2.0 --exists > /dev/null \
 		&& (echo "PUTICON_GDKPIXBUF=m" >> configuration) \
 		|| (echo "PUTICON_GDKPIXBUF=n" >> configuration)
@@ -133,11 +143,12 @@ superkb.o: superkb.h
 superkbrc.o: superkbrc.h globals.h
 imagelib.o: imagelib.h configuration puticon/puticon.h $(obj-y)
 drawkblib.o: drawkblib.h configuration drawkblibs/drawkblibs.h $(obj-y)
-main.o: superkb.h imagelib.h drawkblib.h superkbrc.h
+main.o: superkb.h imagelib.h drawkblib.h superkbrc.h screeninfo.h
 drawkblibs/drawkblibs-xlib.o: drawkblibs/drawkblibs-xlib.h configuration
 drawkblibs/drawkblibs-cairo.o: drawkblibs/drawkblibs-cairo.h drawkblib.o configuration
 puticon/puticon-imlib2.o: puticon/puticon-imlib2.h configuration
 puticon/puticon-gdkpixbuf.o: puticon/puticon-gdkpixbuf.h configuration
+
 
 $(SHARED): %.so: %.o
 	gcc $(ldlibs-m) -shared -o $@ $<
