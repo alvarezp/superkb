@@ -33,6 +33,11 @@
 	#define drawkblibs_cairo_init NULL
 #endif
 
+struct {
+	drawkb_create_t create;
+	drawkb_draw_t draw;
+} drawkblib;
+
 drawkblib_compiled_in_t drawkblib_compiled_in[] = {
 	{ "xlib",    drawkblibs_xlib_init },
 	{ "cairo",   drawkblibs_cairo_init },
