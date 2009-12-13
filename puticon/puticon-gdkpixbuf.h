@@ -4,6 +4,14 @@
  * Copyright (C) 2006, Octavio Alvarez Piza.
  * License: GNU General Public License v2.
  *
+ * This is the actual implementation of puticon by using gdkpixbuf to render a
+ * an icon into an X11 drawable.
+ *
+ * This code is not by drawkblib-xlib directly, but by imagelib.c This allows
+ * imagelib.c to provide multiple options to image rendering.
+ *
+ * See drawkblibs/drawkblib-xlib.h and imagelib.h for details.
+ *
  */
 
 #ifndef __PUTICON_GDKPIXBUF_PIXBUF_XLIB_H

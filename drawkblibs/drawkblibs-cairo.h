@@ -4,6 +4,14 @@
  * Copyright (C) 2006, Octavio Alvarez Piza.
  * License: GNU General Public License v2.
  *
+ * This is the actual implementation of drawkb by using cairo to render the
+ * keyboard onto an X11 drawable .
+ *
+ * This code is not used by Superkb directly, but by drawkblib.c This allows
+ * drawkblib.c to provide multiple options to keyboard rendering.
+ *
+ * See drawkblib.h for details.
+ *
  */
 
 #ifndef __DRAWKBLIBS_CAIRO_H

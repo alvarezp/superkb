@@ -4,6 +4,12 @@
  * Copyright (C) 2006, Octavio Alvarez Piza.
  * License: GNU General Public License v2.
  *
+ * This code provides Superkb with the actual functions to render the
+ * keyboard onto an X11 drawable.
+ *
+ * Multiple different codes may provide the functionality, and are located
+ * under drawkblibs/ as are drawkblib-xlib and drawkblib-cairo.
+ *
  */
 
 #ifndef __drawkblib_H

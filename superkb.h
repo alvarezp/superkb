@@ -4,6 +4,18 @@
  * Copyright (C) 2006, Octavio Alvarez Piza.
  * License: GNU General Public License v2.
  *
+ * Provides Superkb with the mechanism to handle the keyboard. This includes:
+ *  - handling of the hotkey (the one that triggers the keyboard display on
+ *    the screen)
+ *  - calling of the callback functions that actually launch the actions
+ *    (application, document or whatever), 
+ *  - timer management (two at the moment):
+ *    :: One that triggers the configuration program for an action key if
+ *       held down for 3 seconds.
+ *    :: The one that triggers the drawing of the keyboard.
+ *
+ * This code only does the handling of the keyboard. Every action is done by
+ * callbacks. This allows the module to be plugged out if needed.
  */
 
 #ifndef __SUPERKB_H

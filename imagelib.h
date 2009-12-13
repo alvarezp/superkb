@@ -4,6 +4,12 @@
  * Copyright (C) 2006, Octavio Alvarez Piza.
  * License: GNU General Public License v2.
  *
+ * This code provides drawkblib-xlib with a way to render icons on the
+ * drawable it asks to. This allows it to draw the icons on bound keys.
+ *
+ * Multiple different codes may provide the functionality, and are located
+ * under puticon/ as are puticon-imlib2 and puticon-gdkpixbuf.
+ *
  */
 
 #ifndef __IMAGELIB_H

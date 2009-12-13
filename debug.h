@@ -4,6 +4,10 @@
  * Copyright (C) 2008, Octavio Alvarez Piza.
  * License: GNU General Public License v2.
  *
+ * Provides a unified way to print debug messages along the whole code.
+ *
+ * It does so by providing debug(). It should be used instead of *printf().
+ *
  */
 
 #ifndef __DEBUG_H

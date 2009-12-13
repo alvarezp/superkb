@@ -4,6 +4,9 @@
  * Copyright (C) 2006, Octavio Alvarez Piza.
  * License: GNU General Public License v2.
  *
+ * This header should be included by all implementation providers of puticon
+ * in order to comply and interoperate with the needed by imagelib.
+ *
  */
 
 #ifndef __PUTICON_H

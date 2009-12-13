@@ -4,6 +4,14 @@
  * Copyright (C) 2006, Octavio Alvarez Piza.
  * License: GNU General Public License v2.
  *
+ * This is the actual implementation of drawkb by using X11 to render a
+ * keyboard onto an X11 drawable.
+ *
+ * This code is not by Superkb directly, but by drawkblib.c This allows
+ * drawkblib.c to provide multiple options to keyboard rendering.
+ *
+ * See drawkblib.h for details.
+ *
  */
 
 #ifndef __DRAWKBLIBS_XLIB_H

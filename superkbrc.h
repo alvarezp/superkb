@@ -4,6 +4,11 @@
  * Copyright (C) 2006, Octavio Alvarez Piza.
  * License: GNU General Public License v2.
  *
+ * Provides Superkb with a way to read its initial configuration from a file.
+ *
+ * It does so by providing config_load(), but be sure to call config_new()
+ * to allocate the configuration structure.
+ *
  */
 
 #ifndef __CONFIG_H
