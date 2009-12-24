@@ -112,7 +112,7 @@ configuration:
 	-pkg-config gdk-pixbuf-xlib-2.0 --exists > /dev/null \
 		&& (echo "PUTICON_GDKPIXBUF=m" >> configuration) \
 		|| (echo "PUTICON_GDKPIXBUF=n" >> configuration)
-	-imlib2-config --version > /dev/null \
+	-pkg-config imlib2 --exist > /dev/null \
 		&& (echo "PUTICON_IMLIB2=m" >> configuration) \
 		|| (echo "PUTICON_IMLIB2=n" >> configuration)
 	-echo "DRAWKBLIBS_XLIB=m" >> configuration
