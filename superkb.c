@@ -277,6 +277,8 @@ void superkb_start(superkb_p this)
 				debug(9, "[kc] Placeholder: key config window should pop up here.\n");
 				timerclear(&to[TO_CONFIG]);
 				ignore_release = 1;
+				int squashed_state = ev.xkey.state & this->state_mask;
+				remove_from_pressed_key_stack(ev.xkey.keycode, squashed_state);
 			}
 			if (to_reason == TO_DRAWKB) {
 
