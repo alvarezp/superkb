@@ -268,7 +268,7 @@ void superkb_start(superkb_p this)
 			timerdiff(&hold_time, &hold_start, &hold_end);
 			for (i = 0; i < to_n; i++) {
 				if (timerisset(&to[i])) {
-					timer_sub(&to[i], &hold_time);
+					timersub(&to[i], &hold_time, &to[i]);
 				}
 			}
 		}
