@@ -72,30 +72,6 @@ void clear_pressed_key_stack() {
 
 /* End PRESSED KEYS STACK */
 
-static void
-timerdiff(struct timeval *dst, struct timeval *tv0, struct timeval *tv1)
-{
-	if (tv1->tv_usec >= tv0->tv_usec) {
-		dst->tv_usec = tv1->tv_usec - tv0->tv_usec;
-		dst->tv_sec = tv1->tv_sec - tv0->tv_sec;
-	} else {
-		dst->tv_usec = tv1->tv_usec - tv0->tv_usec + 1000000;
-		dst->tv_sec = tv1->tv_sec - tv0->tv_sec - 1;
-	}
-}
-
-static void
-timer_sub(struct timeval *tv1, struct timeval *tv0)
-{
-	if (tv1->tv_usec >= tv0->tv_usec) {
-		tv1->tv_usec = tv1->tv_usec - tv0->tv_usec;
-		tv1->tv_sec = tv1->tv_sec - tv0->tv_sec;
-	} else {
-		tv1->tv_usec = tv1->tv_usec - tv0->tv_usec + 1000000;
-		tv1->tv_sec = tv1->tv_sec - tv0->tv_sec - 1;
-	}
-}
-
 /* This function is the same as XNextEvent but a timeout can be
  * specified in "to". It's supposed to accept NULL for no timeout
  * as the function works like a wrapper for select().
