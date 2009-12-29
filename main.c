@@ -8,7 +8,7 @@
 
 /* Thanks to Natan "Whatah" Zohar for helping with tokenizer. */
 
-#define _GNU_SOURCE
+#define _POSIX_C_SOURCE 2
 
 #include <X11/Xlib.h>
 

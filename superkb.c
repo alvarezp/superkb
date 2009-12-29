@@ -8,8 +8,6 @@
 
 /* Superkb: This modules does all the key and event handling magic. */
 
-#define _GNU_SOURCE
-
 #include <X11/Xlib.h>
 
 #include <unistd.h>
@@ -24,6 +22,7 @@
 #include "superkb.h"
 #include "globals.h"
 #include "debug.h"
+#include "timeval.h"
 
 void (*__Action)(KeyCode keycode, unsigned int state);
 
