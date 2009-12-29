@@ -8,6 +8,8 @@
 
 /* Superkb: This modules does all the key and event handling magic. */
 
+#define _GNU_SOURCE
+
 #include <X11/Xlib.h>
 
 #include <unistd.h>
