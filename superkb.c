@@ -265,7 +265,7 @@ void superkb_start(superkb_p this)
 
 			struct timeval hold_time;
 			/* Update all timers */
-			timerdiff(&hold_time, &hold_start, &hold_end);
+			timersub(&hold_end, &hold_start, &hold_time);
 			for (i = 0; i < to_n; i++) {
 				if (timerisset(&to[i])) {
 					timersub(&to[i], &hold_time, &to[i]);
