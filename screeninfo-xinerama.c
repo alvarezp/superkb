@@ -80,7 +80,9 @@ void screeninfo_get_screens(Display *dpy, screeninfo_t **screens, int *screens_n
 	 * memcpy() it. If the structure ever changes, this code should be
 	 * definitely updated.
 	 */
-	memcpy(screens, xinerama_screens, sizeof(screeninfo_t)*xinerama_screens_n);
+	*screens = malloc(sizeof(screeninfo_t)*xinerama_screens_n);
+	memcpy(*screens, xinerama_screens, sizeof(screeninfo_t)*xinerama_screens_n);
+	*screens_n = xinerama_screens_n;
 
 }
 
