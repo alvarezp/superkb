@@ -48,6 +48,7 @@ config_add_binding_command(Display *dpy, config_t *this, KeySym keysym, unsigned
 			  enum action_type action_type, const char *command,
 			  const char *icon, const char *feedback_string)
 {
+	debug(5, "[bc] Binding command: %d, %s, %s\n", keysym, command, feedback_string);
 	list_add_element(this->key_bindings, this->key_bindings_n, struct key_bindings);
 	this->key_bindings[this->key_bindings_n - 1].keycode =
 		XKeysymToKeycode(dpy, keysym);
@@ -96,6 +97,36 @@ config_add_binding_document(Display *dpy, config_t *this, KeySym keysym, unsigne
 		strcpy(this->key_bindings[this->key_bindings_n - 1].feedback_string, feedback_string);
 	} else {
 		this->key_bindings[this->key_bindings_n - 1].feedback_string = NULL;
+	}
+}
+
+void
+config_add_binding(Display *dpy, config_t *this, enum action_type binding_type, KeySym keysym, unsigned int state,
+			  enum action_type action_type, const char *content,
+			  const char *icon, const char *feedback_string, int autoquote)
+{
+
+	char *feedback_string_quoted = (char *)feedback_string;
+
+	int already_quoted = 0;
+	if (feedback_string[0] == '\'' && feedback_string[strlen(feedback_string) - 1] == '\'') {
+		debug(4, "[aq] Already quoted: %s\n", feedback_string);
+		already_quoted = 1;
+	} else {
+		debug(4, "[aq] Will try to quote: %s\n", feedback_string);
+	}
+
+	switch (binding_type) {
+	case AT_DOCUMENT:
+		debug(4, "[aq] AT_DOCUMENT: %s, %s\n", feedback_string_quoted, icon);
+		config_add_binding_document(dpy, this, keysym, state, AT_DOCUMENT, content, icon, feedback_string_quoted);
+		break;
+	case AT_COMMAND:
+		debug(4, "[aq] AT_COMMAND: %s, %s\n", feedback_string_quoted, icon);
+		config_add_binding_command(dpy, this, keysym, state, AT_COMMAND, content, icon, feedback_string_quoted);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -193,6 +224,9 @@ char *get_line(FILE *in, char *buf, int *bufSize, int *isEof) {
 
 /* Reads line and updates **c to reflect the configuration of that line */
 void handle_line(char *line, int linesize) {
+
+	static int autoquote = 1;
+
 	char *comment;
 	/* We zero out anything past a '#', including the '#', for commenting */
 	if ((comment = strchr(line, '#')) != NULL) {
@@ -347,6 +381,15 @@ void handle_line(char *line, int linesize) {
 			return;
 		}
 
+		if (!strcmp(token_array[0], "FEEDBACK_STRINGS_AUTOQUOTE") && tok_index == 2) {
+			if (!strcmp(token_array[1], "1"))
+				autoquote = 1;
+			else if (!strcmp(token_array[1], "0"))
+				autoquote = 0;
+			else fprintf(stderr, "superkb: FEEDBACK_STRINGS_AUTOQUOTE must be 1 or 0.\n");
+			return;
+		}
+
 		if (!strcmp(token_array[0], "SUPERKEY_RELEASE_CANCELS") && tok_index == 2) {
 			if (!strcmp(token_array[1], "1"))
 				__config->superkb_superkey_release_cancels = 1;
@@ -394,9 +437,9 @@ void handle_line(char *line, int linesize) {
 				validated_param = (char *) token_array[5];
 			}
 
-			config_add_binding_command(__dpy, __config,
+			config_add_binding(__dpy, __config, AT_COMMAND,
 				XStringToKeysym(token_array[2]), atoi(token_array[3]),
-				AT_COMMAND, token_array[4], validated_param, tok_index == 7 ? token_array[6] : NULL);
+				AT_COMMAND, token_array[4], validated_param, tok_index == 7 ? token_array[6] : NULL, autoquote);
 		} else if (!strcmp(token_array[0], "KEY")
 			&& !strcmp(token_array[1], "DOCUMENT")
 			&& (tok_index == 6 || tok_index == 7))
@@ -418,9 +461,9 @@ void handle_line(char *line, int linesize) {
 				validated_param = (char *) token_array[5];
 			}
 
-			config_add_binding_document(__dpy, __config,
+			config_add_binding(__dpy, __config, AT_DOCUMENT,
 				XStringToKeysym(token_array[2]), atoi(token_array[3]),
-				AT_DOCUMENT, token_array[4], validated_param, tok_index == 7 ? token_array[6] : NULL);
+				AT_DOCUMENT, token_array[4], validated_param, tok_index == 7 ? token_array[6] : NULL, autoquote);
 		} else {
 			fprintf(stderr, "Ignoring invalid config line: '[%s]", token_array[0]);
 			for (q = 1; q < tok_index; q++) {
