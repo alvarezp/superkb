@@ -116,6 +116,19 @@ config_add_binding(Display *dpy, config_t *this, enum action_type binding_type, 
 		debug(4, "[aq] Will try to quote: %s\n", feedback_string);
 	}
 
+	if (autoquote && !already_quoted) {
+		feedback_string_quoted = malloc(strlen(feedback_string) + 2);
+		if (feedback_string_quoted) {
+			strcpy(feedback_string_quoted, "'");
+			strcat(feedback_string_quoted, feedback_string);
+			strcat(feedback_string_quoted, "'");
+			debug(4, "[aq] New quoted string: %s\n", feedback_string_quoted);
+		} else {
+			feedback_string_quoted = (char *)feedback_string;
+			debug(4, "[aq] Could not get memory for new string. Falling back: %s\n", feedback_string_quoted);
+		}
+	}
+
 	switch (binding_type) {
 	case AT_DOCUMENT:
 		debug(4, "[aq] AT_DOCUMENT: %s, %s\n", feedback_string_quoted, icon);
