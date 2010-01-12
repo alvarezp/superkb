@@ -100,6 +100,29 @@ SUPERKEY_RELEASE_CANCELS 0
 # BACKGROUND 40 40 40
 # FOREGROUND 220 220 220
 
+#FEEDBACK_STRINGS_AUTOQUOTE: Enable or disable single-quoting around feedback
+#strings.
+#
+#The feedback string is the 6th parameter in KEY COMMAND. The string is simply
+#appended to the FEEDBACK_HANDLER string and the result is run to generate the
+#feedback announcement upon program launching.
+#
+#Previously it was needed to single quote multiple-word strings inside the 
+#double quotes "'like this'" in order to pass it as a single parameter to the
+#shell. However, this behavior changed with FEEDBACK_STRINGS_AUTOQUOTE, which
+#defaults to 1. Single quotes are automatically added (if not already there)
+#and can be turned off by setting this value to 0.
+#
+#This value affects the rest of the configuration file and thus must be present
+#before any KEY directive disired to be affected.
+#
+#Example values:
+#  FEEDBACK_STRINGS_AUTOQUOTE 1
+#  FEEDBACK_STRINGS_AUTOQUOTE 0
+#
+#Default value:
+# FEEDBACK_STRINGS_AUTOQUOTE 1
+
 #Icons files are really not that up to date.
 
 KEY COMMAND "c" 0 /usr/bin/gcalctool /usr/share/icons/gnome/32x32/apps/accessories-calculator.png "'Calculator'"
