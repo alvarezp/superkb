@@ -273,7 +273,7 @@ drawkb_cairo_KbDrawShape(drawkb_p this, cairo_t *cr, signed int angle,
 			XkbDescPtr _kb, XkbShapePtr shape, XkbColorPtr color,
 			Bool is_key, float line_width)
 {
-	printf ("       + This shape is: left=%d, top=%d, angle=%d\n", left, top, angle);
+	debug (15, "[dk]        + This shape is: left=%d, top=%d, angle=%d\n", left, top, angle);
 
 	cairo_save(cr);
 	cairo_translate(cr, left, top);
@@ -313,20 +313,15 @@ drawkb_cairo_KbDrawShape(drawkb_p this, cairo_t *cr, signed int angle,
 
 			if (this->painting_mode == FULL_SHAPE || this->painting_mode == FLAT_KEY) {
 
-				printf ("       + Painting shape filled. ");
 				if ( i % 2 == 0 ) {
-					printf ("Color: %f, %f, %f\n", darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0);
 					cairo_set_source_rgb(cr, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0);
 				} else {
-					printf ("Color: %f, %f, %f\n", background.red/65535.0, background.green/65535.0, background.blue/65535.0);
 					cairo_set_source_rgb(cr, background.red/65535.0, background.green/65535.0, background.blue/65535.0);
 				}
 
 				drawkb_cairo_DrawFilledPolygon(this->dpy, cr, t, l, b, r, corner_radius, line_width);
 
 			} else {
-				printf ("       + Painting shape hollow. ");
-				printf ("Color: %f, %f, %f\n", darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0);
 				cairo_set_source_rgb(cr, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0);
 
 				drawkb_cairo_DrawHollowPolygon(this->dpy, cr, t, l, b, r, corner_radius, line_width);
@@ -461,7 +456,7 @@ void drawkb_cairo_load_and_draw_icon(cairo_t *cr, const int x, const int y, cons
 		unsigned int file_height = cairo_image_surface_get_height(iqf);
 		if (file_width > 0 && file_height > 0) {
 			cairo_translate(cr, x, y);
-			printf (" + screen_width, screen_height, file_width, file_height: %f, %f, %d, %d\n", screen_width, screen_height, file_width, file_height);
+			debug (15, "[dk]  + screen_width, screen_height, file_width, file_height: %f, %f, %d, %d\n", screen_width, screen_height, file_width, file_height);
 			cairo_scale (cr, (screen_width/file_width), (screen_height/file_height));
 			cairo_set_source_surface(cr, iqf, 0, 0);
 			cairo_paint (cr);
@@ -480,7 +475,7 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 		  PangoFontDescription *font_unbound_char, PangoFontDescription *font_unbound_string, PangoFontDescription *font_bound, float line_width)
 {
 
-	printf ("     + This key is: left=%d, top=%d, angle=%d\n", left, top, angle);
+	debug (15, "[dk]      + This key is: left=%d, top=%d, angle=%d\n", left, top, angle);
 
 	cairo_save(cr);
 	cairo_translate(cr, left, top);
@@ -516,7 +511,7 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 			kss = XKeysymToString(ks);
 			if (kss) {
 				strncpy(keystring, kss, 255);
-				printf ("     + Key name: %s\n", kss);
+				debug (15, "[dk]      + Key name: %s\n", kss);
 				kss = drawkb_cairo_LookupKeylabelFromKeystring(kss);
 
 				if (!kss) continue;
@@ -559,7 +554,7 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 
 						cairo_save(cr);
 
-						printf("labelbox: %d, %d\n", key_data.labelbox.x1, key_data.labelbox.y1);
+						debug (15, "[dk] labelbox: %d, %d\n", key_data.labelbox.x1, key_data.labelbox.y1);
 
 						cairo_translate(cr, (key_data.labelbox.x2 + key_data.labelbox.x1) / 2, key_data.labelbox.y1);
 
@@ -788,7 +783,7 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 	font_unbound_char = pango_font_description_from_string(this->font);
 	font_bound = pango_font_description_from_string(this->font);
 
-	printf ("   + This row is: left=%d, top=%d, angle=%d\n", left, top, angle);
+	debug (15, "[dk]    + This row is: left=%d, top=%d, angle=%d\n", left, top, angle);
 
 	cairo_save(cr);
 	cairo_translate(cr, left, top);
@@ -850,7 +845,7 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 
 			strncpy(keystring, kss, 255);
 
-			printf ("     + Calculating best font size for \"%s\"\n", kss);
+			debug (15, "[dk]      + Calculating best font size for \"%s\"\n", kss);
 
 			kss = drawkb_cairo_LookupKeylabelFromKeystring(kss);
 
@@ -897,7 +892,7 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 						already_increased_size_bound = 1;
 					}
 					drawkb_cairo_reduce_to_best_size_by_width(this, cr, labelbox, &font_bound, glyph, &size_bound);
-					printf ("       + Computed size %d as a bound key.\n", size_bound);
+					debug (15, "[dk]        + Computed size %d as a bound key.\n", size_bound);
 				} else if (strlen(glyph) == 1) {
 					/* If this key is a single char unbound key... */
 					if (!already_increased_size_unbound_char) {
@@ -905,7 +900,7 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 						already_increased_size_unbound_char = 1;
 					}
 					drawkb_cairo_reduce_to_best_size_by_width(this, cr, labelbox, &font_unbound_char, glyph, &size_unbound_char);
-					printf ("       + Computed size %d as a single-char unbound key.\n", size_unbound_char);
+					debug (15, "[dk]        + Computed size %d as a single-char unbound key.\n", size_unbound_char);
 				} else {
 					/* This is a multiple char unbound key. */
 					labelbox.x1 += 20;
@@ -917,10 +912,10 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 						already_increased_size_unbound_string = 1;
 					}
 					drawkb_cairo_reduce_to_best_size_by_width(this, cr, labelbox, &font_unbound_string, glyph, &size_unbound_string);
-					printf ("       + Computed size %d as a multichar unbound key.\n", size_unbound_string);
+					debug (15, "[dk]        + Computed size %d as a multichar unbound key.\n", size_unbound_string);
 				}
-				printf ("       + Its labelbox is (x1, x2, y1, y2): %d, %d, %d, %d\n", labelbox.x1, labelbox.x2, labelbox.y1, labelbox.y2);
-				printf ("       + Its fullbox is (x1, x2, y1, y2): %d, %d, %d, %d\n", fullbox.x1, fullbox.x2, fullbox.y1, fullbox.y2);
+				debug (15, "[dk]        + Its labelbox is (x1, x2, y1, y2): %d, %d, %d, %d\n", labelbox.x1, labelbox.x2, labelbox.y1, labelbox.y2);
+				debug (15, "[dk]        + Its fullbox is (x1, x2, y1, y2): %d, %d, %d, %d\n", fullbox.x1, fullbox.x2, fullbox.y1, fullbox.y2);
 			}
 
 
@@ -933,7 +928,7 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 		}
 	}
 
-	printf(" -- Best font sizes calculated: %d, %d, %d\n", size_unbound_string, size_unbound_char, size_bound);
+	debug (15, "[dk]  -- Best font sizes calculated: %d, %d, %d\n", size_unbound_string, size_unbound_char, size_bound);
 
 	my_pango_font_description_set_size(font_unbound_string, size_unbound_string);
 	my_pango_font_description_set_size(font_unbound_char, size_unbound_char);
@@ -989,9 +984,9 @@ drawkb_cairo_KbDrawSection(drawkb_p this, cairo_t *cr, signed int angle,
 		debug(7, "[dr] Drawing section: %s\n", XGetAtomName(this->dpy, section->name));
 
 	if (section->name)
-		printf (" + This section is: mame=%s, left=%d, top=%d, angle=%d\n", XGetAtomName(this->dpy, section->name), left, top, angle);
+		debug (15, "[dk]  + This section is: mame=%s, left=%d, top=%d, angle=%d\n", XGetAtomName(this->dpy, section->name), left, top, angle);
 	else 
-		printf (" + This section is: mame=%s, left=%d, top=%d, angle=%d\n", "(Unnamed)", left, top, angle);
+		debug (15, "[dk]  + This section is: mame=%s, left=%d, top=%d, angle=%d\n", "(Unnamed)", left, top, angle);
 
 	cairo_save(cr);
 	cairo_translate(cr, left, top);
@@ -1031,7 +1026,7 @@ drawkb_cairo_drawkb_cairo_KbDrawComponents(drawkb_p this, cairo_t *cr, signed in
 	 * the best.
 	 */
 
-	printf ("This component is: left=%d, top=%d, angle=%d\n", left, top, angle);
+	debug (15, "[dk] This component is: left=%d, top=%d, angle=%d\n", left, top, angle);
 	cairo_save(cr);
 	cairo_translate(cr, left, top);
 	cairo_rotate(cr, angle*M_PI/1800.0);
