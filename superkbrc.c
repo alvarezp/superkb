@@ -37,6 +37,7 @@
 #define CONFIG_DEFAULT_FEEDBACK_HANDLER "xmessage -buttons '' -center -timeout 2 Launching "
 #define CONFIG_DEFAULT_SUPERKB_SUPERKEY_RELEASE_CANCELS 0
 #define CONFIG_DEFAULT_DRAWKB_PAINTING_MODE FLAT_KEY
+#define CONFIG_DEFAULT_WELCOME_CMD "xmessage -buttons '' -center -timeout 5 Welcome to Superkb! To start, hold down any of your configured Super keys."
 
 int cver = 0;
 
@@ -428,6 +429,11 @@ void handle_line(char *line, int linesize) {
 			return;
 		}
 
+		if (!strcmp(token_array[0], "WELCOME_CMD") && tok_index == 2) {
+			strncpy(__config->welcome_cmd, token_array[1], 500);
+			return;
+		}
+
 		/* FIXME: There might not exist token_array[1]. */
 		if (!strcmp(token_array[0], "KEY")
 			&& !strcmp(token_array[1], "COMMAND")
@@ -549,6 +555,7 @@ config_t * config_new (Display *dpy)
 	this->superkb_superkey_release_cancels = CONFIG_DEFAULT_SUPERKB_SUPERKEY_RELEASE_CANCELS;
 	this->drawkb_painting_mode = CONFIG_DEFAULT_DRAWKB_PAINTING_MODE;
 	this->squashed_states = CONFIG_DEFAULT_SQUASHED_STATES;
+	strcpy(this->welcome_cmd, CONFIG_DEFAULT_WELCOME_CMD);
 
 	return this;
 

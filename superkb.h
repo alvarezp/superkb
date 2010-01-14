@@ -45,6 +45,7 @@ typedef struct {
 	kbwin_t kbwin;
 	char kblayout[3];
 	int state_mask;
+	void (*welcome_message)();
 } superkb_t, *superkb_p;
 
 void superkb_start(superkb_p this);
@@ -58,7 +59,8 @@ int superkb_init(superkb_p this,
              void (*f)(KeyCode keycode, unsigned int state),
              int superkey_replay,
              int superkey_release_cancels,
-             int states_mask);
+             int states_mask,
+             void (*welcome_message)());
 
 void superkb_kbwin_set(superkb_p this,
 			 int (*superkb_kbwin_init) (Display *),

@@ -1,5 +1,17 @@
 FEEDBACK_HANDLER "notify-send --urgency normal -t 2000 --icon='gtk-info' Superkb Launching\"
 
+#WELCOME_CMD: Command to execute on Superkb start. It was intended to send a
+# fixed welcome message on start, configured on /etc/superkbrc, but the user
+# may override it with any other command, including an empty string.
+#
+#Example vlaues:
+#  WELCOME_CMD "notify-send 'Welcome to Superkb'"
+#  WELCOME_CMD "touch ~/.superkb-start-time"
+#  WELCOME_CMD ""
+#
+#Default value: "xmessage -buttons '' -center -timeout 5 Welcome to Superkb! To start, hold down any of your configured Super keys."
+WELCOME_CMD "notify-send --urgency normal -t 5000 --icon='gtk-info' 'Welcome to Superkb' 'To start, hold down any of your configured Super keys.'"
+
 #DELAY: Time (in seconds) the Super key must be pressed before showing
 # the on-screen hints.
 #

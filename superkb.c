@@ -204,6 +204,8 @@ void superkb_start(superkb_p this)
 	timerclear(&to[TO_DRAWKB]);
 	timerclear(&to[TO_CONFIG]);
 
+	(*this->welcome_message)();
+
 	while (1) {
 
 		struct timeval hold_start;
@@ -467,7 +469,7 @@ superkb_init(superkb_p this,
 			 void (*f)(KeyCode keycode, unsigned int state),
 			 int superkey_replay,
              int superkey_release_cancels,
-             int states_mask)
+             int states_mask, void (*welcome_message)())
 {
 
 	__Action = f;
@@ -489,6 +491,8 @@ superkb_init(superkb_p this,
 	this->rootwin = DefaultRootWindow(this->dpy);
 
 	this->dpy = display;
+
+	this->welcome_message = welcome_message;
 
 	/* Create the keyboard window. */
 	r = this->kbwin.init(this->dpy);

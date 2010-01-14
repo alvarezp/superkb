@@ -318,6 +318,17 @@ void sighandler(int sig)
 	}
 }
 
+void welcome_message() {
+	if (config->welcome_cmd) {
+		char *cmdline = malloc(strlen(config->welcome_cmd)+3);
+		if (cmdline != NULL) {
+			strcpy (cmdline, config->welcome_cmd);
+			strcat (cmdline, " &");
+			system(cmdline);
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -484,7 +495,7 @@ int main(int argc, char *argv[])
 
 	status = superkb_init(superkb, dpy, "en", config->superkb_super1,
 		config->superkb_super2, config->drawkb_delay, __Superkb_Action, config->superkb_superkey_replay, config->superkb_superkey_release_cancels,
-		~config->squashed_states);
+		~config->squashed_states, &welcome_message);
 
 	if (status != EXIT_SUCCESS) {
 		return EXIT_FAILURE;
