@@ -182,8 +182,9 @@ const char *next_word(const char *buf, int *wordLength, const char* delim) {
 		c = buf[++j];
 		i = j;
 		while (c != '"' && c != '\0') {
-			c = buf[i++];
+			c = buf[++i];
 		}
+		i++;
 	} else {
 		i = j;
 		while (strchr(delim, c) == NULL) {
