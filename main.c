@@ -319,7 +319,7 @@ void sighandler(int sig)
 }
 
 void welcome_message() {
-	if (config->welcome_cmd) {
+	if (strcmp(config->welcome_cmd, "") != 0) {
 		char *cmdline = malloc(strlen(config->welcome_cmd)+3);
 		if (cmdline != NULL) {
 			strcpy (cmdline, config->welcome_cmd);
