@@ -197,8 +197,21 @@ install-shared:
 
 .PHONY : uninstall
 uninstall:
-	[ -f /usr/bin/superkb ] && rm $(DESTDIR)/usr/bin/superkb
+	$(MAKE) uninstall-app
+	$(MAKE) uninstall-man
+	$(MAKE) uninstall-shared
+	
+.PHONY : uninstall-shared
+uninstall-shared:
 	[ -d /usr/lib/superkb ] && rm -fr $(DESTDIR)/usr/lib/superkb
+
+.PHONY : uninstall-man
+uninstall-man:
+	rm -fr $(DESTDIR)/usr/share/man/man1/superkb.1
+
+.PHONY : uninstall-app
+uninstall-app:
+	rm -fr $(DESTDIR)/usr/bin/superkb
 
 .PHONY : clean
 clean:
