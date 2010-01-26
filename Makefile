@@ -166,6 +166,7 @@ force:
 .PHONY : install
 install:
 	$(MAKE) install-shared
+	$(MAKE) install-man
 	$(MAKE) install-app
 
 .PHONY : install-app
@@ -183,6 +184,9 @@ install-app:
 		echo "Once you have done that, issue the 'superkb' command."; \
 		echo ; \
 	}
+
+.PHONY : install-man
+install-man:
 	install man/superkb.1 $(DESTDIR)/usr/share/man/man1/superkb.1
 
 
