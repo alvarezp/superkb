@@ -118,7 +118,7 @@ config_add_binding(Display *dpy, config_t *this, enum action_type binding_type, 
 	}
 
 	if (autoquote && !already_quoted) {
-		feedback_string_quoted = malloc(strlen(feedback_string) + 2);
+		feedback_string_quoted = malloc(strlen(feedback_string) + 3);
 		if (feedback_string_quoted) {
 			strcpy(feedback_string_quoted, "'");
 			strcat(feedback_string_quoted, feedback_string);
