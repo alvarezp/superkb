@@ -26,7 +26,7 @@ cflags-$(DRAWKBLIBS_XLIB) += $(shell pkg-config x11 --cflags)
 obj-$(DRAWKBLIBS_CAIRO) += drawkblibs/drawkblibs-cairo.o
 syms-$(DRAWKBLIBS_CAIRO) += -DWITH_DRAWKBLIBS_CAIRO
 ldlibs-$(DRAWKBLIBS_CAIRO) += $(shell pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --libs)
-cflags-$(DRAWKBLIBS_CAIRO) += $(shell pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --cflags)
+cflags-$(DRAWKBLIBS_CAIRO) += $(shell pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --cflags) -DPANGO_ENABLE_BACKEND
 
 cflags-y += $(shell pkg-config xft --cflags)
 ldlibs-y += $(shell pkg-config xft --libs)

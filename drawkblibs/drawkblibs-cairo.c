@@ -55,6 +55,7 @@
 #include <cairo-ft.h>
 
 #include <pango/pangocairo.h>
+#include <pango/pango.h>
 
 #include "../drawkblib.h"
 #include "../imagelib.h"
@@ -1052,6 +1053,37 @@ drawkb_cairo_drawkb_cairo_KbDrawComponents(drawkb_p this, cairo_t *cr, signed in
 
 }
 
+/* Shamelessley taken from the code on Pango Cairo, just to avoid dependance
+ * Pango 1.22. */
+
+PangoContext *
+local_pango_font_map_create_context (PangoFontMap *fontmap)
+{
+  PangoContext *context;
+
+  g_return_val_if_fail (fontmap != NULL, NULL);
+
+  context = pango_context_new ();
+  pango_context_set_font_map (context, fontmap);
+
+  return context;
+}
+
+PangoContext *
+local_pango_cairo_create_context (cairo_t *cr)
+{
+	PangoFontMap *fontmap;
+	PangoContext *context;
+
+	g_return_val_if_fail (cr != NULL, NULL);
+
+	fontmap = pango_cairo_font_map_get_default ();
+	context = local_pango_font_map_create_context (fontmap);
+	pango_cairo_update_context (cr, context);
+
+	return context;
+}
+
 void drawkb_cairo_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc, puticon_t PutIcon)
 {
 
@@ -1115,7 +1147,7 @@ void drawkb_cairo_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, uns
 
 	cairo_scale(cr, scale, scale);
 
-	PangoContext *pc = pango_cairo_create_context(cr);
+	PangoContext *pc = local_pango_cairo_create_context(cr);
 	PangoFontDescription *fontdesc;
 	PangoFontMetrics *pm;
 
