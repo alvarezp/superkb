@@ -110,14 +110,16 @@ config_add_binding(Display *dpy, config_t *this, enum action_type binding_type, 
 	char *feedback_string_quoted = (char *)feedback_string;
 
 	int already_quoted = 0;
-	if (feedback_string[0] == '\'' && feedback_string[strlen(feedback_string) - 1] == '\'') {
-		debug(4, "[aq] Already quoted: %s\n", feedback_string);
-		already_quoted = 1;
-	} else {
-		debug(4, "[aq] Will try to quote: %s\n", feedback_string);
+	if (feedback_string != NULL) {
+		if (feedback_string[0] == '\'' && feedback_string[strlen(feedback_string) - 1] == '\'') {
+			debug(4, "[aq] Already quoted: %s\n", feedback_string);
+			already_quoted = 1;
+		} else {
+			debug(4, "[aq] Will try to quote: %s\n", feedback_string);
+		}
 	}
 
-	if (autoquote && !already_quoted) {
+	if (autoquote && !already_quoted && feedback_string != NULL) {
 		feedback_string_quoted = malloc(strlen(feedback_string) + 3);
 		if (feedback_string_quoted) {
 			strcpy(feedback_string_quoted, "'");
