@@ -183,6 +183,8 @@ fi
 
 
 if [ "$NEED_SOMETHING" = "y" ]; then
+	echo 'Your "configuration" file will be renamed as configuration-bad.'
+	mv configuration configuration-bad
 	exit 1;
 fi
 
