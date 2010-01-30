@@ -1,0 +1,193 @@
+#!/bin/bash
+
+# Poor man's distro detection.
+DISTRO=unknown
+grep -q 'Debian' /etc/issue && DISTRO=debian
+grep -q 'Ubuntu' /etc/issue && DISTRO=ubuntu
+grep -q 'Fedora' /etc/issue && DISTRO=fedora
+
+# Default everything to n, so variable is defined here if not in the file.
+XINERAMA_SUPPORT=n
+PUTICON_GDKPIXBUF=n
+PUTICON_IMLIB2=n
+DRAWKBLIBS_XLIB=n
+DRAWKBLIBS_CAIRO=n
+
+# Read configuration file.
+. ./configuration
+
+NEED_SOMETHING=n
+SUGGEST_SOMETHING=n
+
+if echo "$DRAWKBLIBS_XLIB $PUTICON_IMLIB2 $PUTICON_GDKPIXBUF" |
+	grep -q "^[my] n n$"; then
+
+	NEED_SOMETHING=y
+	need_index=$((${#NEED_COMPONENTS[@]}+1))
+	NEED_COMPONENTS[$need_index]='* Imlib2 library and development headers'
+	NEED_UBUNTU_SUGG[$need_index]='libimlib2 libimlib2-dev'
+	NEED_DEBIAN_SUGG[$need_index]='libimlib2 libimlib2-dev'
+	NEED_FEDORA_SUGG[$need_index]='imlib2 imlib2-devel'
+
+fi
+
+if [ "$DRAWKBLIBS_XLIB" = "y" -o "$DRAWKBLIBS_XLIB" = "m" ]; then
+	if pkg-config xft renderproto xrender xinerama --exists > /dev/null; then
+		true
+	else
+
+		NEED_SOMETHING=y
+
+		need_index=$((${#NEED_COMPONENTS[@]}+1))
+		NEED_COMPONENTS[$need_index]='* Xft library and development headers'
+		NEED_UBUNTU_SUGG[$need_index]='libxft2 libxft-dev'
+		NEED_DEBIAN_SUGG[$need_index]='libxft2 libxft-dev'
+		NEED_FEDORA_SUGG[$need_index]='libXft libXft-devel'
+
+		need_index=$((${#NEED_COMPONENTS[@]}+1))
+		NEED_COMPONENTS[$need_index]='* Xrender library and development headers'
+		NEED_UBUNTU_SUGG[$need_index]='libxrender1 libxrender-dev x11proto-render-dev'
+		NEED_DEBIAN_SUGG[$need_index]='libxrender1 libxrender-dev x11proto-render-dev'
+		NEED_FEDORA_SUGG[$need_index]='librender xorg-x11-proto-devel'
+
+	fi
+
+fi
+
+# Suggest Cairo if not detected.
+if [ "$DRAWKBLIBS_CAIRO" = "n" ]; then
+	suggest_index=$((${#SUGGEST_COMPONENTS[@]}+1))
+	SUGGEST_SOMETHING=y
+	SUGGEST_COMPONENTS[$suggest_index]='* Cairo and Pango library and development headers'
+	SUGGEST_UBUNTU_SUGG[$suggest_index]='libcairo2 libcairo2-dev libpango1.0-0 libpango1.0-dev'
+	SUGGEST_DEBIAN_SUGG[$suggest_index]='libcairo2 libcairo2-dev libpango1.0-0 libpango1.0-dev'
+	SUGGEST_FEDORA_SUGG[$suggest_index]='cairo cairo-devel pango pango-devel'
+fi
+
+# Suggest Xinerama if not detected.
+if [ "$XINERAMA_SUPPORT" = "n" ]; then
+	suggest_index=$((${#SUGGEST_COMPONENTS[@]}+1))
+	SUGGEST_SOMETHING=y
+	SUGGEST_COMPONENTS[$suggest_index]='* Xinerama library and development headers'
+	SUGGEST_UBUNTU_SUGG[$suggest_index]='libxinerama1 libxinerama-dev'
+	SUGGEST_DEBIAN_SUGG[$suggest_index]='libxinerama1 libxinerama-dev'
+	SUGGEST_FEDORA_SUGG[$suggest_index]='libXinerama1 libXinerama1-devel'
+fi
+
+
+
+if [ "$NEED_SOMETHING" = "y" ]; then
+	echo
+	echo "-------------------------------------------------------------------"
+	echo
+	echo "ERROR: Superkb requires some components not found in your"
+	echo "system. Compilation can not continue without these components."
+	echo "Please install them accordingly. The required components are:";
+	echo
+	for I in `seq 1 $((${#NEED_COMPONENTS[@]}))`; do
+		echo "${NEED_COMPONENTS[$I]}"
+	done
+	echo
+
+	if [ "$DISTRO" = "fedora" ]; then
+		echo "Under Fedora, we suggest the following command:"
+		echo
+		echo -n '===> su -c '"'"'yum install '
+		for I in `seq 1 $((${#NEED_COMPONENTS[@]}))`; do
+			echo -n "${NEED_FEDORA_SUGG[$I]} "
+		done
+		echo "'"
+		echo
+	fi
+
+	if [ "$DISTRO" = "debian" ]; then
+		echo "Under Debian, we suggest the following command:"
+		echo
+		echo -n '===> su -c '"'"'apt-get install '
+		for I in `seq 1 $((${#NEED_COMPONENTS[@]}))`; do
+			echo -n "${NEED_DEBIAN_SUGG[$I]} "
+		done
+		echo "'"
+		echo
+	fi
+
+	if [ "$DISTRO" = "ubuntu" ]; then
+		echo "Under ubuntu, we suggest the following command:"
+		echo
+		echo -n '===> sudo apt-get install '
+		for I in `seq 1 $((${#NEED_COMPONENTS[@]}))`; do
+			echo -n "${NEED_UBUNTU_SUGG[$I]} "
+		done
+		echo
+		echo
+	fi
+fi
+
+
+if [ "$SUGGEST_SOMETHING" = "y" -a "$NEED_SOMETHING" = "n" ]; then
+	echo
+	echo "-------------------------------------------------------------------"
+	echo
+	echo "WARNING: In order to better enjoy Superkb, some components are"
+	echo "highly suggested. Compilation will continue. The suggested"
+	echo "components are:";
+fi
+
+if [ "$SUGGEST_SOMETHING" = "y" -a "$NEED_SOMETHING" = "y" ]; then
+	echo
+	echo
+	echo "In addition, the following components are highly suggested to"
+	echo "better experience Superkb:"
+fi
+
+if [ "$SUGGEST_SOMETHING" = "y" ]; then
+	echo
+	for I in `seq 1 $((${#SUGGEST_COMPONENTS[@]}))`; do
+		echo "${SUGGEST_COMPONENTS[$I]}"
+	done
+	echo
+
+	if [ "$DISTRO" = "fedora" ]; then
+		echo "Under Fedora, we suggest the following command:"
+		echo
+		echo -n '===> su -c '"'"'yum install '
+		for I in `seq 1 $((${#SUGGEST_COMPONENTS[@]}))`; do
+			echo -n "${SUGGEST_FEDORA_SUGG[$I]} "
+		done
+		echo "'"
+		echo
+	fi
+
+	if [ "$DISTRO" = "debian" ]; then
+		echo "Under Debian, we suggest the following command:"
+		echo
+		echo -n '===> su -c '"'"'apt-get install '
+		for I in `seq 1 $((${#SUGGEST_COMPONENTS[@]}))`; do
+			echo -n "${SUGGEST_DEBIAN_SUGG[$I]} "
+		done
+		echo "'"
+		echo
+	fi
+
+	if [ "$DISTRO" = "ubuntu" ]; then
+		echo "Under ubuntu, we suggest the following command:"
+		echo
+		echo -n '===> sudo apt-get install '
+		for I in `seq 1 $((${#SUGGEST_COMPONENTS[@]}))`; do
+			echo -n "${SUGGEST_UBUNTU_SUGG[$I]} "
+		done
+		echo
+		echo
+	fi
+fi
+
+
+if [ "$NEED_SOMETHING" = "y" ]; then
+	rm configuration;
+	exit 1;
+fi
+
+if [ "$SUGGEST_SOMETHING" = "y" ]; then
+	exit 0;
+fi
+

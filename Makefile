@@ -54,7 +54,6 @@ SHARED=$(obj-m:.o=.so)
 .PHONY : all
 all:
 	$(MAKE) configuration
-	$(MAKE) check_dep
 	$(MAKE) $(SHARED) $(APP)
 
 $(APP): $(OBJS)
@@ -72,39 +71,6 @@ $(APP): $(OBJS)
 		echo ; \
 	}
 
-.PHONY : check_dep
-check_dep:
-	@pkg-config xft renderproto xrender xinerama --exists > /dev/null || { \
-		echo ; \
-		echo "ERROR: Superkb needs the development version of the following packages:"; \
-		echo "       * xft"; \
-		echo "       * renderproto"; \
-		echo "       * xrender"; \
-		echo "       * xinerama"; \
-		echo ; \
-		echo "       In addition, it needs their development headers"; \
-		echo "       in order to compile."; \
-		echo ; \
-		echo "       Please install them according to your distribution"; \
-		echo "       instructions. You will need to do it as root."; \
-		echo ; \
-		echo "       For example:"; \
-		echo ; \
-		echo "       Fedora: yum install libXft libXft-devel librender \\"; \
-		echo "                   xorg-x11-proto-devel libXinerama-devel"; \
-		echo "       Debian: apt-get install libxft2 libxft-dev \\"; \
-		echo "                   x11proto-render-dev \\"; \
-		echo "                   libxinerama1 libxinerama-dev \\"; \
-		echo "                   libxrender1 libxrender-dev"; \
-		echo "       Ubuntu: apt-get install libxft2 libxft-dev \\"; \
-		echo "                   x11proto-render-dev \\"; \
-		echo "                   libxinerama1 libxinerama-dev \\"; \
-		echo "                   libxrender1 libxrender-dev"; \
-		echo ; \
-		rm configuration; \
-		false ; \
-	}
-
 configuration:
 	-pkg-config xinerama --exists > /dev/null \
 		&& (echo "XINERAMA_SUPPORT=y" >> configuration) \
@@ -119,25 +85,7 @@ configuration:
 	-pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --exists > /dev/null \
 		&& (echo "DRAWKBLIBS_CAIRO=m" >> configuration) \
 		|| (echo "DRAWKBLIBS_CAIRO=n" >> configuration)
-	@. ./configuration; \
-		if [ "$$PUTICON_IMLIB2 $$PUTICON_GDKPIXBUF" == "n n" ]; then \
-			echo ; \
-			echo "ERROR: Superkb needs either gdk-pixbuf-xlib or imlib2."; \
-			echo "       In addition, it needs their development headers"; \
-			echo "       in order to compile."; \
-			echo ; \
-			echo "       Please install them according to your distribution"; \
-			echo "       instructions. You will need to do it as root."; \
-			echo ; \
-			echo "       For example:"; \
-			echo ; \
-			echo "       Fedora: yum install imlib2 imlib2-devel"; \
-			echo "       Debian: apt-get install libimlib2 libimlib2-dev"; \
-			echo "       Ubuntu: apt-get install libimlib2 libimlib2-dev"; \
-			echo ; \
-			rm configuration; \
-			false ; \
-		fi
+	@./approve-config
 
 superkb.o: superkb.h
 superkbrc.o: superkbrc.h globals.h
