@@ -54,6 +54,7 @@ SHARED=$(obj-m:.o=.so)
 .PHONY : all
 all:
 	$(MAKE) configuration
+	$(MAKE) checkdep
 	$(MAKE) $(SHARED) $(APP)
 
 $(APP): $(OBJS)
@@ -85,6 +86,8 @@ configuration:
 	-pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --exists > /dev/null \
 		&& (echo "DRAWKBLIBS_CAIRO=m" >> configuration) \
 		|| (echo "DRAWKBLIBS_CAIRO=n" >> configuration)
+
+checkdep:
 	@./approve-config
 
 superkb.o: superkb.h

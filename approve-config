@@ -183,7 +183,6 @@ fi
 
 
 if [ "$NEED_SOMETHING" = "y" ]; then
-	rm configuration;
 	exit 1;
 fi
 
