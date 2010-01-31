@@ -27,7 +27,7 @@ if echo "$DRAWKBLIBS_XLIB $PUTICON_IMLIB2 $PUTICON_GDKPIXBUF" |
 	NEED_COMPONENTS[$need_index]='* Imlib2 library and development headers'
 	NEED_UBUNTU_SUGG[$need_index]='libimlib2-dev'
 	NEED_DEBIAN_SUGG[$need_index]='libimlib2-dev'
-	NEED_FEDORA_SUGG[$need_index]='imlib2 imlib2-devel'
+	NEED_FEDORA_SUGG[$need_index]='imlib2-devel'
 
 fi
 
@@ -42,13 +42,13 @@ if [ "$DRAWKBLIBS_XLIB" = "y" -o "$DRAWKBLIBS_XLIB" = "m" ]; then
 		NEED_COMPONENTS[$need_index]='* Xft library and development headers'
 		NEED_UBUNTU_SUGG[$need_index]='libxft-dev'
 		NEED_DEBIAN_SUGG[$need_index]='libxft-dev'
-		NEED_FEDORA_SUGG[$need_index]='libXft libXft-devel'
+		NEED_FEDORA_SUGG[$need_index]='libXft-devel'
 
 		need_index=$((${#NEED_COMPONENTS[@]}+1))
 		NEED_COMPONENTS[$need_index]='* Xrender library and development headers'
 		NEED_UBUNTU_SUGG[$need_index]='libxrender-dev x11proto-render-dev'
 		NEED_DEBIAN_SUGG[$need_index]='libxrender-dev x11proto-render-dev'
-		NEED_FEDORA_SUGG[$need_index]='librender xorg-x11-proto-devel'
+		NEED_FEDORA_SUGG[$need_index]='xorg-x11-proto-devel'
 
 	fi
 
@@ -61,7 +61,7 @@ if [ "$DRAWKBLIBS_CAIRO" = "n" ]; then
 	SUGGEST_COMPONENTS[$suggest_index]='* Cairo and Pango library and development headers'
 	SUGGEST_UBUNTU_SUGG[$suggest_index]='libcairo2-dev libpango1.0-dev'
 	SUGGEST_DEBIAN_SUGG[$suggest_index]='libcairo2-dev libpango1.0-dev'
-	SUGGEST_FEDORA_SUGG[$suggest_index]='cairo cairo-devel pango pango-devel'
+	SUGGEST_FEDORA_SUGG[$suggest_index]='cairo-devel pango-devel'
 fi
 
 # Suggest Xinerama if not detected.
@@ -71,7 +71,7 @@ if [ "$XINERAMA_SUPPORT" = "n" ]; then
 	SUGGEST_COMPONENTS[$suggest_index]='* Xinerama library and development headers'
 	SUGGEST_UBUNTU_SUGG[$suggest_index]='libxinerama-dev'
 	SUGGEST_DEBIAN_SUGG[$suggest_index]='libxinerama-dev'
-	SUGGEST_FEDORA_SUGG[$suggest_index]='libXinerama1 libXinerama1-devel'
+	SUGGEST_FEDORA_SUGG[$suggest_index]='libXinerama1-devel'
 fi
 
 
