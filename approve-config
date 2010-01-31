@@ -71,7 +71,7 @@ if [ "$XINERAMA_SUPPORT" = "n" ]; then
 	SUGGEST_COMPONENTS[$suggest_index]='* Xinerama library and development headers'
 	SUGGEST_UBUNTU_SUGG[$suggest_index]='libxinerama-dev'
 	SUGGEST_DEBIAN_SUGG[$suggest_index]='libxinerama-dev'
-	SUGGEST_FEDORA_SUGG[$suggest_index]='libXinerama1-devel'
+	SUGGEST_FEDORA_SUGG[$suggest_index]='libXinerama-devel'
 fi
 
 
