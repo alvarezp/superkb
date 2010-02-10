@@ -508,7 +508,7 @@ void handle_line(char *line, int linesize) {
 	return;
 }
 
-void parse_config(FILE *file) {
+int parse_config(FILE *file) {
 	char *buf = malloc(sizeof(*buf));
 	int *bufSize = malloc(sizeof(*bufSize));
 	int *eof = malloc(sizeof(*eof));
@@ -523,7 +523,7 @@ void parse_config(FILE *file) {
 		buf=NULL;
 	}
 
-	return;
+	return EXIT_SUCCESS;
 }
 
 config_t * config_new (Display *dpy)
