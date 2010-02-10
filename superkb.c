@@ -588,8 +588,10 @@ superkb_init(superkb_p this,
 
 	/* Create the keyboard window. */
 	r = this->kbwin.init(this->dpy);
-	if (r == EXIT_FAILURE)
+	if (r == EXIT_FAILURE) {
+		perror("superkb: superkb_init(): kbwin.init() failed");
 		return EXIT_FAILURE;
+	}
 
 	XFlush(this->dpy);
 
