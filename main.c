@@ -355,12 +355,16 @@ void sighandler(int sig)
 
 void welcome_message() {
 	if (strcmp(config->welcome_cmd, "") != 0) {
+
 		char *cmdline = malloc(strlen(config->welcome_cmd)+3);
-		if (cmdline != NULL) {
-			strcpy (cmdline, config->welcome_cmd);
-			strcat (cmdline, " &");
-			system(cmdline);
+		if (cmdline == NULL) {
+			perror("superkb: welcome_message(): malloc() failed");
+			return;
 		}
+
+		strcpy(cmdline, config->welcome_cmd);
+		strcat(cmdline, " &");
+		system(cmdline);
 	}
 }
 
