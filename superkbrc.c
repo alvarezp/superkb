@@ -510,8 +510,22 @@ void handle_line(char *line, int linesize) {
 
 int parse_config(FILE *file) {
 	char *buf = malloc(sizeof(*buf));
+	if (buf == NULL) {
+		perror("superkb: parse_config(): buf = malloc() failed");
+		return EXIT_FAILURE;
+	}
+
 	int *bufSize = malloc(sizeof(*bufSize));
+	if (bufSize == NULL) {
+		perror("superkb: parse_config(): bufSize = malloc() failed");
+		return EXIT_FAILURE;
+	}
+
 	int *eof = malloc(sizeof(*eof));
+	if (eof == NULL) {
+		perror("superkb: parse_config(): eof = malloc() failed");
+		return EXIT_FAILURE;
+	}
  
 	*bufSize = 1;
 	*eof = 0;
