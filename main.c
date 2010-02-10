@@ -187,9 +187,29 @@ int kbwin_init(Display * dpy)
 
 	int i;
 	kbwin = malloc(screens_n * sizeof(Window));
+	if (kbwin == NULL) {
+		perror("superkb: kbwin_init(): kbwin = malloc() failed");
+		return EXIT_FAILURE;
+	}
+
 	kbwin_backup = malloc(screens_n * sizeof(Pixmap));
+	if (kbwin == NULL) {
+		perror("superkb: kbwin_init(): kbwin_backup = malloc() failed");
+		return EXIT_FAILURE;
+	}
+
 	scale = malloc(screens_n * sizeof(double));
+	if (kbwin == NULL) {
+		perror("superkb: kbwin_init(): scale = malloc() failed");
+		return EXIT_FAILURE;
+	}
+
 	kbwin_gc = malloc(screens_n * sizeof(GC));
+	if (kbwin == NULL) {
+		perror("superkb: kbwin_init(): kbwin_gc = malloc() failed");
+		return EXIT_FAILURE;
+	}
+
 	for (i = 0; i < screens_n; i++) {
 
 		int winv;
