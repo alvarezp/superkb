@@ -534,6 +534,7 @@ config_t * config_new (Display *dpy)
 	this = malloc(sizeof(config_t));
 
 	if (this == NULL) {
+		perror("superkb: config_new(): malloc() failed");
 		return NULL;
 	}
 

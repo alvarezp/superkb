@@ -455,6 +455,12 @@ int main(int argc, char *argv[])
 	}
 
 	config = config_new(dpy);
+
+	if (config == NULL) {
+		fprintf(stderr, "Superkb could not load configuration. Quitting.\n");
+		return EXIT_FAILURE;
+	}
+
 	if (config_load(config, dpy) == EXIT_FAILURE) {
 		fprintf(stderr, "\n");
 		fprintf(stderr, "== Make sure the .superkbrc file exists in your $HOME "
