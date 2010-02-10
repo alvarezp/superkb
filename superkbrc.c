@@ -596,9 +596,13 @@ int config_load(config_t *this, Display *dpy)
 
 	fd = fopen("/etc/superkbrc", "r");
 	if (fd) {
-		parse_config(fd);
+		system_config_read = 0;
+		if (parse_config(fd) == EXIT_SUCCESS) {
+			system_config_read = 1;
+		} else {
+			perror("config_load(): parse_config(system) failed");
+		}
 		fclose(fd);
-		system_config_read = 1;
 	}
 
 	/* Read configuration from user file. */
@@ -620,9 +624,13 @@ int config_load(config_t *this, Display *dpy)
 
 	fd = fopen(file, "r");
 	if (fd) {
-		parse_config(fd);
+		user_config_read = 0;
+		if (parse_config(fd) == EXIT_SUCCESS) {
+			user_config_read = 1;
+		} else {
+			perror("config_load(): parse_config(user) failed");
+		}
 		fclose(fd);
-		user_config_read = 1;
 	}
 
 	if (!user_config_read && !system_config_read) {
