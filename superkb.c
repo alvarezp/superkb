@@ -600,6 +600,11 @@ superkb_init(superkb_p this,
 
 superkb_p superkb_create(void) {
 	superkb_p this = malloc(sizeof(superkb_t));
+	if (this == NULL) {
+		perror("superkb: superkb_create(): malloc() failed");
+		return NULL;
+	}
+
 	memset (this, 0, sizeof(superkb_t));
 	return this;
 }
