@@ -148,10 +148,10 @@ void superkb_start(superkb_p this)
 	/* Save autorepeat previous state. Then turn off. */
 
 	XGetKeyboardControl(this->dpy, &xkbs);
-	saved_key1_autorepeat_mode = (xkbs.auto_repeats[(int) this->key1/8] & this->key1 % 8) > 0;
+	saved_key1_autorepeat_mode = (xkbs.auto_repeats[(int) (this->key1/8)] & (1 << (this->key1 % 8))) > 0;
 
 	XGetKeyboardControl(this->dpy, &xkbs);
-	saved_key2_autorepeat_mode = (xkbs.auto_repeats[(int) this->key2/8] & this->key2 % 8) > 0;
+	saved_key2_autorepeat_mode = (xkbs.auto_repeats[(int) (this->key2/8)] & (1 << (this->key2 % 8))) > 0;
 
 	/* FIXME: Autorepeat must be restored on end */
 
