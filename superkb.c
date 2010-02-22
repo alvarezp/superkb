@@ -258,6 +258,14 @@ void superkb_start(superkb_p this)
 
 	(*this->welcome_message)();
 
+	fprintf(stderr,
+		"\n\n"
+		"Superkb is now running!\n"
+		"\n"
+		"Press and hold any of your configured Super keys to start using it.\n"
+		"\n"
+	);
+
 	while (1) {
 
 		struct timeval hold_start;

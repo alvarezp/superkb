@@ -530,18 +530,6 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	fprintf(stderr,
-		"\n\n"
-		"Superkb is now running!\n"
-		"\n"
-		"Press and hold any of your configured Super keys to start using it.\n"
-		"\n"
-		"(Please note: getting a 'BadAccess: attempt to access private resource\n"
-		"denied' error on 'X_GrabKey' means there is another program already using\n"
-		"your configured Super key. If that happens, you should even change the key\n"
-		"or try loading Superkb before the offending program.)\n\n\n"
-	);
-
 	if (!cancel_after_ready)
 		superkb_start(superkb);
 
