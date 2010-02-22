@@ -52,6 +52,8 @@ void superkb_start(superkb_p this);
 
 superkb_p superkb_create(void);
 
+void superkb_restore_auto_repeat(superkb_p this);
+
 int superkb_init(superkb_p this,
              Display *display,
              const char *kblayout, KeyCode key1, KeyCode key2,

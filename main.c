@@ -42,6 +42,8 @@
 #define WINH(i) (kbgeom->width_mm * scale[i])
 #define WINV(i) (kbgeom->width_mm * scale[i])
 
+superkb_p superkb;
+
 struct sigaction action;
 
 screeninfo_t *screens=NULL;
@@ -323,6 +325,11 @@ void sighandler(int sig)
 		chld_p = wait(&chld_status);
 		debug(6, "[chld] Got SIGCHLD. Process: %d. Status: %d\n", chld_p, chld_status);
 		break;
+	case SIGINT:
+		superkb_restore_auto_repeat(superkb);
+		signal(SIGINT, SIG_DFL);
+		kill(getpid(), SIGINT);
+		break;
 	}
 }
 
@@ -428,6 +435,16 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
+	/* Set SIGINT handler. Needed to restore autorepeat on Super keys. */
+	action.sa_handler = sighandler;
+	sigemptyset(&action.sa_mask);
+	action.sa_flags = 0;
+	if (sigaction(SIGINT, &action, NULL) != 0) {
+		fprintf(stderr, "superkb: Error setting SIGINT signal handler. "
+			"Quitting.\n");
+		return EXIT_FAILURE;
+	}
+
 	/* Connect to display. */
 	dpy = XOpenDisplay(NULL);
 	if (dpy == NULL) {
@@ -501,7 +518,7 @@ int main(int argc, char *argv[])
 			"your $HOME/.superkbrc file: %s\n", config->drawkb_drawkblib, vals);
 	}
 
-	superkb_p superkb = superkb_create();
+	superkb = superkb_create();
 
 	superkb_kbwin_set(superkb, kbwin_init, kbwin_map, kbwin_unmap, kbwin_event);
 

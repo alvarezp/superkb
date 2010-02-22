@@ -128,6 +128,27 @@ enum to_index {
 
 struct timeval to[to_n];
 
+int saved_key1_autorepeat_mode = 0;
+int saved_key2_autorepeat_mode = 0;
+
+void superkb_restore_auto_repeat(superkb_p this) {
+
+	XKeyboardControl xkbc;
+	if (this->key1) {
+		xkbc.key = this->key1;
+		xkbc.auto_repeat_mode = saved_key1_autorepeat_mode;
+		XChangeKeyboardControl(this->dpy, KBAutoRepeatMode | KBKey, &xkbc);
+	}
+
+	if (this->key2) {
+		xkbc.key = this->key2;
+		xkbc.auto_repeat_mode = saved_key2_autorepeat_mode;
+		XChangeKeyboardControl(this->dpy, KBAutoRepeatMode | KBKey, &xkbc);
+	}
+
+
+}
+
 void superkb_start(superkb_p this)
 {
 	/* Solicitar los eventos */
@@ -139,9 +160,6 @@ void superkb_start(superkb_p this)
 				 GrabModeAsync, GrabModeAsync);
 
 	XKeyboardState xkbs;
-
-	int saved_key1_autorepeat_mode = 0;
-	int saved_key2_autorepeat_mode = 0;
 
 	int x;
 
