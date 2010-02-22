@@ -176,6 +176,30 @@ int xerror_handler(Display *dpy, XErrorEvent *xerrev) {
 	}
 }
 
+void one_superkey_used_friendly_warning(int number, const char *keyname) {
+
+	const char *ordinal;
+
+	if (number == 1)
+		ordinal = "first";
+
+	if (number == 2)
+		ordinal = "second";
+
+	fprintf(stderr,
+		"WARNING: Your %s configured Super key (%s) is already in\n"
+		"       use by another program (usually Compiz). You may continue using Superkb\n"
+		"       using your second Super key. You may want to try the following to avoid\n"
+		"       this error:\n"
+		"       * Load Superkb before the conflicting program by loading it right\n"
+		"         at startup. (Under GNOME, use System > Startup Applications.)\n"
+		"       * Unload or kill the conflicting program.\n"
+		"       * Clear the configuration for the first Super key by adding\n"
+		"         \"SUPERKEY%d_CODE 0\" in your $HOME/.superkbrc.)\n"
+		"\n", ordinal, keyname, number
+	);
+}
+
 void superkb_start(superkb_p this)
 {
 
@@ -216,6 +240,14 @@ void superkb_start(superkb_p this)
 			"\n"
 		);
 		abort();
+	}
+
+	if (t1 && t2 && !f1 && f2) {
+		one_superkey_used_friendly_warning(1, XKeysymToString(XKeycodeToKeysym(this->dpy, this->key1, 0)));
+	}
+
+	if (t1 && t2 && f1 && !f2) {
+		one_superkey_used_friendly_warning(2, XKeysymToString(XKeycodeToKeysym(this->dpy, this->key2, 0)));
 	}
 
 	XKeyboardState xkbs;
