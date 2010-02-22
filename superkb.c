@@ -24,6 +24,11 @@
 #include "debug.h"
 #include "timeval.h"
 
+int keygrab1_serial = -1;
+int keygrab2_serial = -1;
+int superkey1_grabfail = 0;
+int superkey2_grabfail = 0;
+
 void (*__Action)(KeyCode keycode, unsigned int state);
 
 /* Start PRESSED KEYS STACK */
@@ -146,18 +151,72 @@ void superkb_restore_auto_repeat(superkb_p this) {
 		XChangeKeyboardControl(this->dpy, KBAutoRepeatMode | KBKey, &xkbc);
 	}
 
+}
 
+int display_generic_x_error(Display *dpy, XErrorEvent *xerrev) {
+
+	char buf[80];
+	XGetErrorText(dpy, xerrev->error_code, (char *) buf, sizeof (buf)-1);
+	fprintf(stderr, "X Error of failed request:  %s\n", buf);
+	XGetErrorDatabaseText(dpy, "Xproto", "XError", "Unknown error", (char *) &buf, sizeof (buf)-1);
+	fprintf(stderr, "  Major opcode of failed request:  %d (%s)\n", xerrev->request_code, buf);
+	fprintf(stderr, "  Serial number of failed request:  %d\n", xerrev->minor_code);
+	fprintf(stderr, "  Current serial number in output stream:  %ld\n", xerrev->serial);
+	abort();
+}
+
+int xerror_handler(Display *dpy, XErrorEvent *xerrev) {
+
+	if (xerrev->serial == keygrab1_serial) {
+		superkey1_grabfail = 1;
+	} else if (xerrev->serial == keygrab2_serial) {
+		superkey2_grabfail = 1;
+	} else {
+		display_generic_x_error(dpy, xerrev);
+	}
 }
 
 void superkb_start(superkb_p this)
 {
+
+	XSynchronize(this->dpy, True);
+	XSetErrorHandler(xerror_handler);
+
 	/* Solicitar los eventos */
-	if (this->key1 != 0)
+	if (this->key1 != 0) {
+		keygrab1_serial = NextRequest(this->dpy);
 		XGrabKey(this->dpy, this->key1, AnyModifier, this->rootwin, True,
 				 GrabModeAsync, GrabModeAsync);
-	if (this->key2 != 0)
+	}
+
+	if (this->key2 != 0) {
+		keygrab2_serial = NextRequest(this->dpy);
 		XGrabKey(this->dpy, this->key2, AnyModifier, this->rootwin, True,
 				 GrabModeAsync, GrabModeAsync);
+	}
+
+	XSynchronize(this->dpy, False);
+	XSetErrorHandler(NULL);
+
+	int t1 = (this->key1 != 0);
+	int f1 = superkey1_grabfail;
+	int t2 = (this->key2 != 0);
+	int f2 = superkey2_grabfail;
+
+	if ((t1 && f1 && t2 && f2) || (t1 && f1 && !t2) || (t2 && f2 && !t1)) {
+		fprintf(stderr,
+			"ERROR: Some other program (usually Compiz or another Superkb) is already\n"
+			"       using your Super keys. You may want to try either of the following:\n"
+			"       * Load Superkb before the conflicting program by loading it right\n"
+			"         at startup. (Under GNOME, use System > Startup Applications.)\n"
+			"       * Unload or kill the conflicting program.\n"
+			"       * Try a different set of Super keys. (Remember that Superkb supports\n"
+			"         two Super keys; if you don't use the second one you must clear it\n"
+			"         using \"SUPERKEY2_CODE 0\" in your $HOME/.superkbrc.)\n"
+			"\n"
+		);
+		abort();
+	}
 
 	XKeyboardState xkbs;
 
