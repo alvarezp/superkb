@@ -498,11 +498,14 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 	if (!fixed_num_keys)
 		fixed_num_keys = 256;
 
+	char name[5];
+	char glyph[256];
+	char keystring[256];
+	char *kss;
 	for (i = 0; i < fixed_num_keys; i++) {
-		char name[5] = "";
-		char glyph[256] = "";
-		char keystring[256] = "";
-		char *kss;
+		name[0] = '\0';
+		glyph[0] = '\0';
+		keystring[0] = '\0';
 
 		debug(19, "%d / %s / %s /\n", i, key->name.name, _kb->names->keys[i].name);
 		if (!strncmp(key->name.name, _kb->names->keys[i].name, 4)) {
@@ -825,12 +828,15 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 		memset(&(key_data[key_data_n-1]), 0, sizeof(key_data_t));
 		key_data[key_data_n-1].index = j;
 
+		char name[5];
+		char glyph[256];
+		char keystring[256];
+		char *kss;
 		for (i = 0; i < fixed_num_keys; i++) {
 
-			char name[5] = "";
-			char glyph[256] = "";
-			char keystring[256] = "";
-			char *kss;
+			name[0] = '\0';
+			glyph[0] = '\0';
+			keystring[0] = '\0';
 
 			debug(13, "%d / %s / %s /\n", i, key->name.name, _kb->names->keys[i].name);
 			if (strncmp(key->name.name, _kb->names->keys[i].name, 4) != 0)
