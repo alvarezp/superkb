@@ -13,9 +13,9 @@
 #ifndef __DEBUG_H
 #define __DEBUG_H
 
-typedef void (debug_t)(int level, char *fmt, ...);
+typedef void (debug_t)(const int level, const char *fmt, ...);
 
-void debug(int level, char *fmt, ...);
+void debug(const int level, const char *fmt, ...);
 
 typedef enum {
 	KEYBOARD_ACTIONS = 1,

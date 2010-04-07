@@ -17,7 +17,7 @@ int running_debug_level = 0;
  * level=1, means an important debug message.
  * level=MAX_INT, means a very deep and obscure message.
  */
-void debug(int level, char *fmt, ...)
+void debug(const int level, const char *fmt, ...)
 {
 	va_list args;
 
