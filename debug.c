@@ -19,12 +19,14 @@ int running_debug_level = 0;
  */
 void debug(const int level, const char *fmt, ...)
 {
+	if (level > running_debug_level)
+		return;
+
 	va_list args;
 
 	va_start(args, fmt);
 
-	if (level <= running_debug_level)
-		vprintf(fmt, args);
+	vprintf(fmt, args);
 
 	va_end(args);
 }
