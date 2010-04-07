@@ -760,7 +760,6 @@ KbDrawKey(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 		char keystring[256] = "";
 		char *kss;
 
-		debug(13, "%d / %s / %s /\n", i, key->name.name, _kb->names->keys[i].name);
 		if (!strncmp(key->name.name, _kb->names->keys[i].name, 4)) {
 			strncpy(name, _kb->names->keys[i].name, 4);
 			KeySym ks;
@@ -935,7 +934,6 @@ KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 			char keystring[256] = "";
 			char *kss;
 
-			debug(13, "%d / %s / %s /\n", i, key->name.name, _kb->names->keys[i].name);
 			if (strncmp(key->name.name, _kb->names->keys[i].name, 4) != 0)
 				continue;
 

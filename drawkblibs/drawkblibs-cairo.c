@@ -507,7 +507,6 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 		glyph[0] = '\0';
 		keystring[0] = '\0';
 
-		debug(19, "%d / %s / %s /\n", i, key->name.name, _kb->names->keys[i].name);
 		if (!strncmp(key->name.name, _kb->names->keys[i].name, 4)) {
 			strncpy(name, _kb->names->keys[i].name, 4);
 			KeySym ks;
@@ -838,7 +837,6 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 			glyph[0] = '\0';
 			keystring[0] = '\0';
 
-			debug(13, "%d / %s / %s /\n", i, key->name.name, _kb->names->keys[i].name);
 			if (strncmp(key->name.name, _kb->names->keys[i].name, 4) != 0)
 				continue;
 
