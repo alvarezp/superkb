@@ -217,11 +217,6 @@ char *get_line(FILE *in, char *buf, int *bufSize, int *isEof) {
 
 	while((c = fgetc(in)) != EOF && (c != '\n')) {
 
-	if (ferror(in)) {
-		perror("superkb: ");
-		exit(EXIT_FAILURE);
-	}
-
 		if (i >= (*bufSize) - 1) {
 			buf = realloc(buf, sizeof(char) * *bufSize * 2);
 			*bufSize *= 2;
@@ -233,6 +228,11 @@ char *get_line(FILE *in, char *buf, int *bufSize, int *isEof) {
 		*isEof = 1;
 	}
 	
+	if (ferror(in)) {
+		perror("superkb: ");
+		exit(EXIT_FAILURE);
+	}
+
 	buf[i] = 0;
 	*bufSize = i;
 
