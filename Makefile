@@ -45,7 +45,7 @@ SHELL=/bin/sh
 CC=gcc
 CFLAGS=-Wall -std=c99 -pedantic-errors $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC
 OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o timeval.o $(obj-y)
-LDPARAMS=-lX11 -lm -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
+LDPARAMS=-lX11 -lm -ldl -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
 
 #My variables
 APP=superkb
