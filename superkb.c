@@ -200,6 +200,13 @@ void one_superkey_used_friendly_warning(int number, const char *keyname) {
 	);
 }
 
+int key_is_pressed (Display *dpy, KeyCode keycode)
+{
+	char key_buffer [32];
+	XQueryKeymap(dpy, key_buffer);
+	return ( (key_buffer[keycode >> 3] >> (keycode & 0x07)) & 0x01 );
+}
+
 void superkb_start(superkb_p this)
 {
 
@@ -514,6 +521,13 @@ void superkb_start(superkb_p this)
 
 			int squashed_state = ev.xkey.state & this->state_mask;
 
+			if ( key_is_pressed (this->dpy, ev.xkey.keycode) ) {
+				/* Verifies that the key is indeed pressed and not just a 
+				 * KeyRelease generated X's AutoRepeat.
+			 	 */
+				remove_from_pressed_key_stack(ev.xkey.keycode, squashed_state);
+				continue;
+			}
 			__Action(ev.xkey.keycode, squashed_state);
 
 			debug(1, "[ac] Due to bound key release, executed action for key code = %d, name: %s\n", ev.xkey.keycode, 
