@@ -279,6 +279,7 @@ int kbwin_init(Display * dpy)
 void __Superkb_Action(KeyCode keycode, unsigned int state)
 {
 	unsigned int i;
+	char *argv[4] = { "sh", "-c", NULL, NULL };
 	for (i = 0; i < config->key_bindings_n; i++) {
 		if (config->key_bindings[i].keycode == keycode &&
 		  config->key_bindings[i].state == state) {
@@ -295,8 +296,9 @@ void __Superkb_Action(KeyCode keycode, unsigned int state)
 							system(cmdline);
 						}
 					}
-					system(config->key_bindings[i].action.command);
-					exit(EXIT_SUCCESS);
+					argv[2] = config->key_bindings[i].action.command;
+					execvp(*argv, argv);
+					exit(EXIT_FAILURE);
 				}
 				break;
 			case AT_DOCUMENT:
@@ -316,9 +318,10 @@ void __Superkb_Action(KeyCode keycode, unsigned int state)
 						strcpy (cmdline, config->document_handler);
 						strcat (cmdline, " ");
 						strcat (cmdline, config->key_bindings[i].action.document);
-						system(cmdline);
+						argv[2] = cmdline;
+						execvp(*argv, argv);
 					}
-					exit(EXIT_SUCCESS);
+					exit(EXIT_FAILURE);
 				}
 				break;
 			case AT_FUNCTION:
