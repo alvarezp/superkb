@@ -428,7 +428,7 @@ int main(int argc, char *argv[])
 
 	int status;
 
-	fprintf(stderr, "\nsuperkb " VERSION ": Welcome. This program is under development.\n\n"
+	fprintf(stderr, "\nsuperkb " VERSION VEXTRA ": Welcome. This program is under development.\n\n"
 		"It's strongly recommended to set the following on xorg.conf:\n\n"
 		"| Section \"ServerFlags\"\n"
 		"|   Option \"AllowDeactivateGrabs\" \"On\"\n"
