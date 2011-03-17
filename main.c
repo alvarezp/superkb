@@ -146,6 +146,7 @@ void kbwin_map(Display * dpy)
 	for (i=0; i < screens_n; i++) {
 		XSetTransientForHint(dpy, kbwin[i], DefaultRootWindow(dpy));
 		XMapWindow(dpy, kbwin[i]);
+		XRaiseWindow(dpy, kbwin[i]);
 	}
 }
 
