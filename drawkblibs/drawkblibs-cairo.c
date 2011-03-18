@@ -515,6 +515,17 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 				&_kb->geom->shapes[key->shape_ndx],
 				&_kb->geom->colors[key->color_ndx], True, line_width);
 
+/*  // THIS IS DEBUGGING CODE TO DRAW LIMITS OF LABELBOX AND FULLBOX.
+    // UNCOMMENT IF NEEDED.
+
+	cairo_save(cr);
+	cairo_set_source_rgb(cr, 0, 0, 0);
+	drawkb_cairo_DrawHollowPolygon(this->dpy, cr, key_data.fullbox.y1, key_data.fullbox.x1, key_data.fullbox.y2, key_data.fullbox.x2, 0, line_width);
+	cairo_set_source_rgb(cr, 1, 1, 1);
+	drawkb_cairo_DrawHollowPolygon(this->dpy, cr, key_data.labelbox.y1, key_data.labelbox.x1, key_data.labelbox.y2, key_data.labelbox.x2, 0, line_width);
+	cairo_restore(cr);
+*/
+
 	/* This is to work around an XKB apparent bug. */
 	fixed_num_keys = _kb->names->num_keys;
 	if (!fixed_num_keys)
