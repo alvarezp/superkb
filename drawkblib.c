@@ -68,9 +68,9 @@ void drawkblib_GetValues(char *buf, unsigned long buf_n)
 		return;
 
 	while ((entry = readdir(dir))) {
-		if (strncmp(entry->d_name, "drawkblibs-", 8) == 0
+		if (strncmp(entry->d_name, "drawkblibs-", 11) == 0
 			&& strncmp(&entry->d_name[strlen(entry->d_name)-3], ".so", 3) == 0) {
-			strncat(buf, entry->d_name+8, strlen(entry->d_name)-11 > buf_n ? buf_n : strlen(entry->d_name)-11);
+			strncat(buf, entry->d_name+11, strlen(entry->d_name)-14 > buf_n ? buf_n : strlen(entry->d_name)-14);
 			strncat(buf, " ", buf_n);
 		}
 	}

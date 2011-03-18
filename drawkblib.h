@@ -28,5 +28,7 @@ void drawkb_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned 
 
 int Init_drawkblib(const char *userlib);
 
+void drawkblib_GetValues(char *buf, unsigned long buf_n);
+
 #endif
 
