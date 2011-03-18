@@ -549,6 +549,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Failed to initialize drawkb library: %s.\n\n"
 			"You might try any of the following as the value for DRAWKBLIB in\n"
 			"your $HOME/.superkbrc file: %s\n", config->drawkb_drawkblib, vals);
+		return EXIT_FAILURE;
 	}
 
 	superkb = superkb_create();
