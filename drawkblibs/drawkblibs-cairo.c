@@ -434,7 +434,7 @@ void drawkb_cairo_pango_echo(cairo_t *cr, PangoFontDescription *fontdesc, const 
 
 }
 
-void drawkb_cairo_load_and_draw_icon(cairo_t *cr, const int x, const int y, const float screen_width, const float screen_height, const char * icon) {
+void drawkb_cairo_load_and_draw_icon(drawkb_p this, cairo_t *cr, const int x, const int y, const float screen_width, const float screen_height, const char * icon) {
 
 	debug(4, "--> drawkb_cairo_load_and_draw_icon(%p, %d, %d, %f, %f, %s);\n", cr, x, y, screen_width, screen_height, icon);
 
@@ -541,7 +541,7 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 
 						cairo_save(cr);
 
-						drawkb_cairo_load_and_draw_icon(cr, key_data.fullbox.x2 - size, key_data.fullbox.y2 - size, size, size, buf);
+						drawkb_cairo_load_and_draw_icon(this, cr, key_data.fullbox.x2 - size, key_data.fullbox.y2 - size, size, size, buf);
 
 						cairo_restore(cr);
 
