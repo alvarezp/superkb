@@ -859,7 +859,7 @@ void AdjustSize(drawkb_p this, XkbBoundsRec labelbox, const char *glyph, double 
 
 	XftFont *fs;
 
-	debug (10, " --> AdjustSize (labelbox(x1=%d, y1=%d, x2=%d, y2=%d), glyph=%s, initial_key_height_percent=%lf, scale=%lf, size=%d\n", labelbox.x1, labelbox.y1, labelbox.x2, labelbox.y2, glyph, initial_key_height_percent, scale, *size);
+	this->debug (10, " --> AdjustSize (labelbox(x1=%d, y1=%d, x2=%d, y2=%d), glyph=%s, initial_key_height_percent=%lf, scale=%lf, size=%d\n", labelbox.x1, labelbox.y1, labelbox.x2, labelbox.y2, glyph, initial_key_height_percent, scale, *size);
 
 	if (!*size) {
 		*size = labelbox_height * initial_key_height_percent * scale;
@@ -871,25 +871,25 @@ void AdjustSize(drawkb_p this, XkbBoundsRec labelbox, const char *glyph, double 
 			XftFontClose(this->dpy, fs);
 			(*size)++;
 			fs = XLoadQueryScalableFont(this->dpy, 0, this->font, *size);
-			debug (10, "Iterating in %s:%d\n", __FILE__, __LINE__);
+			this->debug (10, "Iterating in %s:%d\n", __FILE__, __LINE__);
 		}
 	} else {
 		fs = XLoadQueryScalableFont(this->dpy, 0, this->font, *size);
 	}
 
-	debug (10, " ::: AdjustSize interim size value: %d\n", *size);
+	this->debug (10, " ::: AdjustSize interim size value: %d\n", *size);
 
 	/* Reduce the *size point by point as less as possible. */
 	while (MyXftTextWidth(this->dpy, fs, glyph, strlen(glyph)) > (int) labelbox_width*scale) {
 		XftFontClose(this->dpy, fs);
 		(*size)--;
 		fs = XLoadQueryScalableFont(this->dpy, 0, this->font, *size);
-		debug (10, "Iterating in %s:%d\n", __FILE__, __LINE__);
+		this->debug (10, "Iterating in %s:%d\n", __FILE__, __LINE__);
 	}
 
 	XftFontClose(this->dpy, fs);
 
-	debug (10, " <-- AdjustSize final size value: %d\n", *size);
+	this->debug (10, " <-- AdjustSize final size value: %d\n", *size);
 }
 
 void
@@ -922,7 +922,7 @@ KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 	for (j = 0; j < row->num_keys; j++) {
 		XkbKeyPtr key = &row->keys[j];
 
-		debug (4, "KbDrawRow: processing key j=%d\n ", j);
+		this->debug (4, "KbDrawRow: processing key j=%d\n ", j);
 
 		list_add_element (key_data, key_data_n, key_data_t);
 		memset(&(key_data[key_data_n-1]), 0, sizeof(key_data_t));
