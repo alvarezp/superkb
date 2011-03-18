@@ -1128,8 +1128,8 @@ void drawkb_cairo_fill_gradient(drawkb_p this, cairo_t *cr, int width_mm, int he
 	cairo_pattern_t * pat;
 
 	pat = cairo_pattern_create_linear(0, 0, 0, height_mm);
-	cairo_pattern_add_color_stop_rgba(pat, 0, lightcolor.red/65535.0, lightcolor.green/65535.0, lightcolor.blue/65535.0, 0.1);
-	cairo_pattern_add_color_stop_rgba(pat, 0, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0, 0.1);
+	cairo_pattern_add_color_stop_rgba(pat, 0, lightcolor.red/65535.0, lightcolor.green/65535.0, lightcolor.blue/65535.0, 0.5);
+	cairo_pattern_add_color_stop_rgba(pat, 1, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0, 0.5);
 	cairo_set_source(cr, pat);
 
 	cairo_move_to(cr, 0, 0);
