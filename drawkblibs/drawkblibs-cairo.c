@@ -568,14 +568,14 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 
 					if (strcmp(buf, "") != 0) {
 
-						int size = key_data.labelbox.x2 - key_data.labelbox.x1;
+						int size = key_data.labelbox.x2 - key_data.labelbox.x1 + 1;
 
-						if (key_data.fullbox.y2 - key_data.labelbox.y2 < size) 
-							size = key_data.fullbox.y2 - key_data.labelbox.y2;
+						if (key_data.fullbox.y2 - key_data.labelbox.y2 + 1 < size)
+							size = key_data.fullbox.y2 - key_data.labelbox.y2 + 1;
 
 						cairo_save(cr);
 
-						drawkb_cairo_load_and_draw_icon(this, cr, key_data.fullbox.x2 - size, key_data.fullbox.y2 - size, size, size, buf);
+						drawkb_cairo_load_and_draw_icon(this, cr, key_data.fullbox.x2 - size + 1, key_data.fullbox.y2 - size + 1, size, size, buf);
 
 						cairo_restore(cr);
 
@@ -896,7 +896,7 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 
 			/* Calculate label + icon box bounds */
 			int fullbox_border = line_width;
-			int fullbox_margin = line_width / 2;
+			int fullbox_margin = this->painting_mode == FULL_SHAPE ? 0 : line_width;
 
 			XkbBoundsRec kr, *k = &kr;
 			
@@ -912,9 +912,9 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 			}
 
 			fullbox.x1 = k->x1 + fullbox_margin + fullbox_border;
-			fullbox.x2 = k->x2 - fullbox_margin - fullbox_border;
+			fullbox.x2 = k->x2 - fullbox_margin - fullbox_border + 1;
 			fullbox.y1 = k->y1 + fullbox_margin + fullbox_border;
-			fullbox.y2 = k->y2 - fullbox_margin - fullbox_border;
+			fullbox.y2 = k->y2 - fullbox_margin - fullbox_border + 1;
 			/* End calculate label + icon box bounds */
 
 			/* Default labelbox. Overriden according to key binding status. */
@@ -1225,7 +1225,7 @@ void drawkb_cairo_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, uns
 
 	g_object_unref(pc);
 
-	float line_width = 3 / scale;
+	float line_width = 2 / scale;
 
 	if (this->use_gradients) {
 		drawkb_cairo_fill_gradient(this, cr, kbgeom->width_mm, kbgeom->height_mm);
