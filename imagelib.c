@@ -121,7 +121,7 @@ int Init_Imagelib(Display *dpy, const char *userlib)
 			return EXIT_SUCCESS;
 		}
 	} else {
-		fprintf(stderr, "(superkb: %s)\n\n", dlerror());
+		fprintf(stderr, "Error loading imagelib %s: %s\n", userlib, dlerror());
 	}
 
 	free(fn);

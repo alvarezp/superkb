@@ -109,6 +109,7 @@ int Init_drawkblib(const char *userlib)
 			return EXIT_SUCCESS;
 		}
 	} else {
+		fprintf(stderr, "Error loading drawkblib %s: %s\n", userlib, dlerror());
 	}
 
 	free(fn);
