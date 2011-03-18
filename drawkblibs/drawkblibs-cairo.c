@@ -1110,6 +1110,28 @@ local_pango_cairo_create_context (cairo_t *cr)
 	return context;
 }
 
+void drawkb_cairo_fill_gradient(drawkb_p this, cairo_t *cr, int width_mm, int height_mm) {
+
+	cairo_pattern_t * pat;
+
+	pat = cairo_pattern_create_linear(0, 0, 0, height_mm);
+	cairo_pattern_add_color_stop_rgba(pat, 0, lightcolor.red/65535.0, lightcolor.green/65535.0, lightcolor.blue/65535.0, 0.1);
+	cairo_pattern_add_color_stop_rgba(pat, 0, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0, 0.1);
+	cairo_set_source(cr, pat);
+
+	cairo_move_to(cr, 0, 0);
+	cairo_line_to(cr, width_mm, 0);
+	cairo_line_to(cr, width_mm, height_mm);
+	cairo_line_to(cr, 0, height_mm);
+	cairo_line_to(cr, 0, 0);
+
+	cairo_fill(cr);
+
+	cairo_pattern_destroy(pat);
+
+}
+
+
 void drawkb_cairo_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc, puticon_t PutIcon)
 {
 
@@ -1191,6 +1213,10 @@ void drawkb_cairo_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, uns
 	g_object_unref(pc);
 
 	float line_width = 3 / scale;
+
+	if (this->use_gradients) {
+		drawkb_cairo_fill_gradient(this, cr, kbgeom->width_mm, kbgeom->height_mm);
+	}
 
 	/* Draw each component (section or doodad) of the top-level kbdesc->geometry, in
 	 * priority order. Note that priority handling is left to the function. */
