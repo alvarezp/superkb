@@ -1222,7 +1222,7 @@ int Init_Font(drawkb_p this, const char *font)
 }
 
 drawkb_p drawkb_xlib_create(Display *dpy, const char *font,
-	IQF_t IQF, painting_mode_t painting_mode, float scale, debug_t *debug)
+	IQF_t IQF, painting_mode_t painting_mode, float scale, debug_t *debug, XkbDescPtr kbdesc)
 {
 
 	drawkb_p this = (drawkb_p) malloc(sizeof(drawkb_t));
@@ -1234,6 +1234,8 @@ drawkb_p drawkb_xlib_create(Display *dpy, const char *font,
 	this->dpy = dpy;
 
 	this->debug = debug;
+
+	this->kbdesc = kbdesc;
 
 	/* Init_Font needs Init_Geometry to succeed, because one of
 	 * the fallback fonts is the XKB's specified font label, and

@@ -35,11 +35,12 @@ typedef struct {
 	IQF_t IQF;
 	painting_mode_t painting_mode;
 	debug_t *debug;
+	XkbDescPtr kbdesc;
 } drawkb_t, *drawkb_p;
 
 typedef int (puticon_t)(Drawable kbwin, int x, int y, int width, int height, const char *fn);
 
-typedef drawkb_p (*drawkb_create_t)(Display *dpy, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale, debug_t debug);
+typedef drawkb_p (*drawkb_create_t)(Display *dpy, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale, debug_t debug, XkbDescPtr kbdesc);
 
 typedef void (*drawkb_draw_t)(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc, puticon_t puticon);
 
