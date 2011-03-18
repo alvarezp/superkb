@@ -32,6 +32,7 @@
 #define CONFIG_DEFAULT_DRAWKB_FORECOLOR_RED 56100
 #define CONFIG_DEFAULT_DRAWKB_FORECOLOR_GREEN 56100
 #define CONFIG_DEFAULT_DRAWKB_FORECOLOR_BLUE 56100
+#define CONFIG_DEFAULT_DRAWKB_USE_GRADIENTS 1
 #define CONFIG_DEFAULT_DOCUMENT_HANDLER "gnome-open"
 #define CONFIG_DEFAULT_SUPERKB_SUPERKEY_REPLAY 1
 #define CONFIG_DEFAULT_FEEDBACK_HANDLER "xmessage -buttons '' -center -timeout 2 Launching "
@@ -437,6 +438,16 @@ void handle_line(char *line, int linesize) {
 			return;
 		}
 
+		if (!strcmp(token_array[0], "USE_GRADIENTS") && tok_index == 2) {
+			if (!strcmp(token_array[1], "1"))
+				__config->use_gradients = 1;
+			else if (!strcmp(token_array[1], "0"))
+				__config->use_gradients = 0;
+			else fprintf(stderr, "superkb: USE_GRADIENTS value must be 1 or 0.\n");
+			return;
+		}
+
+
 		/* FIXME: There might not exist token_array[1]. */
 		if (!strcmp(token_array[0], "KEY")
 			&& !strcmp(token_array[1], "COMMAND")
@@ -567,6 +578,7 @@ config_t * config_new (Display *dpy)
 	this->forecolor.red = CONFIG_DEFAULT_DRAWKB_FORECOLOR_RED;
 	this->forecolor.green = CONFIG_DEFAULT_DRAWKB_FORECOLOR_GREEN;
 	this->forecolor.blue = CONFIG_DEFAULT_DRAWKB_FORECOLOR_BLUE;
+	this->use_gradients = CONFIG_DEFAULT_DRAWKB_USE_GRADIENTS;
 	strcpy(this->document_handler, CONFIG_DEFAULT_DOCUMENT_HANDLER);
 	this->superkb_superkey_replay = CONFIG_DEFAULT_SUPERKB_SUPERKEY_REPLAY;
 	strcpy(this->feedback_handler, CONFIG_DEFAULT_FEEDBACK_HANDLER);

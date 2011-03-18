@@ -59,6 +59,7 @@ typedef struct {
 		int green;
 		int blue;
 	} forecolor;
+	int use_gradients;
 	char document_handler[500];
 	int superkb_superkey_replay;
 	char feedback_handler[500];
