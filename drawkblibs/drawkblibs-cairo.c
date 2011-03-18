@@ -71,7 +71,7 @@ cairo_surface_t *surface;
 
 double __scale;
 
-XkbDescPtr kbdesc;
+extern XkbDescPtr kbdesc;
 XkbGeometryPtr kb_geom;
 
 IQF_t IQF;
@@ -168,6 +168,7 @@ void drawkb_cairo_WorkaroundBoundsBug(Display * dpy, XkbDescPtr _kb)
 
 	/* To workaround an X11R7.0 and previous bug */
 	if (VendorRelease(dpy) < 70100000 &&
+		VendorRelease(dpy) > 50000000 &&
 		!strcmp(ServerVendor(dpy), "The X.Org Foundation"))
 	{
 		for (i = 0; i < _kb->geom->num_shapes; i++)
