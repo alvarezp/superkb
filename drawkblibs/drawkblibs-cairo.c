@@ -545,6 +545,7 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 
 				if (this->IQF(XStringToKeysym(keystring), 0, buf, buf_n) == EXIT_SUCCESS) {
 
+					cairo_save(cr);
 					cairo_translate(cr, key_data.labelbox.x1, key_data.labelbox.y1);
 
 					cairo_set_source_rgb(cr, foreground.red/65535.0, foreground.green/65535.0, foreground.blue/65535.0);
@@ -552,6 +553,7 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 					this->debug(8, "[pe] a1: %s\n", cairo_status_to_string(cairo_status(cr)));
 					drawkb_cairo_pango_echo(cr, font_bound, glyph, JUST_LEFT);
 					this->debug(8, "[pe] a2: %s\n", cairo_status_to_string(cairo_status(cr)));
+					cairo_restore(cr);
 
 					if (strcmp(buf, "") != 0) {
 
