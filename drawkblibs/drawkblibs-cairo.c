@@ -272,6 +272,9 @@ drawkb_cairo_KbDrawShape(drawkb_p this, cairo_t *cr, signed int angle,
 			XkbDescPtr _kb, XkbShapePtr shape, XkbColorPtr color,
 			Bool is_key, float line_width)
 {
+
+	cairo_pattern_t * pat;
+
 	this->debug (15, "[dk]        + This shape is: left=%d, top=%d, angle=%d\n", left, top, angle);
 
 	cairo_save(cr);
@@ -313,12 +316,33 @@ drawkb_cairo_KbDrawShape(drawkb_p this, cairo_t *cr, signed int angle,
 			if (this->painting_mode == FULL_SHAPE || this->painting_mode == FLAT_KEY) {
 
 				if ( i % 2 == 0 ) {
-					cairo_set_source_rgb(cr, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0);
+
+					if ( this->use_gradients) {
+						pat = cairo_pattern_create_linear(l, t, l, b);
+						cairo_pattern_add_color_stop_rgba(pat, 0, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0, 0.33);
+						cairo_pattern_add_color_stop_rgba(pat, 0.66, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0, 0.75);
+						cairo_pattern_add_color_stop_rgba(pat, 1, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0, 1);
+						cairo_set_source(cr, pat);
+					} else {
+						cairo_set_source_rgb(cr, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0);
+					}
 				} else {
-					cairo_set_source_rgb(cr, background.red/65535.0, background.green/65535.0, background.blue/65535.0);
+					if ( this->use_gradients) {
+						pat = cairo_pattern_create_linear(l, t, l, b);
+						cairo_pattern_add_color_stop_rgba(pat, 0, background.red/65535.0, background.green/65535.0, background.blue/65535.0, 0.33);
+						cairo_pattern_add_color_stop_rgba(pat, 0.33, background.red/65535.0, background.green/65535.0, background.blue/65535.0, 0.75);
+						cairo_pattern_add_color_stop_rgba(pat, 1, background.red/65535.0, background.green/65535.0, background.blue/65535.0, 1);
+						cairo_set_source(cr, pat);
+					} else {
+						cairo_set_source_rgb(cr, background.red/65535.0, background.green/65535.0, background.blue/65535.0);
+					}
 				}
 
 				drawkb_cairo_DrawFilledPolygon(this->dpy, cr, t, l, b, r, corner_radius, line_width);
+
+				if ( this->use_gradients) {
+					cairo_pattern_destroy(pat);
+				}
 
 			} else {
 				cairo_set_source_rgb(cr, darkcolor.red/65535.0, darkcolor.green/65535.0, darkcolor.blue/65535.0);
