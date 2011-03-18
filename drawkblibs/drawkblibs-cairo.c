@@ -71,9 +71,6 @@ cairo_surface_t *surface;
 
 double __scale;
 
-extern XkbDescPtr kbdesc;
-XkbGeometryPtr kb_geom;
-
 IQF_t IQF;
 
 int g_size;
