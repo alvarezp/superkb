@@ -19,7 +19,7 @@
 
 #include "drawkblibs.h"
 
-int drawkb_xlib_create(Display *dpy, const char *imagelib, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale);
+int drawkb_xlib_create(Display *dpy, const char *imagelib, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale, XkbDescPtr kbdesc, int use_gradients);
 void drawkb_xlib_draw(drawkb_p this, Drawable d, GC gc, unsigned int width, unsigned int height, XkbDescPtr kbdesc, puticon_t puticon);
 
 int drawkblibs_xlib_init (
