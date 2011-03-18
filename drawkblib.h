@@ -17,7 +17,7 @@
 
 #include "drawkblibs/drawkblibs.h"
 
-drawkb_p drawkb_create(Display *dpy, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale, debug_t *debug, XkbDescPtr kbdesc);
+drawkb_p drawkb_create(Display *dpy, const char *font, IQF_t IQF, painting_mode_t painting_mode, float scale, debug_t *debug, XkbDescPtr kbdesc, int use_gradients);
 
 typedef struct {
 	const char *code;
