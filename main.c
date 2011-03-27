@@ -28,6 +28,7 @@
 #include <signal.h>
 #include <stdarg.h>
 #include <sys/wait.h>
+#include <locale.h>
 
 #include "superkb.h"
 #include "imagelib.h"
@@ -488,6 +489,8 @@ int main(int argc, char *argv[])
 	}
 
 	config = config_new(dpy);
+
+	setlocale(LC_ALL, "");
 
 	if (config == NULL) {
 		fprintf(stderr, "Superkb could not load configuration. Quitting.\n");

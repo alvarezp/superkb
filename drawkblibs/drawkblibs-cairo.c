@@ -159,6 +159,23 @@ char *drawkb_cairo_LookupKeylabelFromKeystring(char *kss) {
 	return kss;
 }
 
+size_t mbstrlen(const char *s) {
+	int c = 0;
+	int r;
+
+	r = mblen(s, MB_CUR_MAX);
+	while (r > 0) {
+		++c;
+		s = s + r;
+		r = mblen(s, MB_CUR_MAX);
+	}
+
+	if (r == -1)
+		return -1;
+
+	return c;
+}
+
 void drawkb_cairo_WorkaroundBoundsBug(Display * dpy, XkbDescPtr _kb)
 {
 	int i, j;
@@ -588,7 +605,7 @@ drawkb_cairo_KbDrawKey(drawkb_p this, cairo_t *cr, signed int angle,
 						cairo_set_source_rgb(cr, lightcolor.red/65535.0, lightcolor.green/65535.0, lightcolor.blue/65535.0);
 					}
 
-					if (strlen(kss) == 1) {
+					if (mbstrlen(kss) == 1) {
 
 						cairo_save(cr);
 
@@ -933,7 +950,7 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 					}
 					drawkb_cairo_reduce_to_best_size_by_width(this, cr, labelbox, &font_bound, glyph, &size_bound);
 					this->debug (15, "[dk]        + Computed size %d as a bound key.\n", size_bound);
-				} else if (strlen(glyph) == 1) {
+				} else if (mbstrlen(glyph) == 1) {
 					/* If this key is a single char unbound key... */
 					if (!already_increased_size_unbound_char) {
 						drawkb_cairo_increase_to_best_size_by_height(this, cr, labelbox, &font_bound, glyph, &size_unbound_char);
