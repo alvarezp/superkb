@@ -139,6 +139,7 @@ drawkb_cairo_keystrings_t drawkb_cairo_keystrings[] = {
 	{ "Next",                     "PgDn" },
 	{ "questiondown",             "¿" },
 	{ "Print",                    "PrScr" },
+	{ "less",                     "<" },
 	{ "", "" }
 };
 
