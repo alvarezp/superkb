@@ -79,6 +79,8 @@ HELP2MAN=help2man
 APP=superkb
 SHARED=$(obj-m:.o=.so)
 
+MODTYPE ?= m
+
 .PHONY : all
 all:
 	$(MAKE) configuration
@@ -110,14 +112,14 @@ configuration:
 		&& (echo "XINERAMA_SUPPORT=y" >> configuration) \
 		|| (echo "XINERAMA_SUPPORT=n" >> configuration)
 	-pkg-config gdk-pixbuf-xlib-2.0 --exists > /dev/null \
-		&& (echo "PUTICON_GDKPIXBUF=m" >> configuration) \
+		&& (echo "PUTICON_GDKPIXBUF=$(MODTYPE)" >> configuration) \
 		|| (echo "PUTICON_GDKPIXBUF=n" >> configuration)
 	-pkg-config imlib2 --exists > /dev/null \
-		&& (echo "PUTICON_IMLIB2=m" >> configuration) \
+		&& (echo "PUTICON_IMLIB2=$(MODTYPE)" >> configuration) \
 		|| (echo "PUTICON_IMLIB2=n" >> configuration)
-	-echo "DRAWKBLIBS_XLIB=m" >> configuration
+	-echo "DRAWKBLIBS_XLIB=$(MODTYPE)" >> configuration
 	-pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --exists > /dev/null \
-		&& (echo "DRAWKBLIBS_CAIRO=m" >> configuration) \
+		&& (echo "DRAWKBLIBS_CAIRO=$(MODTYPE)" >> configuration) \
 		|| (echo "DRAWKBLIBS_CAIRO=n" >> configuration)
 
 checkdep:
