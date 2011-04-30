@@ -516,7 +516,7 @@ int main(int argc, char *argv[])
 			"X. Quitting.\n");
 		fprintf(stderr, "\nIf using GNOME you might want to try adding a "
 			"keyboard layout and then\nremoving it, and making sure your "
-			"default layout is effectively selected as\ndefault.\n");
+			"current layout is effectively selected as\ndefault.\n");
 		return EXIT_FAILURE;
 	}
 
