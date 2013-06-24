@@ -130,6 +130,7 @@ install:
 
 .PHONY : install-app
 install-app:
+	mkdir -p $(DESTDIR)/usr/bin
 	cp $(APP) $(DESTDIR)/usr/bin
 	@[ -f ${DESTDIR}/usr/bin/superkb ] && { \
 		echo ; \
@@ -146,6 +147,7 @@ install-app:
 
 .PHONY : install-man
 install-man:
+	mkdir -p $(DESTDIR)/usr/share/man/man1
 	install man/superkb.1 $(DESTDIR)/usr/share/man/man1/superkb.1
 
 
