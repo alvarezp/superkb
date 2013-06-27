@@ -53,7 +53,11 @@ ifndef PREFIX
 	PREFIX=usr/local/
 endif
 
-MACROS=-DPREFIX=$(PREFIX)
+ifndef LIBDIRNAME
+	LIBDIRNAME=lib/
+endif
+
+MACROS=-DPREFIX=$(PREFIX) -DLIBDIRNAME=$(LIBDIRNAME)
 
 #Special variables
 SHELL=/bin/sh
@@ -160,8 +164,8 @@ install-man:
 
 .PHONY : install-shared
 install-shared:
-	mkdir -p $(DESTDIR)/$(PREFIX)/lib/superkb
-	[ -n "$(SHARED)" ] && cp $(SHARED) $(DESTDIR)/$(PREFIX)/lib/superkb/ || true
+	mkdir -p $(DESTDIR)/$(PREFIX)/$(LIBDIRNAME)/superkb
+	[ -n "$(SHARED)" ] && cp $(SHARED) $(DESTDIR)/$(PREFIX)/$(LIBDIRNAME)/superkb/ || true
 
 .PHONY : uninstall
 uninstall:
@@ -171,7 +175,7 @@ uninstall:
 	
 .PHONY : uninstall-shared
 uninstall-shared:
-	[ -d /$(PREFIX)/lib/superkb ] && rm -fr $(DESTDIR)/$(PREFIX)/lib/superkb
+	[ -d /$(PREFIX)/$(LIBDIRNAME)/superkb ] && rm -fr $(DESTDIR)/$(PREFIX)/$(LIBDIRNAME)/superkb
 
 .PHONY : uninstall-man
 uninstall-man:

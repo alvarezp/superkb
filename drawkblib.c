@@ -30,7 +30,7 @@
  #define PREFIX "/usr/local/"
 #endif
 
-#define LIB_PREFIX "/" ESTR(PREFIX) "/lib/"
+#define LIB_PREFIX "/" ESTR(PREFIX) "/" ESTR(LIBDIRNAME) "/"
 
 #ifndef WITH_DRAWKBLIBS_XLIB
 	#define drawkblibs_xlib_init NULL

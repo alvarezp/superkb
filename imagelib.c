@@ -30,7 +30,7 @@
  #define PREFIX "/usr/local/"
 #endif
 
-#define LIB_PREFIX "/" ESTR(PREFIX) "/lib/"
+#define LIB_PREFIX "/" ESTR(PREFIX) "/" ESTR(LIBDIRNAME) "/"
 
 #ifndef WITH_GDKPIXBUF
 	#define pi_gdkpixbuf_init NULL
