@@ -23,7 +23,14 @@
 #include "drawkblibs/drawkblibs-xlib.h"
 #include "drawkblibs/drawkblibs-cairo.h"
 
-#define LIB_PREFIX "/usr/lib/"
+#define STR(str) #str
+#define ESTR(str) STR(str)
+
+#ifndef PREFIX
+ #define PREFIX "/usr/local/"
+#endif
+
+#define LIB_PREFIX "/" ESTR(PREFIX) "/lib/"
 
 #ifndef WITH_DRAWKBLIBS_XLIB
 	#define drawkblibs_xlib_init NULL

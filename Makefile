@@ -48,10 +48,17 @@ ifeq ($(shell pkg-config --modversion pango),1.32.3)
        PEDANTIC_ERRORS :=
 endif
 
+#Directory variables
+ifndef PREFIX
+	PREFIX=usr/local/
+endif
+
+MACROS=-DPREFIX=$(PREFIX)
+
 #Special variables
 SHELL=/bin/sh
 CC=gcc
-CFLAGS=-Wall -std=c99 $(PEDANTIC_ERRORS) $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC -DVEXTRA=\""$(version_extrainfo)"\"
+CFLAGS=-Wall -std=c99 $(PEDANTIC_ERRORS) $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC -DVEXTRA=\""$(version_extrainfo)"\" $(MACROS)
 OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o timeval.o $(obj-y)
 LDPARAMS=-lX11 -lm -ldl -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
 
@@ -130,9 +137,9 @@ install:
 
 .PHONY : install-app
 install-app:
-	mkdir -p $(DESTDIR)/usr/bin
-	cp $(APP) $(DESTDIR)/usr/bin
-	@[ -f ${DESTDIR}/usr/bin/superkb ] && { \
+	mkdir -p $(DESTDIR)/$(PREFIX)/bin
+	cp $(APP) $(DESTDIR)/$(PREFIX)/bin
+	@[ -f ${DESTDIR}/$(PREFIX)/bin/superkb ] && { \
 		echo ; \
 		echo "Superkb has been successfully installed!"; \
 		echo ; \
@@ -147,14 +154,14 @@ install-app:
 
 .PHONY : install-man
 install-man:
-	mkdir -p $(DESTDIR)/usr/share/man/man1
-	install man/superkb.1 $(DESTDIR)/usr/share/man/man1/superkb.1
+	mkdir -p $(DESTDIR)/$(PREFIX)/share/man/man1
+	install man/superkb.1 $(DESTDIR)/$(PREFIX)/share/man/man1/superkb.1
 
 
 .PHONY : install-shared
 install-shared:
-	mkdir -p $(DESTDIR)/usr/lib/superkb
-	[ -n "$(SHARED)" ] && cp $(SHARED) $(DESTDIR)/usr/lib/superkb/ || true
+	mkdir -p $(DESTDIR)/$(PREFIX)/lib/superkb
+	[ -n "$(SHARED)" ] && cp $(SHARED) $(DESTDIR)/$(PREFIX)/lib/superkb/ || true
 
 .PHONY : uninstall
 uninstall:
@@ -164,15 +171,15 @@ uninstall:
 	
 .PHONY : uninstall-shared
 uninstall-shared:
-	[ -d /usr/lib/superkb ] && rm -fr $(DESTDIR)/usr/lib/superkb
+	[ -d /$(PREFIX)/lib/superkb ] && rm -fr $(DESTDIR)/$(PREFIX)/lib/superkb
 
 .PHONY : uninstall-man
 uninstall-man:
-	rm -fr $(DESTDIR)/usr/share/man/man1/superkb.1
+	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/superkb.1
 
 .PHONY : uninstall-app
 uninstall-app:
-	rm -fr $(DESTDIR)/usr/bin/superkb
+	rm -fr $(DESTDIR)/$(PREFIX)/bin/superkb
 
 .PHONY : clean
 clean:

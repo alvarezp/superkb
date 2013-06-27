@@ -23,7 +23,14 @@
 #include "puticon/puticon-gdkpixbuf.h"
 #include "puticon/puticon-imlib2.h"
 
-#define LIB_PREFIX "/usr/lib/"
+#define STR(str) #str
+#define ESTR(str) STR(str)
+
+#ifndef PREFIX
+ #define PREFIX "/usr/local/"
+#endif
+
+#define LIB_PREFIX "/" ESTR(PREFIX) "/lib/"
 
 #ifndef WITH_GDKPIXBUF
 	#define pi_gdkpixbuf_init NULL
