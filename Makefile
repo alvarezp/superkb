@@ -42,9 +42,15 @@ endif
 
 version_extrainfo = $(shell ./extendedversioninfo.bash)
 
-#Conditional -pedantic-errors because of pango 1.32.3
+#Conditional -pedantic-errors because of pango 1.32.3, 1.32.4 and 1.32.5.
 PEDANTIC_ERRORS := -pedantic-errors
 ifeq ($(shell pkg-config --modversion pango),1.32.3)
+       PEDANTIC_ERRORS :=
+endif
+ifeq ($(shell pkg-config --modversion pango),1.32.4)
+       PEDANTIC_ERRORS :=
+endif
+ifeq ($(shell pkg-config --modversion pango),1.32.5)
        PEDANTIC_ERRORS :=
 endif
 
