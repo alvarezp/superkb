@@ -72,6 +72,9 @@ CFLAGS=-Wall -std=c99 $(PEDANTIC_ERRORS) $(WEXTRA) $(syms-y) $(cflags-y) $(cflag
 OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o timeval.o $(obj-y)
 LDPARAMS=-lX11 -lm -ldl -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
 
+#Convenience variables
+HELP2MAN=help2man
+
 #My variables
 APP=superkb
 SHARED=$(obj-m:.o=.so)
@@ -81,6 +84,11 @@ all:
 	$(MAKE) configuration
 	$(MAKE) checkdep
 	$(MAKE) $(SHARED) $(APP)
+	$(MAKE) man
+
+man: $(APP)
+	mkdir -p man/
+	$(HELP2MAN) --help-option=-h --version-option=-v -N ./$(APP) > man/$(APP).1
 
 $(APP): $(OBJS)
 	$(CC) $(LDPARAMS) -o $(APP) $(OBJS)
@@ -197,3 +205,4 @@ clean:
 	-/bin/rm -f `find -name "*~"`
 	-/bin/rm -f `find -name core`
 	-/bin/rm -f `find -name "core.*"`
+	-/bin/rm -fr man/
