@@ -384,7 +384,7 @@ int main(int argc, char *argv[])
 
 	running_debug_level = 0;
 
-	while ((c = getopt(argc, argv, ":0d:h")) != -1) {
+	while ((c = getopt(argc, argv, ":0d:hv")) != -1) {
 		switch(c) {
 		case '0':
 			cancel_after_ready++;
@@ -396,6 +396,10 @@ int main(int argc, char *argv[])
 		case 'h':
 			/* FIXME: doesn't check if it is really an integer */
 			help++;
+			break;
+		case 'v':
+			printf("%s\n", VERSION VEXTRA);
+			exit(EXIT_SUCCESS);
 			break;
 		case ':':
 			/* -d level is optional, defaults to 1. */
@@ -420,6 +424,7 @@ int main(int argc, char *argv[])
 		printf("	-0         Quit when Superkb is ready (for timing and debugging).\n");
 		printf("	-d level   Show debug messages up to the specified verbosity level.\n");
 		printf("	-h         Shows this help.\n");
+		printf("	-v         Shows program version.\n");
 		printf("\n");
 		if (help)
 			exit(EXIT_SUCCESS);	
