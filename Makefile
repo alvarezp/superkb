@@ -42,10 +42,16 @@ endif
 
 version_extrainfo = $(shell ./extendedversioninfo.bash)
 
+#Conditional -pedantic-errors because of pango 1.32.3
+PEDANTIC_ERRORS := -pedantic-errors
+ifeq ($(shell pkg-config --modversion pango),1.32.3)
+       PEDANTIC_ERRORS :=
+endif
+
 #Special variables
 SHELL=/bin/sh
 CC=gcc
-CFLAGS=-Wall -std=c99 -pedantic-errors $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC -DVEXTRA=\""$(version_extrainfo)"\"
+CFLAGS=-Wall -std=c99 $(PEDANTIC_ERRORS) $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC -DVEXTRA=\""$(version_extrainfo)"\"
 OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o timeval.o $(obj-y)
 LDPARAMS=-lX11 -lm -ldl -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
 
