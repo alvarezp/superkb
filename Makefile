@@ -91,7 +91,7 @@ man: $(APP)
 	$(HELP2MAN) --help-option=-h --version-option=-v -N ./$(APP) > man/$(APP).1
 
 $(APP): $(OBJS)
-	$(CC) $(LDPARAMS) -o $(APP) $(OBJS)
+	$(CC) -o $(APP) $(OBJS) $(LDPARAMS)
 	@[ -f superkb ] && { \
 		echo ; \
 		echo "Superkb has been successfully compiled!"; \
