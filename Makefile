@@ -90,7 +90,7 @@ all:
 
 man: $(APP)
 	mkdir -p man/
-	$(HELP2MAN) --help-option=-h --version-option=-v -N ./$(APP) > man/$(APP).1
+	$(HELP2MAN) -n 'Graphical keyboard launcher with on-screen hints' --help-option=-h --version-option=-v -N ./$(APP) > man/$(APP).1
 
 $(APP): $(OBJS)
 	$(CC) -o $(APP) $(OBJS) $(LDPARAMS)
