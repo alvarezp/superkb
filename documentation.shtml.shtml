@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+	 PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+	<title>Documentation - Superkb</title>
+        <!--#include virtual="stylesheets.html" -->
+	<meta http-equiv="Content-type"
+	  content="application/xhtml+xml; charset=iso-8859-1" />
+	<style type="text/css"><!--
+	--></style>
+  <!--#include virtual="analytics.html" -->
+  </head>
+  <body> 
+
+	<!--#include virtual="menu.html.en" -->
+
+	<div class="content">
+
+	<div class ="index">
+		<ul class="index">
+			<li class="index"><a href="#source">Source code</a>
+			<li class="index"><a href="#compilation">Compilation</a>
+			<li class="index"><a href="#installation">Installation</a>
+			<li class="index"><a href="#configuration">Configuration</a>
+		</ul>
+	</div>
+
+	<h1>Some documentation</h1>
+
+	<p>This page is divided into several sections. Please use the floating menu
+	at the right to navigate through it.</p>
+
+	<h2 id="source">Source code</h2>
+
+	<p>The source code is managed under Git. To get it, make sure you have Git installed and use:</p>
+
+	<p><code>git clone git://superkb.git.sourceforge.net/gitroot/superkb/superkb superkb-git</code></p>
+
+	<p>Also, the source code has a lot of FIXME which need work. They are documented
+	throughout the code.</p>
+
+	<h2 id="compilation">Compilation</h2>
+
+	<p>a simple <code>make</code> should do it. However, in some distributions,
+	you must issue the command two times.</p>
+
+	<p>Superkb uses a file named "configuration" to keep track of detected
+	system settings. This file can contain the following directives:</p>
+	<ul>
+		<li><strong>PUTICON_GDKPIXBUF={y|m|n}</strong>: whether to compile
+		support for Gdk-Pixbuf library (y), include support for it as a
+		module (m), or not include support for it at all (n). It is normally
+		detected by the Makefile by using <code>pkg-config
+		gdk-pixbuf-xlib-2.0</code>.</li>
+		<li><strong>PUTICON_IMLIB2={y|m|n}</strong>: whether to compile
+		support for Imlib2 library (y), include support for it as a
+		module (m), or not include support for it at all (n). It is normally
+		detected by the Makefile by using <code>imlib2-config</code>.</li>
+	</ul>
+
+	<h2 id="installation">Installation</h2>
+
+	<p>A simple <code>make install</code> should do. Paths are fixed at this moment.</p>
+
+	<h2 id="configuration">Configuration</h2>
+
+	<p>Superkb looks for a file named .superkbrc in the $HOME directory. The
+	file is interpreted as a script, so if a command conflicts with another, the
+	second one wins. Comments are indicated by a pound sign (#)
+	and the rest of the line is ignored. Basic syntax is "KEYWORD value", but if
+	a value includes a space, it must be enclosed in double quotation marks.
+	Currently supported directives are:</p>
+	<ul>
+		<li><strong>IMAGELIB {gdkpixbuf|imbli2}</strong>: Set the icon loading
+			library to use. Support for it must be either compiled in or included as
+			a module. See <a href="#compilation">Compilation</a> for more information.
+			Default value: "imlib2".
+		</li>
+		<li><strong>FONT "font name"</strong>: The XLFD name of the font to use. I recommend to
+			use a scalable font. I use <code>xfontsel -pattern "*-0-0-0-0-*-0-*"</code>
+			to find a font chooser with suitable fonts. But there are reports that this
+		   doesn't necesarily work.	Don't forget the double quotes on the font name,
+			since most fonts contain spaces in their names. Default value:
+			"-*-bitstream vera sans-bold-r-*-*-*-*-*-*-*-*-*-*".
+		</li>
+		<li><strong>BACKGROUND r g b</strong>: Sets the background color to use. Each
+			value must be in the range of 0 to 65535. This is likely to change in the
+			future. Default value: 59500 59500 59500. (Yes, it's ugly.)
+		<li><strong>FOREGROUND r g b</strong>: Sets the foreground color to use. Each
+			value must be in the range of 0 to 65535. This is likely to change in the
+			future. Default value: 2000 2000 2000. (Heh, it's ugly too.)
+		</li>
+		<li><strong>DELAY seconds</strong>: Sets the amount of time to wait for
+			before the keyboard is shown, after holding the Super key down.
+			Decimal values are accepted. Default value: 0.5.
+		</li>
+		<li><strong>SUPERKEY1_STRING</strong>: Sets the first Super key, by
+			name. Default value: "Super_L"
+		</li>
+		<li><strong>SUPERKEY2_STRING</strong>: Sets the second Super key, by
+			name. Default value: "Super_R"
+		</li>
+		<li><strong>SUPERKEY1_CODE</strong>: Sets the first Super key, by
+			X key code.
+		</li>
+		<li><strong>SUPERKEY1_STRING</strong>: Sets the second Super key, by
+			X key code.
+		</li>
+		<li><strong>KEY COMMAND key mask command icon [feedback]</strong>: Launches an arbitrary
+			command. "Key" sets the key to
+			use. Not all keys work at this moment, but letters and function keys (as in
+			"F1" should work. "Mask" is reserved for future use; just put a 0 in there.
+			"Command" is the command to run (don't forget the double quotes if needed)
+			and "Icon" is the ABSOLUTE location to the icon file to show on the
+			keyboard. The optional "feedback" string should appear with the line to
+			be appended to the FEEDBACK_HANDLER. For example, if the FEEDBACK_HANDLER is
+			'xmessage -timeout 2 -center Launching ', the "feedback" string should be
+			set to something like "gedit", so it shows "Launching gedit" on the screen.
+			Note that omiting the "feedback" string disables the feedback for that KEY.
+		</li>
+		<li><strong>KEY DOCUMENT key mask document icon [feedback]</strong>: Uses the
+			DOCUMENT_HANDLER to open the specified document. "Key" sets the key to
+			use. Not all keys work at this moment, but letters and function keys (as in
+			"F1" should work. "Mask" is reserved for future use; just put a 0 in there.
+			"Command" is the command to run (don't forget the double quotes if needed)
+			and "Icon" is the ABSOLUTE location to the icon file to show on the
+			keyboard. The optional "feedback" string should appear with the line to
+			be appended to the FEEDBACK_HANDLER. For example, if the FEEDBACK_HANDLER is
+			'xmessage -timeout 2 -center Launching ', the "feedback" string should be
+			set to something like "gedit", so it shows "Launching gedit" on the screen.
+			Note that omiting the "feedback" string disables the feedback for that KEY.
+		</li>
+
+		<li><strong>DOCUMENT_HANDLER string</strong>: Indicates what program should
+		be used to open a document specified with a KEY DOCUMENT directive.
+		</li>
+
+		<li><strong>FEEDBACK_HANDLER string</strong>: Sets the program to use to
+		send the feedback when a KEY gets executed. Technically speaking, the command
+		actually sent, is the "feedback" on the KEY command concatenated to the
+		FEEDBACK_HANDLER parameter.
+		</li>
+
+		<li><strong>SUPERKEY_REPLAY { 0 | 1 }</strong>: Sets whether the
+		Super key should be resent to the original input window, so the
+		typical key usage won't get lost. For instance, if the F10 key
+		is set as the Super key, this would allow the key to be sent
+		again if the key is hit (as opposed to held down or combined
+		with another key to launch something). This way, GNOME apps that
+		have a menu will show it.
+		</li>
+	</ul>
+
+  </body>
+</html>
+
+

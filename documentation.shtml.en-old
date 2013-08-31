@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+	 PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+	<title>Documentation - Superkb</title>
+        <!--#include virtual="stylesheets.html" -->
+	<meta http-equiv="Content-type"
+	  content="application/xhtml+xml; charset=iso-8859-1" />
+	<style type="text/css"><!--
+	--></style>
+  </head>
+  <body> 
+
+	<!--#include virtual="menu.html.en" -->
+
+	<div class="content">
+
+	<div class ="index">
+		<ul class="index">
+			<li class="index"><a href="#source">Source code</a>
+			<li class="index"><a href="#compilation">Compilation</a>
+			<li class="index"><a href="#installation">Installation</a>
+			<li class="index"><a href="#configuration">Configuration</a>
+			<li class="index"><a href="#distrotesting">Testing on distros</a>
+		</ul>
+	</div>
+
+	<h1>Some documentation</h1>
+
+	<p>This page is divided into several sections. Please use the floating menu
+	at the right to navigate through it.</p>
+
+	<h2 id="source">Source code</h2>
+
+	<p>The source code is managed under Git. To get it, make sure you have Git installed and use:</p>
+
+	<p><code>git clone git://superkb.git.sourceforge.net/gitroot/superkb/superkb superkb-git</code></p>
+
+	<p>Also, the source code has a lot of FIXME which need work. They are documented
+	throughout the code.</p>
+
+	<h2 id="compilation">Compilation</h2>
+
+	<p>a simple <code>make</code> should do it. However, in some distributions,
+	you must issue the command two times.</p>
+
+	<p>Superkb uses a file named "configuration" to keep track of detected
+	system settings. This file can contain the following directives:</p>
+	<ul>
+		<li><strong>PUTICON_GDKPIXBUF={y|m|n}</strong>: whether to compile
+		support for Gdk-Pixbuf library (y), include support for it as a
+		module (m), or not include support for it at all (n). It is normally
+		detected by the Makefile by using <code>pkg-config
+		gdk-pixbuf-xlib-2.0</code>.</li>
+		<li><strong>PUTICON_IMLIB2={y|m|n}</strong>: whether to compile
+		support for Imlib2 library (y), include support for it as a
+		module (m), or not include support for it at all (n). It is normally
+		detected by the Makefile by using <code>imlib2-config</code>.</li>
+	</ul>
+
+	<h2 id="installation">Installation</h2>
+
+	<p>A simple <code>make install</code> should do. Paths are fixed at this moment.</p>
+
+	<h2 id="configuration">Configuration</h2>
+
+	<p>Superkb looks for a file named .superkbrc in the $HOME directory. The
+	file is interpreted as a script, so if a command conflicts with another, the
+	second one wins. Comments are indicated by a pound sign (#)
+	and the rest of the line is ignored. Basic syntax is "KEYWORD value", but if
+	a value includes a space, it must be enclosed in double quotation marks.
+	Currently supported directives are:</p>
+	<ul>
+		<li><strong>IMAGELIB {gdkpixbuf|imbli2}</strong>: Set the icon loading
+			library to use. Support for it must be either compiled in or included as
+			a module. See <a href="#compilation">Compilation</a> for more information.
+			Default value: "imlib2".
+		</li>
+		<li><strong>FONT "font name"</strong>: The XLFD name of the font to use. I recommend to
+			use a scalable font. I use <code>xfontsel -pattern "*-0-0-0-0-*-0-*"</code>
+			to find a font chooser with suitable fonts. But there are reports that this
+		   doesn't necesarily work.	Don't forget the double quotes on the font name,
+			since most fonts contain spaces in their names. Default value:
+			"-*-bitstream vera sans-bold-r-*-*-*-*-*-*-*-*-*-*".
+		</li>
+		<li><strong>BACKGROUND r g b</strong>: Sets the background color to use. Each
+			value must be in the range of 0 to 65535. This is likely to change in the
+			future. Default value: 59500 59500 59500. (Yes, it's ugly.)
+		<li><strong>FOREGROUND r g b</strong>: Sets the foreground color to use. Each
+			value must be in the range of 0 to 65535. This is likely to change in the
+			future. Default value: 2000 2000 2000. (Heh, it's ugly too.)
+		</li>
+		<li><strong>DELAY seconds</strong>: Sets the amount of time to wait for
+			before the keyboard is shown, after holding the Super key down.
+			Decimal values are accepted. Default value: 0.5.
+		</li>
+		<li><strong>SUPERKEY1_STRING</strong>: Sets the first Super key, by
+			name. Default value: "Super_L"
+		</li>
+		<li><strong>SUPERKEY2_STRING</strong>: Sets the second Super key, by
+			name. Default value: "Super_R"
+		</li>
+		<li><strong>SUPERKEY1_CODE</strong>: Sets the first Super key, by
+			X key code.
+		</li>
+		<li><strong>SUPERKEY1_STRING</strong>: Sets the second Super key, by
+			X key code.
+		</li>
+		<li><strong>KEY COMMAND key mask command icon [feedback]</strong>: Launches an arbitrary
+			command. "Key" sets the key to
+			use. Not all keys work at this moment, but letters and function keys (as in
+			"F1" should work. "Mask" is reserved for future use; just put a 0 in there.
+			"Command" is the command to run (don't forget the double quotes if needed)
+			and "Icon" is the ABSOLUTE location to the icon file to show on the
+			keyboard. The optional "feedback" string should appear with the line to
+			be appended to the FEEDBACK_HANDLER. For example, if the FEEDBACK_HANDLER is
+			'xmessage -timeout 2 -center Launching ', the "feedback" string should be
+			set to something like "gedit", so it shows "Launching gedit" on the screen.
+			Note that omiting the "feedback" string disables the feedback for that KEY.
+		</li>
+		<li><strong>KEY DOCUMENT key mask document icon [feedback]</strong>: Uses the
+			DOCUMENT_HANDLER to open the specified document. "Key" sets the key to
+			use. Not all keys work at this moment, but letters and function keys (as in
+			"F1" should work. "Mask" is reserved for future use; just put a 0 in there.
+			"Command" is the command to run (don't forget the double quotes if needed)
+			and "Icon" is the ABSOLUTE location to the icon file to show on the
+			keyboard. The optional "feedback" string should appear with the line to
+			be appended to the FEEDBACK_HANDLER. For example, if the FEEDBACK_HANDLER is
+			'xmessage -timeout 2 -center Launching ', the "feedback" string should be
+			set to something like "gedit", so it shows "Launching gedit" on the screen.
+			Note that omiting the "feedback" string disables the feedback for that KEY.
+		</li>
+
+		<li><strong>DOCUMENT_HANDLER string</strong>: Indicates what program should
+		be used to open a document specified with a KEY DOCUMENT directive.
+		</li>
+
+		<li><strong>FEEDBACK_HANDLER string</strong>: Sets the program to use to
+		send the feedback when a KEY gets executed. Technically speaking, the command
+		actually sent, is the "feedback" on the KEY command concatenated to the
+		FEEDBACK_HANDLER parameter.
+		</li>
+
+		<li><strong>SUPERKEY_REPLAY { 0 | 1 }</strong>: Sets whether the
+		Super key should be resent to the original input window, so the
+		typical key usage won't get lost. For instance, if the F10 key
+		is set as the Super key, this would allow the key to be sent
+		again if the key is hit (as opposed to held down or combined
+		with another key to launch something). This way, GNOME apps that
+		have a menu will show it.
+		</li>
+	</ul>
+
+	<h2 id="distrotesting">Testing on distributions</h2>
+
+	<p>These are installation notes and instructions on specific distributions.
+	Comments and additions are welcome.</p>
+
+	<h3 id="ubuntu606lts">Ubuntu 6.06 LTS (Dapper Drake)</h3>
+
+	<ul>
+		<li>Prepare your Ubuntu installation:<ul>
+			<li>Run Synaptic Package Manager, from System >
+				Administration</li>
+			<li>Click Reload</li>
+			<li>Mark "make", "libimlib2-dev", "gcc" (not -4.0, not
+			       -3.x, just plain "gcc").</li>
+			<li>Click Apply and continue as usual</li>
+		</ul>
+		<li>Update libimlib2. (At the moment of writing, Ubuntu doesn't
+				include the required libimlib2, not even as an update):<ul>
+			<li><code>wget http://easynews.dl.sourceforge.net/sourceforge/enlightenment/imlib2-1.2.2.tar.gz</code></li>
+			<li><code>tar xvzf imlib2-1.2.2.tar.gz</code></li>
+			<li><code>cd imlib2-1.2.2</code></li>
+			<li><code>./configure --prefix=/usr && make</code></li>
+			<li><code>sudo make install</code></li>
+		</ul>
+		<li>Install Superkb:<ul>
+			<li>Download Superkb from the <a href="download.shtml.en">Download
+			</a>
+				section.</li>
+			<li><code>tar xvzf superkb-0.10-tar.gz</code> &mdash;or&mdash; <code>tar xvjf
+				superkb-0.10.tar.bz2</code></li>
+			<li><code>cd superkb-0.10</code></li>
+			<li><code>sudo make install</code></li>
+		</ul>
+		<li>Configure Superkb:<ul>
+			<li><code>cp sample-config/superkbrc-gnome $HOME/.superkbrc</code></li>
+			<li>Edit <code>$HOME/.superkbrc</code> with gedit or any other text-editor:<ul>
+				<li>Change the first line ("IMAGELIB gdkpixbuf") to "<code>IMAGELIB
+					imlib2</code>"</li>
+				<li>You may need to set the font. Check the above, in the
+                    documentation for the FONT directive for more info.</li>
+				<li>Save and quit.</li>
+			</ul>
+		</ul>
+	<li>Run it by typing "<code>superkb</code>".</li>
+	<li>You may want to include it in your list of running programs by
+	adding it in System > Preferences > Sessions > Startup Programs.</li>
+	</ul>
+
+	<p>I have Superkb running in my Ubuntu 6.06 LTS workstation at work.</p>
+
+	<p>There are issues when running Superkb on Ubuntu on an IBM Thinkpad T42.
+	The laptop doesn't include a Win key, and the key I wanted to use (Forward)
+	sends KeyPress and KeyRelease simultaneously, whatever its AutoRepeat
+	status is. This makes it unusable for Superkb at this moment.</p>
+			
+	<h3 id="arch070">Arch Linux 0.7</h3>
+
+	<p>I have Superkb running in my Arch Linux 0.7.</p>
+
+	<h3 id="ubuntu610">Ubuntu 6.10 (Edgy Eft)</h3>
+
+	<p>Before installing Superkb you must upgrade your X.org because of an
+	existing bug. There are precompiled packages for i386 for Ubuntu Edgy
+	available, so it should be just a matter of installing it using dpkg. This
+	is what worked for me:</p>
+
+	<ol>
+		<li>Issue <code>dpkg -l | grep ^ii | grep -E "^ii..(xdmx-tools|xdmx|xnest|xserver-xephyr|xserver-xorg-core|xserver-xorg-dev|xvfb)"</code>.
+			The resulting list are the packages you need to upgrade, so:</li>
+		<li>Download them from <a href="http://people.ubuntu.com/~seb128/xorg-server-edgy-update/">http://people.ubuntu.com/~seb128/xorg-server-edgy-update/</a>.</li>
+		<li>Run <code>sudo dpkg -i <em>package-name</em>.deb</code> for each downloaded file.</li>
+		<li>Restart your X server.</li>
+	</ol>
+
+	<p>Now that you have updated your Edgy X.org, follow the instructions for
+	<a href="#ubuntu606lts">Ubuntu 6.06 LTS (Dapper Drake)</a>.</p>
+	
+	<h3 id="fedora6">Fedora Core 6</h3>
+
+	<p>Due to a bug in Xorg included in Fedora Core 6, Superkb can't run at
+	all. This was fixed in Xorg shortly after Fedora Core 6 was released.
+	I have no info regarding updates that fix Xorg in Fedora Core 6.</p>
+
+	<h3 id="fedora5">Fedora Core 5</h3>
+
+	<ul>
+		<li>Prepare your Fedora Core 5 installation:<ul>
+			<li>Open a terminal window.</li>
+			<li><code>yum install imlib2-devel xorg-x11-devel gcc</code></li>
+		</ul>
+		<li>Update libimlib2. (At the moment of writing, Fedora Core 5 doesn't
+				include the required libimlib2, not even as an update):<ul>
+			<li><code>wget http://easynews.dl.sourceforge.net/sourceforge/enlightenment/imlib2-1.2.2.tar.gz</code></li>
+			<li><code>tar xvzf imlib2-1.2.2.tar.gz</code></li>
+			<li><code>cd imlib2-1.2.2</code></li>
+			<li><code>./configure --prefix=/usr && make</code></li>
+			<li><code>su -c "make install"</code></li>
+		</ul>
+		<li>Install Superkb:<ul>
+			<li>Download Superkb from the <a href="download.shtml.en">Download
+			</a>
+				section.</li>
+			<li><code>tar xvzf superkb-0.10-tar.gz</code> &mdash;or&mdash; <code>tar xvjf
+				superkb-0.10.tar.bz2</code></li>
+			<li><code>cd superkb-0.10</code></li>
+			<li><code>su -c "make install"</code></li>
+		</ul>
+		<li>Configure Superkb:<ul>
+			<li><code>cp sample-config/superkbrc-gnome $HOME/.superkbrc</code></li>
+			<li>Edit <code>$HOME/.superkbrc</code> with gedit or any other text-editor:<ul>
+				<li>Change the first line ("IMAGELIB gdkpixbuf") to "<code>IMAGELIB
+					imlib2"</code></li>
+				<li>You may need to set the font. Check the above, in the
+                    documentation for the FONT directive for more info.</li>
+				<li>Save and quit.</li>
+			</ul>
+		</ul>
+	<li>Run it by typing "<code>superkb</code>".</li>
+	</ul>
+
+	<h3 id="debiansid">Debian Sid</h3>
+
+	<p>Due to a bug in Xorg included in Debian Sid, Superkb can't run at
+	all. This was fixed in Xorg shortly after Debian Sid was released.
+	I have no info regarding updates that fix Xorg in Debian Sid.</p>
+
+
+  </body>
+</html>
+
+

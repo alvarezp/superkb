@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Download - Superkb</title>
+        <!--#include virtual="stylesheets.html" -->
+    <meta http-equiv="Content-type"
+      content="application/xhtml+xml; charset=iso-8859-1" />
+    <style type="text/css"><!--
+    --></style>
+  </head>
+  <body> 
+
+    <!--#include virtual="menu.html.en" -->
+
+	<div class="content">
+
+    <h1>Download</h1>
+
+    <p>Superkb still uses diapers, so there are no binary packages yet. Still,
+      there are three ways to get the source code. You can either:</p>
+    <ul>
+      <li>Download <a href="#package">the most recent package</a>, either in source code or as a precompiled binary for Ubuntu.</li>
+      <li>Get <a href="#get-svn">the current code from SVN</a>.</li>
+      <li>Browse the SVN repository online. <a href="#browse-svn">(Instructions)</a></li>
+    </ul>
+
+    <h2 id="package">Most recent packages</h2>
+
+    <p id='current-tarball-version'>The current version is: "superkb-0.13", released on 2008-02-07.</p>
+    <ul>
+      <li id='download-current-tarball-gz'>Current tarball in gz: <a href='http://prdownloads.sourceforge.net/superkb/superkb-<!--#include virtual="CURRENT_VERSION" -->.tar.gz?download'>superkb-<!--#include virtual="CURRENT_VERSION" -->.tar.gz</a></li>
+     <li id='download-current-tarball-bz2'>Current tarball in bz2: <a href='http://prdownloads.sourceforge.net/superkb/superkb-<!--#include virtual="CURRENT_VERSION" -->.tar.bz2?download'>superkb-<!--#include virtual="CURRENT_VERSION" -->.tar.bz2</a></li>
+      <li id='download-current-binary-deb'>Current Debian package: <a href='http://prdownloads.sourceforge.net/superkb/superkb_<!--#include virtual="CURRENT_VERSION" -->_i386.deb?download'>superkb_<!--#include virtual="CURRENT_VERSION" -->_i386.deb</a></li>
+    </ul>
+
+    <h3>Changelog (since -proto3):</h3>
+
+    <ul id="download-full-changelog">
+    <!--#include virtual="changelog.html.part.en" -->
+    </ul>
+
+    <h3>Some notes:</h3>
+    <ul>
+      <li>There is a sample configuration file at ./sample-config.</li>
+      <li>Superkb needs Xkb and either gdk-pixbuf w/pkg-config or imlib2.</li>
+      <li>You need a scalable font. You can try
+		<code>xfontsel -pattern "*-0-0-0-0-*-0-*"</code></li>
+      <li>To compile you must issue "make" from the "src" directory. Superkb
+		should detect wether you have gdk-pixbuf or imlib2.</li>
+    </ul>
+
+    <h2 id="get-svn">Downloading the latest code</h2>
+
+    <p>Development version is currently held in SVN, which you can download
+    by issuing:</p>
+
+    <p><code>svn co https://superkb.svn.sourceforge.net/svnroot/superkb/trunk superkb-svn</code></p>
+
+    <h2 id="browse-svn">Brosing the SVN repository</h2>
+
+    <p>As an alternative to downloading the whole code, you can point your
+    browser to <a href="http://superkb.svn.sourceforge.net/viewvc/superkb/">
+    and view individiual files by using SF's ViewVC facility.</p>
+	</div>
+
+  </body>
+</html>
+
+

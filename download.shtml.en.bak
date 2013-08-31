@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Download - Superkb</title>
+        <!--#include virtual="stylesheets.html" -->
+    <meta http-equiv="Content-type"
+      content="application/xhtml+xml; charset=iso-8859-1" />
+    <style type="text/css"><!--
+    --></style>
+  </head>
+  <body> 
+
+    <!--#include virtual="menu.html.en" -->
+
+	<div class="content">
+
+    <h1>Download</h1>
+
+    <p>Superkb still uses diapers, so there are no binary packages yet. Still,
+      there are three ways to get the source code. You can either:</p>
+    <ul>
+      <li>Download <a href="#tarball">the most recent tarball</a>, which has the latest released code.</li>
+      <li>Get <a href="#get-svn">the current code from SVN</a>.</li>
+      <li>Browse the SVN repository online. <a href="#browse-svn">(Instructions)</a></li>
+    </ul>
+
+    <h2 id="tarball">Most recent tarball</h2>
+
+    <p id="download-current-tarball-version">The current tarball is: "superkb-0.12", released on 2007-11-13.</p>
+    <ul>
+      <li id="download-current-tarball-gz">Current tarball in gz: <a href="http://prdownloads.sourceforge.net/superkb/superkb-0.12.tar.gz?download">superkb-0.12.tar.gz</a></li>
+      <li id="download-current-tarball-bz2">Current tarball in bz2: <a href="http://prdownloads.sourceforge.net/superkb/superkb-0.12.tar.bz2?download">superkb-0.12.tar.bz2</a></li>
+    </ul>
+
+    <h3>Changelog (since -proto3):</h3>
+
+    <ul id="download-full-changelog">
+    <!--#include virtual="changelog.html.part.en" -->
+	<li>0.12: Prepended ./ when checking for the results of configuration upon creation. (avoid double 'make' command).</li>
+	<li>0.12: Suppress the output of commands when making configuration.</li>
+	<li>0.12: New option "SUPERKEY_REPLAY": Configures whether the Super key should be sent to the original focus window if hit, and not held or combined.</li>
+	<li>0.12: Basic support for FEEDBACK_HANDLER, to allow the user to be notified with something of his choice when a program is being run.</li>
+      <li>0.11: No more zombie leftovers ("defunct").</li>
+      <li>0.11: Fixed bug where an unknown key name would make that entry to
+        spread across the keybaord.</li>
+      <li>0.11: Support for KEY DOCUMENT and DOCUMENT_HANDLER.</li>
+      <li>0.10: Font is now configurable. You must use scalable fonts,
+		though.</li>
+      <li>0.10: Common errors have friendlier messages.</li>
+      <li>0.10: Foreground and background color are now configurable an they
+		are correctly used now. (Colors are specified by their three components,
+		red green blue, from 0 to 65535.)</li>
+      <li>0.10: Super keys are configurable. See superkbrc.c for more info. This
+		is good for users of certain Winkey-less keyboards, like Thinkpad's,
+		like me.</li>
+      <li>0.10: Imlib2 can now be used as an icon-loading library. Gdk-pixbuf
+		is still available.</li>
+      <li>0.10: The keyboard is rendered on start instead of every time, which
+		makes the program feel smoother.</li>
+      <li>0.10: Fixed a bug where the screen was drawn twice sometimes.</li>
+      <li>0.10: Several stabilization, initialization, memory leaks fixes,
+		etc.</li>
+      <li>0.10: Makefile will try to autodetect the appropriate icon rendering
+		library on compilation.</li>
+      <li>0.10: Icon library can be compiled in or as a shared object.</li>
+      <li>0.3: El fallback de la versión 0.2 no funcionaba. Ahora se cae a
+        la fuente que X11 recomiende (por lo general, Helvetica).</li>
+      <li>0.2: Added some basic error checking.</li>
+      <li>0.2: Fallbacks to Helvetica if Bitstream Vera Sans is not found.</li>
+      <li>0.1: Added "make install" and "make uninstall" in Makefile.</li>
+      <li>0.1: Added a delay to draw the keyboard. Added DELAY directive.</li>
+      <li>0.1: Better placement of icons in rotated sections.</li>
+      <li>0.1: Bugfix: Commands specified for a key were not executed.</li>
+      <li>0.1: Key label were partially drawn when there was an icon in that key.
+      </li>
+    </ul>
+
+    <h3>Some notes:</h3>
+    <ul>
+      <li>There is a sample configuration file at ./sample-config.</li>
+      <li>Superkb needs Xkb and either gdk-pixbuf w/pkg-config or imlib2.</li>
+      <li>You need a scalable font. You can try
+		<code>xfontsel -pattern "*-0-0-0-0-*-0-*"</code></li>
+      <li>To compile you must issue "make" from the "src" directory. Superkb
+		should detect wether you have gdk-pixbuf or imlib2.</li>
+    </ul>
+
+    <h2 id="get-svn">Downloading the latest code</h2>
+
+    <p>Development version is currently held in SVN, which you can download
+    by issuing:</p>
+
+    <p><code>svn co https://superkb.svn.sourceforge.net/svnroot/superkb/trunk superkb-svn</code></p>
+
+    <h2 id="browse-svn">Brosing the SVN repository</h2>
+
+    <p>As an alternative to downloading the whole code, you can point your
+    browser to <a href="http://superkb.svn.sourceforge.net/viewvc/superkb/">
+    and view individiual files by using SF's ViewVC facility.</p>
+	</div>
+
+  </body>
+</html>
+
+

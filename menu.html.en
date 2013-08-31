@@ -1,0 +1,34 @@
+  <div class="header">
+	<!--[if lte IE 6]>
+	<div class="ie-notice"><p>Yes, I'm aware that this site looks completely broken.
+	Although this website may have some bugs, most of the display problems lie
+	in the Internet Explorer browser. I don't have enough time to work on the
+	webpage so it fits the <strong>non-standard</strong> box model that Internet
+	Explorer follows. Sorry for the inconvenience that this may cause.</p>
+
+	<p>You can get Firefox for free from the Mozilla Foundation website: <a
+	style="color:white"
+	href="http://www.mozilla.com/en-US/firefox/">http://www.mozilla.com/en-US/firefox/</a>
+	</p>
+
+	<p>If you have some spare time and would like to fix the webpage, all I ask
+	is that it works in Internet Explorer 6 and up, looking and working exactly
+	the same as it currently does under Firefox, without using JavaScript.
+	Conditional comments are ok.</p>
+
+	<p>Thank you.</p>
+	</div>
+	<hr class="ie-notice" />
+	<![endif]-->
+    <div class="menu">
+	<ul class="menu">
+		<li class="menu" id="home"><a href="index.shtml.en" class="menu">Home</a></li>
+		<li class="menu" id="about"><a href="about.shtml.en" class="menu"><span>About</span></a></li>
+		<li class="menu" id="screenshots"><a href="screenshots.shtml.en" class="menu">Screenshots</a></li>
+		<li class="menu" id="documentation"><a href="documentation.shtml.en" class="menu">Documentation</a></li>
+		<li class="menu" id="download"><a href="download.shtml.en" class="menu">Download</a></li>
+		<li class="menu" id="espanol"><a href="index.shtml.es" class="menu">Español</a></li>
+    </ul>
+    </div>
+    <div class="logo"><img src="graphics/logo.png" alt="Superkb" /></div>
+  </div>

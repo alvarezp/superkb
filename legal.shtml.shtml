@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Legal - Superkb</title>
+<!--    <link rel="stylesheet" href="" /> -->
+    <meta http-equiv="Content-type"
+      content="application/xhtml+xml; charset=iso-8859-1" />
+    <style type="text/css"><!--
+      body { font-family: sans-serif; background: url('logo.png') 100% 0% no-repeat; }
+      h1 { border-bottom: 1px solid black; }
+    --></style>
+  <!--#include virtual="analytics.html" -->
+  </head>
+  <body> 
+
+    <!--#include virtual="menu.html.en" -->
+
+    <h1>License and legal stuff</h1>
+
+    <p>All software regarding this project, incluiding prototypes and
+    draft code is distributed under the terms of the <a href="http://www.gnu.org/copyleft/gpl.html">
+    General Public License, version 2</a>. All art regarding this project is
+    released under the terms of the <a rel="license"
+    href="http://creativecommons.org/licenses/by-sa/2.5/">Creative Commons Attribution-ShareAlike 2.5 License</a>.</p>
+
+    <p>
+    The keyboard is a modified version of <a href="http://openclipart.org/clipart//computer/hardware/Computer-Keyboardlayout-de.svg">
+    the one put in the public domain by Christoph Eckert</a>.
+    </p>
+
+    <p>Here is a link to <a href="http://www.sourceforge.net/projects/superkb">the Superkb Project page
+    at Sourceforge.net</a>.
+
+    <p><a href="http://sourceforge.net"><img style="float: left; margin-right: 10px;"
+    src="http://sflogo.sourceforge.net/sflogo.php?group_id=154661&amp;type=2" width="125"
+    height="37" alt="SourceForge.net Logo" /></a>Also, as requested by the
+    SourceForge terms of service, here is the logo for SourceForge.net, the the great open
+    source project hoster, which helps in this way to the Superkb project.</p>
+
+  </body>
+</html>
+
+

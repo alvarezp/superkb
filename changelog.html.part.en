@@ -1,0 +1,80 @@
+	<li>0.22: Keyboard drawing enhanced by gradients. Controllable by USE_GRADIENTS with a default value of 1.</li>
+	<li>0.22: Fixed bug #432887: Sometimes a program gets launched multiple times. (Eduardo Bustamante)</li>
+	<li>0.22: Multiple Superkb processes are no more. Superkb will use only one process. (Eduardo Bustamante)</li>
+	<li>0.22: Fixed linking in newer versions of GCC due to lack of explicit libdl inclusion. (Eduardo Bustamante)</li>
+	<li>0.22: Superkb will try to detect details about the source code status and provide more version information for troubleshooting purposes. For example: 0.21+git-0123456+localchanges(b:master).</li>
+	<li>0.22: Fix icon placement calculation.</li>
+	<li>0.22: Many crashes are fixed.</li>
+	<li>0.21: Detection of already-grabbed Super keys and hints about it on the terminal.</li>
+	<li>0.21: We don't depend on SIGCHLD being ignored anymore. (Fixes chromium-browser and Gwibber).</li>
+	<li>0.21: A friendly message is shown on the screen on Superkb successful launch (via the WELCOME_CMD option).</li>
+	<li>0.21: Feedback strings don't need to be requoted anymore. (via the new FEEDBACK_STRINGS_AUTOQUOTE option).</li>
+	<li>0.21: States (like Shift) can now be used.</li>
+	<li>0.21: Lots of work on code portability.</li>
+	<li>0.21: Lots of comments throughout the code.</li>
+	<li>0.21: Lots of usability and stabilitiy fixes.</li>
+	<li>0.20: Changed default shape painting style to FLAT_KEY.</li>
+	<li>0.20: Changed default drawing method to Cairo and default font to "Sans Bold".</li>
+	<li>0.20: Added Cairo drawing support.</li>
+	<li>0.20: Fixed crashes on some unlabeled keys.</li>
+	<li>0.20: Fixed BadAccess on XChangeKeyboardControl when a SUPERKEY_CODE is 0.</li>
+	<li>0.20: Modularization of drawkb libs.</li>
+	<li>0.20: Added some friendlier error messages to guide through installation.</li>
+	<li>0.20: Fixed some failures to detect keyboard geometry.</li>
+	<li>0.20: Added a simple man page.</li>
+	<li>0.20: Added support for a system-wide configuration file at /etc/superkbrc.</li>
+	<li>0.20: Fixed x86_64 compilation (-fPIC was missing).</li>
+	<li>0.17: Switched SCM to Git.</li>
+	<li>0.17: Set windows TRANSIENT hint each time they are mapped.</li>
+	<li>0.17: Implemented EINTR check for select() in superkb.c</li>
+	<li>0.17: Added Xinerama support.</li>
+	<li>0.17: Friendlier errors on compilation, installation and config loading.</li>
+	<li>0.16: Some code fixes, reported by gcc -Wextra.</li>
+	<li>0.16: Rewritten text drawing code by using Xft.</li>
+	<li>0.16: Fixed a very ugly race condition regarding X event processing.</li>
+	<li>0.15: Added -0 command line option to force Superkb to quit when ready, for timing purposes.</li>
+	<li>0.15: Major rewrite of the label drawing code. It should be correctly possitioned and sized now, for each of the key drawing types.</li>
+	<li>0.15: More label lookup code rewrite. Added label for ntilde, plus and others.</li>
+	<li>0.15: Rewritten code to get actual key labels from KeyStrings. No enhancements made.</li>
+	<li>0.15: Experimental commit to fix some absurd code. It may bring up some bugs.</li>
+	<li>0.15: Added some debugging messages in superkb.c</li>
+	<li>0.15: Added debugging output support to stdout with option "-d level".</li>
+	<li>0.15: Changed default foreground and background values.</li>
+	<li>0.15: Changed default for SUPERKEY_RELEASE_CANCELS to 0.</li>
+	<li>0.15: Changed default for SUPERKEY_REPLAY to 1.</li>
+	<li>0.15: Added two more painting modes, selectable with the DRAWKB_PAINTING_MODE directive (FULL_SHAPE by default), but can take BASE_OUTLINE_ONLY and FLAT_KEY.</li>
+	<li>0.14: $(DESTDIR) was not applied to mkdir on the Makefile, which made the Ubuntu package to install badly.</li>
+	<li>0.13: Push version to 0.13</li>
+	<li>0.13: Allow the Makefile to handle $(DESTDIR) variable.</li>
+	<li>0.13: Support for SUPERKEY_RELEASE_CANCELS, which enables Superkb to execute actions for keys that are still pressed when the Super key is released.</li>
+	<li>0.13: If the three color components in BACKGROUND or FOREGROUND are <= 255, consider them to be in the range 0..255.</li>
+	<li>0.13: Push version to 0.12+svn</li>
+	<li>0.12: Basic support for FEEDBACK_HANDLER, to allow the user to be notified with something of his choice when a program is being run.</li>
+	<li>0.12: New option "SUPERKEY_REPLAY": Configures whether the Super key should be sent to the original focus window if hit, and not held or combined.</li>
+	<li>0.12: Suppress the output of commands when making configuration.</li>
+	<li>0.12: Prepended ./ when checking for the results of configuration upon creation.</li>
+	<li>0.11: Pull version number out to a separate file for easier scripting.</li>
+	<li>0.11: Set version in main.c to 0.11.</li>
+	<li>0.11: Support for KEY DOCUMENT and DOCUMENT_HANDLER.</li>
+	<li>0.11: Fix bug where an unknown key name would make that entry to spread acrossthe keybaord.</li>
+	<li>0.11: Set version to 0.11-devel.</li>
+	<li>0.11: Ignore SIGCHLD to avoid zombie processes.</li>
+	<li>0.11: Initial import, from 0.10.</li>
+	<li>0.10: Font is now configurable. You must use scalable fonts, though.</li>
+	<li>0.10: Common errors have friendlier messages.</li>
+	<li>0.10: Foreground and background color are now configurable an they are correctly used now. (Colors are specified by their three components, red green blue, from 0 to 65535.)</li>
+	<li>0.10: Super keys are configurable. See superkbrc.c for more info. This is good for users of certain Winkey-less keyboards, like Thinkpad's, like me.</li>
+	<li>0.10: Imlib2 can now be used as an icon-loading library. Gdk-pixbuf is still available.</li>
+	<li>0.10: The keyboard is rendered on start instead of every time, which makes the program feel smoother.</li>
+	<li>0.10: Fixed a bug where the screen was drawn twice sometimes.</li>
+	<li>0.10: Several stabilization, initialization, memory leaks fixes, etc.</li>
+	<li>0.10: Makefile will try to autodetect the appropriate icon rendering library on compilation.</li>
+	<li>0.10: Icon library can be compiled in or as a shared object.</li>
+	<li>0.3: 0.2 font fallback didn't work. Now it falls back to an X11-specified font.</li>
+	<li>0.2: Added some basic error checking.</li>
+	<li>0.2: Fallbacks to Helvetica if Bitstream Vera Sans is not found.</li>
+	<li>0.1: Added "make install" and "make uninstall" in Makefile.</li>
+	<li>0.1: Added a delay to draw the keyboard. Added DELAY directive.</li>
+	<li>0.1: Better placement of icons in rotated sections.</li>
+	<li>0.1: Bugfix: Commands specified for a key were not executed.</li>
+	<li>0.1: Key label were partially drawn when there was an icon in that key.</li>

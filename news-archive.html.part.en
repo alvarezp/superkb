@@ -1,0 +1,204 @@
+	<h2>Version 0.20</h2>
+
+	<p><strong class="date">2009-11-20</strong>: Superkb 0.20 is out! This
+	version includes support for drawing the keyboard using Cairo, which gives
+	better rendering. Though some details might be unpolished, it is pretty
+	much ready for dialy use.</p>
+
+	<p>Lots of bugs and crashes have been fixed, compilation for x86_64 has
+	been fixed, and a lot of messages are friendlier now.</p>
+
+	<p>Try it out and report any issues in the <a href="https://bugs.launchpad.net/superkb">bug
+	tracking system</a>.</p>
+
+	<h2>Version 0.17</h2>
+
+	<p><strong class="date">2009-09-21</strong>: Superkb has a
+	<a href="https://bugs.launchpad.net/superkb">bug tracking system</a>
+	at Launchpad. Any bug you might find should be raised up there so they
+	can be properly followed up.</p>
+
+	<p><strong class="date">2009-03-18</strong>: Superkb 0.17. We have Superkb
+	source code hosted under Git, and this is why this version took so long to
+	get released. The Git repository includes all of the history from CVS and
+	SVN, and it is looks very nice.</p>
+
+	<p>So, what's new in 0.17? Support for Xinerama. No official screenshots
+	yet, but some in-the-meanwhile pictures can be seen on
+	<a href="http://alvarezp.ods.org/blog/2008/06/18/implementando-soporte-para-xinerama-en-superkb/">a
+	post (in Spanish)</a> from my blog.
+	</p>
+
+	<h2>Version 0.16</h2>
+
+	<p><strong class="date">2008-04-04</strong>: Superkb 0.16. This is one
+	version I'm very glad to announce. The text drawing code now uses Xft, and
+	there is a very ugly race condition fixed. Sorry, no screenshots yet.
+	</p>
+
+	<h2>Version 0.15</h2>
+
+	<p><strong class="date">2008-02-20</strong>: Superkb 0.15. This one has
+	two major changes. First, two new, experimental and configurable painting
+	methods. Please see the <a href="screenshots.shtml.en">screenshots</a> for
+	details. The second one is the rewritten code for label painting. This
+	code has better criteria for choosing the size and position of key labels.
+	</p>
+
+	<h2>Version 0.14</h2>
+
+	<p><strong class="date">2008-02-07</strong>: Happy New Year! Superkb 0.14
+	is just out of the oven. The important change is that keyboard actions
+	now can get launched even if the Super key is released before the binding
+	key.However, this must be configured by setting SUPERKEY_RELEASE_CANCELS
+	to 0.</p>
+
+	<p>And guess what, we also have an Ubuntu package! It is absolutely *not*
+	tested, so go with it on your own. It shouldn't break anything, though.</p>
+
+	<h2>Version 0.12</h2>
+
+	<p><strong class="date">2007-12-07</strong>: We have screenshots for
+	Superkb 0.12 now, where Superkb uses different feedback handlers.
+	</p>
+
+	<p><strong class="date">2007-11-13</strong>: Superkb 0.12 has been
+	released! Some inspiration has been
+	happening these couple of days, and two features were introduced:
+	initial feedback support and hotkey replay. The first one is merely
+	experimental, intended to let you know what have you launched. The
+	second is helpful for keyboards without Super keys (like Thinkpads).
+	</p>
+
+	<h2>Version 0.11</h2>
+
+	<p><strong class="date">2007-09-16</strong>: To prove we are back, we have
+	released version 0.11 with two important bugs fixed and initial support
+	for opening arbitrary documents with a document handler (like gnome-open,
+	xdg-open, etc.).</p>
+
+	<p><strong class="date">2007-09-08</strong>: Hopefully, we are back. After
+	a good while, source is now in SVN and development will be easier again.
+	There are some bugs that should be fixed and distributions now include
+	the fixed X Window Server.</p>
+
+	<p><strong class="date">2006-12-28</strong>: We now have a <a
+	href="documentation.shtml.en">Documentation</a> section in the website!
+	Take a look at it before it gets cold!</p>
+
+	<p><strong class="date">2006-12-27</strong>: Merry Christmas and Happy
+	New Year, everybody! It's been a while without updates. I've had very
+	little free time lately. However, I'm glad to announce what is expected
+	for the next version, hopefully ready by early March:</p>
+	<ul>
+		<li>Graphical configuration interface, powered by GTK+.</li>
+		<li>Support for .desktop files (via KEY APPLICATION command).</li>
+		<li>Project will be hosted on SVN instead of CVS.</li>
+		<li>Some ugly bugs fixed.</li>
+	</ul>
+
+	<p>I'm currently holding the source code because it hasn't been moved
+	to SVN. However, the source is released under the GPLv2, so if you want to
+	take a look at the code, just ask me for the development version and I'll
+	be glad to send a copy over by e-mail.</p>
+
+	<h2>Version 0.10</h2>
+
+	<p><strong class="date">2006-09-17</strong>: We have a brand new website!
+	As you can see, the site has been cleaned up a little bit but the looks are
+	much better. Kudos and thanks go to
+	<a href="http://linux.mty.itesm.mx/~oestrada">Oscar Estrada</a>.</p>
+
+	<p><strong class="date">2006-08-10</strong>: After more than 3 months, I'm
+	very glad to announce development version 0.10 of Superkb. Most of the
+	work has been done to enhance the prototype and ease the installation and
+	configuration process. Check a more precise changelog on the <a
+	href="downloads.shtml.en">downloads</a> page for more information. All user
+	feedback is welcome at alvarezp@users.sourceforge.net.</p>
+
+	<h2>Version 0.3</h2>
+
+    <p><strong class="date">2006-05-27</strong>: Check out the new
+    <a href="screenshots.shtml.en">screenshot</a>, showing Superkb's
+    rendering of an IBM Thinkpad keyboard.
+    </p>
+
+    <p><strong class="date">2006-04-24</strong>: Releasing a version right
+    after another just to fix some bugs is humiliating. That's why it took me
+    14 days to do it. But here it is: <a href="download.shtml.es">0.3</a>.
+    The important change is that in case Bitstream Vera Sans isn't available
+    it falls back to a recommended X11 font, so it's A Good Thing.
+    </p>
+
+	<h2>Version 0.2</h2>
+
+    <p><strong class="date">2006-04-10</strong>: Version 0.2 released. So 
+    it turns out that the program crashes on lack of Bitstream Vera Sans font.
+    Shame on me. Download the new version.
+    </p>
+
+	<h2>Version 0.1</h2>
+
+    <p><strong class="date">2006-04-08</strong>: VERSION 0.1 RELEASED! Now
+    that I tried -proto3 myself and fixed some horrible bugs, I decided that
+    Superkb is ready to meet the world. <a href="screenshots.shtml.en">See
+    what Superkb does</a> and download it
+    yourself. I hope you all like it. All comments are welcome to
+    alvarezp at users.sourceforge.net. I'd like to thank all freenode#xlib
+    participants, specially mmc, tybalt89, ppl and whatah for all their help.
+    </p>
+
+	<h2>Initial development</h2>
+
+    <p><strong class="date">2006-03-18</strong>: Okay, I was testing it
+    myself and I realized that Proto3 was not executing bound commands so
+    I fixed it and commited it to CVS. I'll gather other bugfixes and release
+    a 0.1.
+    </p>
+
+    <p><strong class="date">2006-03-16</strong>: 
+    GREAT NEWS! Finally, the first usable version (according to me) is ready.
+    the program is still very fool as to detect some circumstances, but it is
+    in a works-flexibly-for-me and I hope for you too. Downloaded quick from
+    Downloads section before it gets cold. 
+    You must get prototype #3. I'd like to thank Natan "Whatah" Zohar for
+    sending me the config file tokenizing code.</p>
+
+    <p><strong class="date">2006-03-11</strong>: 
+    TARBALL! After a month, there are some important changes in the
+    source code. The most important one is that icons are now displayed on
+    top of bound keys, as per configuration. Even though configuration is
+    still hard coded, Superkb is now prepared to accept code to read
+    settings from an external file. Once this is done we can say that the
+    program is in a usable state.</p>
+
+    <p><strong class="date">2006-02-11</strong>: TARBALL! I uploaded a
+    snapshot to the Downloads section.</p>
+
+    <p><strong class="date">2006-02-11</strong>: New commit! Drawkb now
+    detects the best outline available for drawing a shape --instead of
+    bounds-- and uses it. Note that my keyboard always uses "approximate
+    outline" so I don't know if "primary outlines" will work properly.</p>
+
+    <p><strong class="date">2006-01-28</strong>: New commit! Instead of
+    loading a png file with the keyboard drawing, Superkb now uses XKB to
+    load the keyboard geometry. This adds a lot of flexibility. The module
+    drawkb.c does this. It just drafts the keyboard for now by drawing "bounds"
+    instead of the actual key shapes.</p>
+
+    <p><strong class="date">2006-01-06</strong>: New commit! I managed to load
+    the keyboard into a GdkPixbuf and put part of it on the screen. Because of
+    this, I had to s/kb/superkb_kb/ in superkb.[hc] because of nameconflict.
+    Also, the window now stays on top and doesn't have decorations. Now it looks
+    more like the original idea. Keybindings are still hardcoded, but easy to
+    code.</p>
+    <p> I'd really like to thank tybalt89, mmc, raster and all the #xlib people
+    for helping me with the Xlib protocol. It would have been a lot more
+    difficult without them.</p>
+
+    <p><strong class="date">2005-12-24</strong>: CVS has been updated! Superkb
+    has been modularized. superkb.c holds the keyboard handling functions
+    while main.c holds the configuration and drawing of the keyboard. It also
+    supports being interrupted by kill -SIGUSR1. Try
+    downloading it using Sourceforge's instructions for anonymous CVS.</p>
+

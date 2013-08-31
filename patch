@@ -1,0 +1,86 @@
+diff -ru superkb-0.22.orig/Makefile superkb-0.22/Makefile
+--- superkb-0.22.orig/Makefile	2011-03-18 15:36:45.000000000 -0700
++++ superkb-0.22/Makefile	2011-05-19 22:45:20.000000000 -0700
+@@ -46,8 +46,8 @@
+ SHELL=/bin/sh
+ CC=gcc
+ CFLAGS=-Wall -std=c99 -pedantic-errors $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC -DVEXTRA=\""$(version_extrainfo)"\"
+-OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o timeval.o $(obj-y)
+-LDPARAMS=-lX11 -lm -ldl -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
++OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o $(obj-y)
++LDPARAMS=-lX11 -lm -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
+ 
+ #My variables
+ APP=superkb
+@@ -169,6 +169,6 @@
+ .PHONY : clean
+ clean:
+ 	-/bin/rm -f $(OBJS) $(APP) */*.o */*.so configuration
+-	-/bin/rm -f `find -name "*~"`
+-	-/bin/rm -f `find -name core`
+-	-/bin/rm -f `find -name "core.*"`
++	-/bin/rm -f `find . -name "*~"`
++	-/bin/rm -f `find . -name core`
++	-/bin/rm -f `find . -name "core.*"`
+diff -ru superkb-0.22.orig/approve-config superkb-0.22/approve-config
+--- superkb-0.22.orig/approve-config	2011-03-18 15:36:45.000000000 -0700
++++ superkb-0.22/approve-config	2011-05-19 22:46:19.000000000 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/usr/bin/env bash
+ 
+ # Poor man's distro detection.
+ DISTRO=unknown
+diff -ru superkb-0.22.orig/drawkblib.c superkb-0.22/drawkblib.c
+--- superkb-0.22.orig/drawkblib.c	2011-03-18 15:36:45.000000000 -0700
++++ superkb-0.22/drawkblib.c	2011-05-19 18:22:33.000000000 -0700
+@@ -6,7 +6,6 @@
+  *
+  */
+ 
+-#include <malloc.h>
+ #include <string.h>
+ #include <stdlib.h>
+ #include <dlfcn.h>
+diff -ru superkb-0.22.orig/imagelib.c superkb-0.22/imagelib.c
+--- superkb-0.22.orig/imagelib.c	2011-03-18 15:36:45.000000000 -0700
++++ superkb-0.22/imagelib.c	2011-05-19 22:32:24.000000000 -0700
+@@ -6,7 +6,6 @@
+  *
+  */
+ 
+-#include <malloc.h>
+ #include <string.h>
+ #include <stdlib.h>
+ #include <dlfcn.h>
+diff -ru superkb-0.22.orig/screeninfo-xinerama.c superkb-0.22/screeninfo-xinerama.c
+--- superkb-0.22.orig/screeninfo-xinerama.c	2011-03-18 15:36:45.000000000 -0700
++++ superkb-0.22/screeninfo-xinerama.c	2011-05-19 18:21:23.000000000 -0700
+@@ -6,7 +6,7 @@
+  *
+  */
+ 
+-#include <malloc.h>
++#include <stdlib.h>
+ #include <string.h>
+ #include <stdio.h>
+ 
+diff -ru superkb-0.22.orig/superkb.c superkb-0.22/superkb.c
+--- superkb-0.22.orig/superkb.c	2011-03-18 15:36:45.000000000 -0700
++++ superkb-0.22/superkb.c	2011-05-19 22:44:58.000000000 -0700
+@@ -22,7 +22,6 @@
+ #include "superkb.h"
+ #include "globals.h"
+ #include "debug.h"
+-#include "timeval.h"
+ 
+ int keygrab1_serial = -1;
+ int keygrab2_serial = -1;
+@@ -174,6 +173,7 @@
+ 	} else {
+ 		display_generic_x_error(dpy, xerrev);
+ 	}
++    return 0;
+ }
+ 
+ void one_superkey_used_friendly_warning(int number, const char *keyname) {

@@ -1,0 +1,31 @@
+	<h2>Version 0.22</h2>
+
+	<p><strong class="date">2013-07-13</strong>: Superkb is now available in
+	the main Fedora repositories! Thanks to <a href="http://www.rugebiker.com/">Rubén Guerra</a>
+	Fedora users can now install Superkb using the yum package manager with
+	a simple <code>yum install superkb</code> and installation will be done
+	by magic. Thanks again.
+	</p>
+
+	<p><strong class="date">2011-03-18</strong>: Superkb 0.22 is out! After a
+	year of inactivity, we have important fixes and hopefully an
+	<a href="/shots/0.22/0.22-flatkey.png">improved
+	keyboard hinting window</a>. Also, the
+	<a href="http://superkb.org/wiki/">Wiki</a> has been renewed after the
+	horrible spam wave. Try it out and let us know what you think on the
+	<a href="https://lists.sourceforge.net/lists/listinfo/superkb-devel">Superkb-devel
+	mailing-list</a>. If you find a bug, please report it to us on the
+	<a href="https://bugs.launchpad.net/superkb">Bug tracking system</a>.
+	</p>
+
+	<h2>Version 0.21</h2>
+
+	<p><strong class="date">2010-03-07</strong>: Superkb 0.21 is out! There has
+	been a lot of work for this version also. See the <a
+	href="http://superkb.sourceforge.net/download.shtml.en">changelog</a> for
+	details. Don't forget to check out the new
+	<a href="http://superkb.org/wiki/">Wiki</a> and
+	the <a href="https://bugs.launchpad.net/superkb">Bug tracking system</a>.
+	</p>
+
+

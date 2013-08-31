@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+<head>
+	<meta name="generator" content=
+	"HTML Tidy for Linux/x86 (vers 1 September 2005), see www.w3.org" />
+
+	<title>Documentación - Superkb</title>
+        <!--#include virtual="stylesheets.html" -->
+	<meta http-equiv="Content-type" content=
+	"application/xhtml+xml; charset=utf-8" />
+<style type="text/css">
+/*<![CDATA[*/
+<!--
+																-->
+/*]]>*/
+</style>
+</head>
+
+<body>
+	<!--#include virtual="menu.html.es" -->
+
+	<div class="content">
+		<div class="index">
+			<ul class="index">
+				<li class="index"><a href="#source">Código fuente</a></li>
+
+				<li class="index"><a href="#compilation">Compilación</a></li>
+
+				<li class="index"><a href="#installation">Instalación</a></li>
+
+				<li class="index"><a href="#configuration">Configuración</a>
+				</li>
+
+				<li class="index"><a href="#distrotesting">Pruebas en
+				distribuciones</a></li>
+			</ul>
+		</div>
+
+		<h1>Algo de documentación</h1>
+
+		<p>Esta página está dividida en varias secciones. Use el menú flotante
+		de la derecha para navegar en ella.</p>
+
+		<h2 id="source">Código fuente</h2>
+
+		<p>El código fuente actualmente está en Git. Para obtenerlo,
+		es necesario contar con una correcta instalación de
+		Git. Después, use:</p>
+
+		<p><code>git clone git://superkb.git.sourceforge.net/gitroot/superkb/superkb superkb-git</code></p>
+
+		<p>También, el código tiene muchos FIXME ("arréglame") and necesitan
+		trabajo. Están documentados a lo largo del código.</p>
+
+		<h2 id="compilation">Compilación</h2>
+
+		<p>Un simple <code>make</code> debe bastar. Sin embargo, en algunas
+		sdistribuciones es necesario aplicarlo dos veces.</p>
+
+		<p>Superkb usa un archivo llamado "configuration" para registrar las
+		cualidades actuales del sistema. Este archivo acepta las siguientes
+		directivas:</p>
+
+		<ul>
+			<li><strong>PUTICON_GDKPIXBUF={y|m|n}</strong>: indica si se debe
+			compilar el soporte para Gdk-Pixbuf (y), incluirlo como módulo (m) o
+			no incluirlo de plano (n). Normalmente lo detecta Makefile mediante
+			<code>pkg-config gdk-pixbuf-xlib-2.0</code>.</li>
+
+			<li><strong>PUTICON_IMLIB2={y|m|n}</strong>: indica si se debe
+			compilar el soporte para Imlib2 (y), incluirlo como módulo (m) o no
+			incluirlo de plano (n). Normalmente lo detecta Makefile mediante
+			<code>imlib2-config</code>.</li>
+		</ul>
+
+		<h2 id="installation">Instalación</h2>
+
+		<p>Un simple <code>make install</code> debe bastar. Las rutas de
+		instalación son fijas en este momento.</p>
+
+		<h2 id="configuration">Configuración</h2>
+
+		<p>Superkb busca un archivo llamado .superkbrc en el directorio $HOME.
+		El archivo es interpretado como un script, por lo que si dos líneas se
+		contradicen, gana la segunda en orden de aparición. Se pueden indicar
+		comentarios mediante el signo de número (#) y se ignora el resto de la
+		lí­nea. La sintaxis básica es "CLAVE valor", pero si el valor incluye
+		espacios, se debe envolver en comillas ("). Las directivas que se
+		admiten son:</p>
+
+		<ul>
+			<li><strong>IMAGELIB {gdkpixbuf|imbli2}</strong>: Establece la
+			librerí­a para cargar iconos. Se debe incluir soporte ya sea
+			compilado o como módulo. Vea <a href="#compilation">Compilación</a>
+			para mayor información. Valor por omisión: "imlib2".</li>
+
+			<li><strong>FONT "fuente"</strong>: El nombre XLFD de la fuente a
+			usar. Recomiendo usar una fuente escalable. Yo uso <code>xfontsel
+			-pattern "*-0-0-0-0-*-0-*"</code> para cargar un selector de fuentes
+			apropiadas. Sin embargo, algunas personas han indicado que esto no
+			necesariamente funciona. No olvide las comillas en el nombre de la
+			fuente, ya que algunas incluyen espacios. Valor por omisión:
+			"-*-bitstream vera sans-bold-r-*-*-*-*-*-*-*-*-*-*".</li>
+
+			<li><strong>BACKGROUND r v a</strong>: Marca el color de fondo a
+			usar. Cada valor debe estar entre 0 y 65535. Muy probablemente esto
+			cambiará en un futuro. Valor por omisión: 59500 59500 59500. (Sí,
+			está feo.)</li>
+
+			<li><strong>FOREGROUND r v a</strong>: Marca el color de primer
+			plano a usar. Cada valor debe estar entre 0 y 65535. Muy
+			probablemente esto cambiará en un futuro. Valor por omisión: 2000
+			2000 2000. (Je, también está feo.)</li>
+
+			<li><strong>DELAY segundos</strong>: Marca el tiempo a esperar a
+			mostrar el teclado después de que se mantiene la tecla de Super
+			presionada. Se admiten valores decimales. Valor por omisión: 0.5.
+			</li>
+			<li><strong>SUPERKEY1_STRING</strong>: Establece la primera tecla
+			Super, por nombre. Valor por omisión: "Super_L"
+			</li>
+			<li><strong>SUPERKEY2_STRING</strong>: Establece la segunda tecla
+			Super, por nombre. Valor por omisión: "Super_R"
+			</li>
+			<li><strong>SUPERKEY1_CODE</strong>: Establece la primera tecla
+			Super, por código de tecla de X.
+			</li>
+			<li><strong>SUPERKEY1_STRING</strong>: Establece la segunda tecla
+			Super, por por código de tecla de X.
+			</li>
+			<li><strong>KEY COMMAND tecla máscara comando icono [retro]</strong>:
+			Ejecuta un comando arbitrario.
+			"Tecla" indica la tecla a usar. No todas las teclas funcionan,
+			en este momento, pero sí las letras y las de función (como "F1").
+			"Máscara" está reservado para uso futuro; sólo hay que poner un 0.
+			"Comando" es el comando a ejecutar (no olvidar poner las comillas
+			si se necesita) e "Icono" es la ubicación ABSOLUTA del archivo con
+			el icono a mostrar en el teclado. La cadena opcional "retro" debe aparecer con la línea a añadir
+			al FEEDBACK_HANDLER. Por ejemplo, si el FEEDBACK_HANDLER es 'xmessage -timeout 2 -center Cargando ', la cadena "retro"
+			debe ser algo como "gedit", para que muestre "Cargando gedit" en pantalla.
+			Nótese que omitir la cadena "retro" deshabilita la retroalimentación para esa KEY.</li>
+
+			<li><strong>KEY DOCUMENT tecla máscara documento icono [retro]</strong>:
+			Usa DOCUMENT_HANDLER para abrir el documento especificado
+			"Tecla" indica la tecla a usar. No todas las teclas funcionan,
+			en este momento, pero sí las letras y las de función (como "F1").
+			"Máscara" está reservado para uso futuro; sólo hay que poner un 0.
+			"Comando" es el comando a ejecutar (no olvidar poner las comillas
+			si se necesita) e "Icono" es la ubicación ABSOLUTA del archivo con
+			el icono a mostrar en el teclado. La cadena opcional "retro" debe aparecer con la línea a añadir
+			al FEEDBACK_HANDLER. Por ejemplo, si el FEEDBACK_HANDLER es 'xmessage -timeout 2 -center Cargando ', la cadena "retro"
+			debe ser algo como "gedit", para que muestre "Cargando gedit" en pantalla.
+			Nótese que omitir la cadena "retro" deshabilita la retroalimentación para esa KEY.</li>
+
+			<li><strong>DOCUMENT_HANDLER cadena</strong>: Indica el programa a usar para
+			abrir los documentos indicados por una KEY DOCUMENT.
+			</li>
+
+			<li><strong>FEEDBACK_HANDLER cadena</strong>: Indica el programa a usar para
+			mandar el feedback cuando se ejecuta una KEY. Técnicamente hablando, el comando
+			se compone del parámetro "retro" en el comando KEY, añadido al parámetro
+			indicado en FEEDBACK_HANDLER.
+			</li>
+
+			<li><strong>SUPERKEY_REPLAY { 0 | 1 }</strong>: Indica si
+			la tecla Super debe ser reenviada a la pantalla de la cual
+			fue robada, de modo que no se pierda el uso convencional de
+			la tecla. Por ejemplo, si se usa F10 como tecla Super,
+			esta opción permite que si la tecla se presiona sin combinarse
+			con otra ni permitir que el teclado aparezca en pantalla (estilo
+			click), se reenvíe ese F10 a la aplicación original, de modo que
+			en GNOME, se presentaría el menú en las aplicaciones que tienen
+			uno.
+			</li>
+		</ul>
+
+		<h2 id="distrotesting">Probando en distibuciones</h2>
+
+		<p>Estas son notas de instalación e instrucciones para distros
+		específicas. Se aceptan comentarios y adiciones.</p>
+
+		<h3 id="ubuntu606lts">Ubuntu 6.06 LTS (Dapper Drake)</h3>
+
+		<ul>
+			<li>Prepare su instalación de Ubuntu:
+
+				<ul>
+					<li>Corra Synaptic Package Manager, de Sistema &gt;
+					Administración</li>
+
+					<li>Presione Reload</li>
+
+					<li>Marque "make", "libimlib2-dev" y "gcc" (no -4.0, no
+					-3.x, sino "gcc" simple).</li>
+
+					<li>Presione Aplicar y continúe como siempre.</li>
+				</ul>
+			</li>
+
+			<li>Actualice libimlib2. (Al momento de elaborar este documento,
+			Ubuntu no incluye la versión necesaria, ni siquiera como
+			actualización:
+
+				<ul>
+					<li>wget
+					http://easynews.dl.sourceforge.net/sourceforge/enlightenment/imlib2-1.2.2.tar.gz</li>
+
+					<li>tar xvzf imlib2-1.2.2.tar.gz</li>
+
+					<li>cd imlib2-1.2.2</li>
+
+					<li>./configure --prefix=/usr &amp;&amp; make</li>
+
+					<li>sudo make install</li>
+				</ul>
+			</li>
+
+			<li>Instale Superkb:
+
+				<ul>
+					<li>Descargue Superkb de la sección <a href=
+					"download.shtml.es">Descargas</a>.</li>
+
+					<li>tar xvzf superkb-0.10-tar.gz &mdash;o&mdash; tar xvjf
+					superkb-0.10.tar.bz2</li>
+
+					<li>cd superkb-0.10</li>
+
+					<li>sudo make install</li>
+				</ul>
+			</li>
+
+			<li>Configure Superkb:
+
+				<ul>
+					<li>cp sample-config/superkbrc-gnome $HOME/.superkbrc</li>
+
+					<li>Edite $HOME/.superkbrc con gedit o cualquier otro editor
+					de textos:
+
+						<ul>
+							<li>Cambie la primera línea ("IMAGELIB gdkpixbuf")
+							a "IMAGELIB imlib2"</li>
+
+				<li>Tal vez necesite establecer la fuente. Vea arriba, en la
+                    sección de documentación sobre la directiva FONT para mayor
+					información.</li>
+							<li>Guarde y salga.</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+
+			<li>Corra el programa mediante el comando "superkb".</li>
+
+			<li>Quizá quiera incluirlo en la lista de programas de arranque,
+			añadiéndolo en Sistema &gt; Preferencias &gt; Sesiones &gt;
+			Programas de Arranque.</li>
+		</ul>
+
+		<p>Yo tengo Superkb corriendo en Ubuntu 6.06 LTS en mi estación de
+		trabajo.</p>
+
+		<p>Hay algunos problemas al correr Superkb en Ubuntu en una IBM Thinkpad
+		T42. La laptop no incluye una tecla Win, y la que deseo usar (Avanzar)
+		manda KeyPress y KeyRelease simultáneamente, independientemente de su
+		estado AutoRepeat. Esto impide su uso en Superkb, en Ubuntu 6.10 LTS.
+
+		<h3 id="arch070">Arch Linux 0.7</h3>
+
+		<p>Tengo Superkb corriendo en mi Arch Linux 0.7, en la Thinkpad.</p>
+
+	<h3 id="ubuntu610">Ubuntu 6.10 (Edgy Eft)</h3>
+
+	<p>Antes de instalar Superkb, debes actualizar tu X.org, pues tiene un bug.
+	Hay paquetes precompilados para i386 para Ubuntu Edgy disponibles, así que
+	sólo debe ser cosa de instalarlos con dpkg. Esto es lo que funcionó
+	conmigo:</p>
+
+	<ol>
+		<li>Ejecuta en una terminal: <code>dpkg -l | grep ^ii | grep -E "xdmx-tools|xdmx|xnest|xserver-xephyr|xserver-xorg-core|xserver-xorg-dev|xvfb"</code>.
+			Estos son los paquetes que necesitas actualizar, así que:</li>
+		<li>Bájalos de <a href="http://people.ubuntu.com/~seb128/xorg-server-edgy-update/">http://people.ubuntu.com/~seb128/xorg-server-edgy-update/</a>.</li>
+		<li>Ejecuta <code>sudo dpkg -i <em>package-name</em>.deb</code> en cada archivo bajado.</li>
+		<li>Reinicia tu X.org.</li>
+	</ol>
+
+	<p>Ahora que está reparado el X.org de Edgy, sigue las instrucciones para
+	<a href="#ubuntu606lts">Ubuntu 6.06 LTS (Dapper Drake)</a>.</p>
+
+	<h3 id="fedora6">Fedora Core 6</h3>
+
+	<p>Debido a una falla en el Xorg incluida en Fedora Core 6, Superkb no
+	funciona. Esto fue reparado en Xorg poco después de la liberación de
+	Fedora Core 6. No tengo información sobre actualizaciones que reparen
+	esta falla en la distribución.</p>
+
+	<h3 id="fedora5">Fedora Core 5</h3>
+
+	<ul>
+		<li>Prepare su configuración de Fedora Core 5:<ul>
+			<li>Abra una ventana de terminal.</li>
+			<li><code>yum install imlib2-devel xorg-x11-devel gcc</code></li>
+		</ul>
+			<li>Actualice libimlib2. (Al momento de elaborar este documento,
+			Ubuntu no incluye la versión necesaria, ni siquiera como
+			actualización:
+
+			<li><code>wget http://easynews.dl.sourceforge.net/sourceforge/enlightenment/imlib2-1.2.2.tar.gz</code></li>
+			<li><code>tar xvzf imlib2-1.2.2.tar.gz</code></li>
+			<li><code>cd imlib2-1.2.2</code></li>
+			<li><code>./configure --prefix=/usr && make</code></li>
+			<li><code>su -c "make install"</code></li>
+		</ul>
+		<li>InstaleSuperkb:<ul>
+			<li>Descargue Superkb de la sección <a
+	 		href="download.shtml.en">Descargas</a>.</li>
+			<li><code>tar xvzf superkb-0.10-tar.gz</code> &mdash;o&mdash; <code>tar xvjf
+				superkb-0.10.tar.bz2</code></li>
+			<li><code>cd superkb-0.10</code></li>
+			<li><code>su -c "make install"</code></li>
+		</ul>
+		<li>Configure Superkb:<ul>
+			<li><code>cp sample-config/superkbrc-gnome $HOME/.superkbrc</code></li>
+			<li>Edit <code>$HOME/.superkbrc</code> with gedit or any other text-editor:<ul>
+				<li>Cambie la primera línea ("IMAGELIB gdkpixbuf") a "<code>IMAGELIB
+					imlib2"</code></li>
+				<li>Tal vez necesite establecer la fuente. Vea arriba, en la
+                    sección de documentación sobre la directiva FONT para mayor
+					información.</li>
+				<li>Guarde y salga.</li>
+			</ul>
+		</ul>
+	<li>Ejecute Superkb mediante "<code>superkb</code>".</li>
+	</ul>
+
+	<h3 id="debiansid">Debian Sid</h3>
+
+	<p>Debido a una falla en el Xorg incluida en Debian Sid, Superkb no
+	funciona. Esto fue reparado en Xorg poco después de la liberación de
+	Debian Sid. No tengo información sobre actualizaciones que reparen
+	esta falla en la distribución.</p>
+
+	</div>
+
+</body>
+</html>

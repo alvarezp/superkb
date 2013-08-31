@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Superkb</title>
+        <!--#include virtual="stylesheets.html" -->
+    <meta http-equiv="Content-type"
+      content="application/xhtml+xml; charset=iso-8859-1" />
+    <style type="text/css"><!--
+    --></style>
+  <!--#include virtual="analytics.html" -->
+  </head>
+  <body> 
+
+    <!--#include virtual="menu.html.en" -->
+
+	<div class="content">
+
+    <div class="info">
+	<h1>Welcome to Superkb!</h1>
+
+	<p style="margin-bottom: 0px">Superkb is a graphical application launcher
+	for Linux. It works by activating upon a hotkey press, usually Super_L or
+	Super_R (better known as "the Windows key"). On activation it shows a
+	keyboard on screen with the keys and its corresponding actions.</p>
+
+<p class="tell-me-more"><a href="about.shtml.en">Tell me more...</a></p>
+
+	<ul>
+      <li id='front-current-version'>Current version: <!--#include virtual="CURRENT_VERSION" -->. Please note that this is a development version, and it is in a works-for-me state..</li>
+		<li>License: GPL v2.</li>
+		<li>Project page: <a href="http://sourceforge.net/projects/superkb">http://sourceforge.net/projects/superkb</a></li>
+      <li id='front-gz-download'>Download in gz: <a href='http://prdownloads.sourceforge.net/superkb/superkb-<!--#include virtual="CURRENT_VERSION" -->.tar.gz?download'>superkb-<!--#include virtual="CURRENT_VERSION" -->.tar.gz</a></li>
+      <li id='front-bz2-download'>Download in bz2: <a href='http://prdownloads.sourceforge.net/superkb/superkb-<!--#include virtual="CURRENT_VERSION" -->.tar.bz2?download'>superkb-<!--#include virtual="CURRENT_VERSION" -->.tar.bz2</a></li>
+      <!--<li id='download-current-binary-fc12'>Current version for Fedora Core 12: <a href='http://prdownloads.sourceforge.net/superkb/superkb-<!--#include virtual="CURRENT_VERSION" -->-1.fc12.i686.rpm?download'>superkb-<!--#include virtual="CURRENT_VERSION" -->-1.fc12.i686.rpm</a></li>-->
+      <li id='front-bugtracker'>Bug tracker: <a href="https://bugs.launchpad.net/superkb">https://bugs.launchpad.net/superkb</a></li>
+      <li id='wiki'>Documentation Wiki: <a href="http://superkb.org/wiki/">http://superkb.org/wiki/</a></li>
+	</ul>
+
+	<p class="center"><img src="shots/0.15/0.15-flat-key-320-165.png"
+			alt="Screenshot" style="width: 90%; max-width: 320px" /></p>
+
+	<p>This program is given under the GNU General Public License, version 2
+	and it is provided as is, without any warranty or responsibility of any
+	kind.</p>
+
+
+    </div>
+
+    <div class="news">
+
+    <h1>News</h1>
+
+	<!--#include virtual="news-front.html.part.en" -->
+
+	<p class="tell-me-more"><a href="news.shtml.en">All news</a></p>
+
+	<h1>Many thanks to</h1>
+	<ul>
+		<li><a href="http://linux.mty.itesm.mx/~oestrada">Oscar Estrada</a> for
+		the development of this page.</li>
+		<li>Whatah, for helping with the tokenizer.</li>
+		<li>#xlib at irc.freenode.net, for their invaluable help.</li>
+	</ul>
+
+    <p style="margin-top: 30px"><a href="http://sourceforge.net"><img style="float: left; margin-right: 10px;"
+    src="http://sflogo.sourceforge.net/sflogo.php?group_id=154661&amp;type=2" width="125"
+    height="37" alt="SourceForge.net Logo" /></a>Project hosted by
+    SourceForge.net</p>
+
+	</div>
+
+	</div>
+
+  </body>
+</html>
+
+

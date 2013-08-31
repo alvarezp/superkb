@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Screenshots - Superkb</title>
+        <!--#include virtual="stylesheets.html" -->
+    <meta http-equiv="Content-type"
+      content="application/xhtml+xml; charset=iso-8859-1" />
+    <style type="text/css"><!--
+    --></style>
+  <!--#include virtual="analytics.html" -->
+  </head>
+  <body> 
+
+    <!--#include virtual="menu.html.en" -->
+
+	<div class="content">
+
+    <h1>Screenshots</h1>
+
+	<p>These images show how has Superkb been evolving, newer versions first.
+	There is also a <a href="#bloopers">bloopers</a> section at the end.</p>
+
+    <h2 style="clear: both">Version 0.22</h2>
+    <p class="shot">
+      <a style="float: left" href="shots/0.22/0.22-flatkey.png">
+        <img src="shots/0.22/0.22-flatkey-thumb.png" /></a>
+        Superkb 0.22 with USE_GRADIENTS 1 and PAINTING_MODE FLAT_KEY.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.22/0.22-flatkey.png">Full size</a>,
+        <a href="shots/0.22/0.22-flatkey-960-368.png">960x368</a>,
+        <a href="shots/0.22/0.22-flatkey-640-245.png">640x245</a>,
+    </p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/0.22/0.22-baseoutline.png">
+        <img src="shots/0.22/0.22-baseoutline-thumb.png" /></a>
+        Superkb 0.22 with USE_GRADIENTS 1 and PAINTING_MODE BASE_OUTLINE_ONLY.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.22/0.22-baseoutline.png">Full size</a>,
+        <a href="shots/0.22/0.22-baseoutline-960-368.png">9660x368</a>,
+        <a href="shots/0.22/0.22-baseoutline-640-245.png">640x245</a>,
+    </p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/0.22/0.22-fullshape.png">
+        <img src="shots/0.22/0.22-fullshape-thumb.png" /></a>
+        Superkb 0.22 with USE_GRADIENTS 1 and PAINTING_MODE FULL_SHAPE.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.22/0.22-fullshape.png">Full size</a>,
+        <a href="shots/0.22/0.22-fullshape-960-368.png">960x368</a>,
+        <a href="shots/0.22/0.22-fullshape-640-245.png">640x245</a>,
+    </p>
+
+    <h2 style="clear: both">Version 0.15</h2>
+    <p class="shot">
+      <a style="float: left" href="shots/0.15/0.15-flat-key.png">
+        <img src="shots/0.15/0.15-flat-key-thumb-100-72.png" /></a>
+        Superkb 0.15 with its new default colors and its new FLAT_KEY painting
+		method. Notice how the labels for the function keys are painted with
+		a different size.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.15/0.15-flat-key.png">1024x529</a>,
+        <a href="shots/0.15/0.15-flat-key-640-331.png">640x331</a>,
+        <a href="shots/0.15/0.15-flat-key-320-165.png">320x165</a>.
+    </p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/0.15/0.15-full-shape.png">
+        <img src="shots/0.15/0.15-full-shape-thumb-100-72.png" /></a>
+        Superkb 0.15 with its new default colors and its new FULL_SHAPE
+		painting method. This one uses more information provided by the XKB
+		extension in X to render the full shape of the key.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.15/0.15-full-shape.png">1024x529</a>,
+        <a href="shots/0.15/0.15-full-shape-640-331.png">640x331</a>,
+        <a href="shots/0.15/0.15-full-shape-320-165.png">320x165</a>.
+    </p>
+
+    <h2 style="clear: both">Version 0.12</h2>
+    <p class="shot">
+      <a style="float: left" href="shots/0.12/0.12-feedback-mumbles-aduarte-loading.png">
+        <img src="shots/0.12/0.12-feedback-mumbles-aduarte-loading-100-63.png" /></a>
+      Superkb 0.12 using Mumbles as its feedback handler. Thanks to Alfredo for this
+	screenshot.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.12/0.12-feedback-mumbles-aduarte-loading.png">1280x800</a>,
+        <a href="shots/0.12/0.12-feedback-mumbles-aduarte-loading-960-600.png">960x600</a>,
+        <a href="shots/0.12/0.12-feedback-mumbles-aduarte-loading-640-400.png">640x400</a>,
+        <a href="shots/0.12/0.12-feedback-mumbles-aduarte-loading-320-200.png">320x200</a>.
+    </p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/0.12/0.12-feedback-notify-send.png">
+        <img src="shots/0.12/0.12-feedback-notify-send-100-75.png" /></a>
+      This is Superkb 0.12 using libnotify as its feedback handler.
+	The configuration directive is <code>FEEDBACK_HANDLER "notify-send
+	--urgency normal -t 2000 --icon='gtk-info' Superkb Launching\"</code> with
+	that backslash almost at the end. At the KEY entries, if the display text is
+	more than one word, you must quote it "'like this'" for it to work.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.12/0.12-feedback-notify-send.png">1024x768</a>,
+        <a href="shots/0.12/0.12-feedback-notify-send-960-720.png">960x720</a>,
+        <a href="shots/0.12/0.12-feedback-notify-send-640-480.png">640x480</a>,
+        <a href="shots/0.12/0.12-feedback-notify-send-320-240.png">320x240</a>.
+    </p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/0.12/0.12-feedback-osd.png">
+        <img src="shots/0.12/0.12-feedback-osd-100-75.png" /></a>
+      This is Superkb using OSD as its feedback handler.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.12/0.12-feedback-osd.png">1024x768</a>,
+        <a href="shots/0.12/0.12-feedback-osd-960-720.png">960x720</a>,
+        <a href="shots/0.12/0.12-feedback-osd-640-480.png">640x480</a>,
+        <a href="shots/0.12/0.12-feedback-osd-320-240.png">320x240</a>.
+    </p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/0.12/0.12-feedback-xmessage.png">
+        <img src="shots/0.12/0.12-feedback-xmessage-100-75.png" /></a>
+      This is the default feedback handler used by Superkb. It's ugly and look
+	how it is not always on foreground, so you will surely like to set this
+	to something else. I hope to change the default some day.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.12/0.12-feedback-xmessage.png">1024x768</a>,
+        <a href="shots/0.12/0.12-feedback-xmessage-960-720.png">960x720</a>,
+        <a href="shots/0.12/0.12-feedback-xmessage-640-480.png">640x480</a>,
+        <a href="shots/0.12/0.12-feedback-xmessage-320-240.png">320x240</a>.
+    </p>
+
+    <h2 style="clear: both">Version 0.10</h2>
+    <p class="shot">
+      <a style="float: left" href="shots/0.10/0.10-regular-640-512.png">
+        <img src="shots/0.10/0.10-regular-100-80.png" /></a>
+      This is just how new version, 0.10 looks like. (Personally, I like it
+	  better). It's running under Ubuntu 6.06 LTS using Imlib2 as icon loader.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.10/0.10-regular-1280-1024.png">1280x1024</a>,
+        <a href="shots/0.10/0.10-regular-960-768.png">960x768</a>,
+        <a href="shots/0.10/0.10-regular-640-512.png">640x512</a>,
+        <a href="shots/0.10/0.10-regular-320-256.png">320x256</a>.
+    </p>
+
+    <h2 style="clear: both">Version 0.3</h2>
+    <p class="shot">
+      <a style="float: left" href="shots/0.3/0.3-thinkpad-640-331.png">
+        <img src="shots/0.3/0.3-thinkpad-100-52.png" /></a>
+      Here you can see how Superkb draws an IBM Thinkpad keyboard. We just
+      added <code>Option "XkbGeometry" "imb_vndr/thinkpad(us)"</code> to xorg.conf in
+      the right section.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.3/0.3-thinkpad-1280-660.png">1280x660</a>,
+        <a href="shots/0.3/0.3-thinkpad-960-497.png">960x497</a>,
+        <a href="shots/0.3/0.3-thinkpad-640-331.png">640x331</a>,
+        <a href="shots/0.3/0.3-thinkpad-320-166.png">320x166</a>.
+    </p>
+
+    <h2 style="clear: both">Version 0.1</h2>
+    <p>All screenshots from -proto3 also apply to 0.1. It's also worth to
+      show how Superkb can draw other keyboard layouts as configured in
+      X.org.</p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/0.1/0.1-natural-640-221.png">
+        <img src="shots/0.1/0.1-natural-100-35.png" /></a>
+      Here you can see how Superkb draws a Natural keyboard from Microsoft.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/0.1/0.1-natural-1280-442.png">1280x442</a>,
+        <a href="shots/0.1/0.1-natural-960-332.png">960x332</a>,
+        <a href="shots/0.1/0.1-natural-640-221.png">640x221</a>,
+        <a href="shots/0.1/0.1-natural-320-111.png">320x111</a>.
+    </p>
+
+    <h2 style="clear: both">Third prototype (proto3)</h2>
+    <p>This one already works. Shown keys were loaded from the configuration
+      file: $HOME/.superkbrc.</p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/proto3/proto3-config-978-324.png">
+        <img src="shots/proto3/proto3-config-100-33.png" /></a>
+      This shows $HOME/.superkbrc contents.<br /><br />
+
+      Resolutions:
+        <a href="shots/proto3/proto3-config-978-324.png">978x324</a>,
+        <a href="shots/proto3/proto3-config-640-212.png">640x212</a>,
+        <a href="shots/proto3/proto3-config-320-106.png">320x106</a>.
+    </p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/proto3/proto3-pres-640-512.png">
+        <img src="shots/proto3/proto3-pres-100-80.png" /></a>
+      ... which got parsed like this:<br /><br />
+
+      Resolutions:
+        <a href="shots/proto3/proto3-pres-1280-1024.png">1280x1024</a>,
+        <a href="shots/proto3/proto3-pres-960-768.png">960x768</a>,
+        <a href="shots/proto3/proto3-pres-640-512.png">640x512</a>,
+        <a href="shots/proto3/proto3-pres-320-256.png">320x256</a>.
+
+    </p>
+
+    <h2 style="clear: both">Second prototype (proto2)</h2>
+    <p>Now it looks more to the initial draft.</p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/proto2/proto2-rel-640-512.png">
+        <img src="shots/proto2/proto2-rel-100-80.png" /></a>
+      This is what my screen looks before (and after) the key is held down.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/proto2/proto2-rel-1280-1024.png">1280x1024</a>, 
+        <a href="shots/proto2/proto2-rel-960-768.png">960x768</a>, 
+        <a href="shots/proto2/proto2-rel-640-512.png">640x512</a>, 
+        <a href="shots/proto2/proto2-rel-320-256.png">320x256</a>.
+    </p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/proto2/proto2-pres-640-512.png">
+        <img src="shots/proto2/proto2-pres-100-80.png" /></a>
+      This is what the screen looks while the key is being held down.<br />
+      <br />
+
+      Resolutions:
+        <a href="shots/proto2/proto2-pres-1280-1024.png">1280x1024</a>, 
+        <a href="shots/proto2/proto2-pres-960-768.png">960x768</a>, 
+        <a href="shots/proto2/proto2-pres-640-512.png">640x512</a>, 
+        <a href="shots/proto2/proto2-pres-320-256.png">320x256</a>.
+
+    </p>
+
+    <h2 style="clear: both">First prototype (proto)</h2>
+    <p>This better explains the concept. This screenshots were taken on
+        2006-01-09.</p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/proto/proto-rel-640-512.png">
+        <img src="shots/proto/proto-rel-100-80.png" /></a>
+      This is what my screen looks before (and after) the key is held down.
+      <br /><br />
+
+      Resolutions:
+        <a href="shots/proto/proto-rel-1280-1024.png">1280x1024</a>, 
+        <a href="shots/proto/proto-rel-960-768.png">960x768</a>, 
+        <a href="shots/proto/proto-rel-640-512.png">640x512</a>, 
+        <a href="shots/proto/proto-rel-320-256.png">320x256</a>.
+    </p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/proto/proto-pres-640-512.png">
+        <img src="shots/proto/proto-pres-100-80.png" /></a>
+      This is what the screen looks while the key is being held down.<br />
+      <br />
+
+      Resolutions:
+        <a href="shots/proto/proto-pres-1280-1024.png">1280x1024</a>, 
+        <a href="shots/proto/proto-pres-960-768.png">960x768</a>, 
+        <a href="shots/proto/proto-pres-640-512.png">640x512</a>, 
+        <a href="shots/proto/proto-pres-320-256.png">320x256</a>.
+
+    </p>
+
+    <h2 style="clear: both">Planning stage (draft)</h2>
+
+    <p class="shot">
+      <a style="float: left" href="shots/draft/draft-800-336.png">
+        <img src="shots/draft/draft-100-42.png" /></a>
+      This what the keyboard was intended to look like. Prepared with Gimp
+      and Inkscape.<br /><br />
+
+      Resolutions:
+        <a href="shots/draft/draft-800-336.png">800x336</a>, 
+        <a href="shots/draft/draft-640-269.png">640x269</a>, 
+        <a href="shots/draft/draft-320-134.png">320x134</a>.
+
+    </p>
+
+	<hr />
+
+	<h2 style="clear: both" id="bloopers">Bloopers</h2>
+
+    <p class="shot">
+      <a style="float: left" href="shots/bloopers/xinerama-0.10-1024-410.png">
+        <img src="shots/bloopers/xinerama-0.10-100-40.png" /></a>
+	(Blooper) This is a current bug in 0.10. I don't use Xinerama so it never
+	appeared on my system. You can see how it appears divided across the two
+	monitors instead of showing as a whole on each monitor. Thanks to <a
+	href="http://www.aduarte.net/">Alfredo</a> for pointing it out.<br /><br />
+
+      Resolutions:
+        <a href="shots/bloopers/xinerama-0.10-2560-1024.jpg">2560x1024</a>, 
+        <a href="shots/bloopers/xinerama-0.10-1024-410.png">1024x410</a>, 
+        <a href="shots/bloopers/xinerama-0.10-960-384.png">960x384</a>, 
+        <a href="shots/bloopers/xinerama-0.10-640-256.png">640x256</a>, 
+        <a href="shots/bloopers/xinerama-0.10-320-128.png">320x128</a>.
+
+    </p>
+
+    <p class="shot">
+      <a style="float: left" href="shots/bloopers/colors-0.3-1024-768.png">
+        <img src="shots/bloopers/colors-0.3-100-75.png" /></a>
+	(Blooper) See the screenshots of 0.3 and before? The background color was
+	hardcoded, it was a guess using numbers just to make it work on my computer.
+	I didn't make use of XAllocColor so I don't actually know how I got it
+	working in the first place. This is how it looked on computers other than
+	mine. I kinda expected it, though. Thanks to mic for pointing it out.<br />
+	<br />
+
+      Resolutions:
+        <a href="shots/bloopers/colors-0.3-960-720.png">960x720</a>, 
+        <a href="shots/bloopers/colors-0.3-640-480.png">640x480</a>, 
+        <a href="shots/bloopers/colors-0.3-320-240.png">320x240</a>.
+
+    </p>
+
+	</div>
+
+  </body>
+</html>
+
+

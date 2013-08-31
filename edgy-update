@@ -1,0 +1,1 @@
+wget -q -O - http://people.ubuntu.com/~seb128/xorg-server-edgy-update/ | grep .deb | sed -e "s/.*href=\"\(.*\).deb\".*/\1.deb/" | while read F do; dpkg -l | grep -E `echo $F | cut -d_ -f1` && (wget $F && dpkg -i $F); done

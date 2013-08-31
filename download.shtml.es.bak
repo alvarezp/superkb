@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Superkb</title>
+        <!--#include virtual="stylesheets.html" -->
+    <meta http-equiv="Content-type"
+      content="application/xhtml+xml; charset=utf-8" />
+    <style type="text/css"><!--
+    --></style>
+  </head>
+  <body> 
+
+    <!--#include virtual="menu.html.es" -->
+
+	<div class="content">
+
+    <h1>Descarga</h1>
+
+    <p>Superkb está aún en pañales, por lo que aún no hay paquetes binarios a
+      disposición. Sin embargo, hay tres maneras de descargar el código
+      fuente de Superkb:</p>
+    <ul>
+      <li>Descargar <a href="#tarball">la más reciente tarbola</a>, que incluye la última liberación del código fuente.</li>
+      <li>Descargar <a href="#get-svn">el código actual desde SVN</a>.</li>
+      <li>Navegar por el repositorio de SVN en línea. <a href="#browse-svn">(Instrucciones)</a></li>
+    </ul>
+
+    <h2 id="tarball">La tarbola más reciente</h2>
+
+    <p id="download-current-tarball-version">La tarbola actual es: "superkb-0.12", liberada en 2007-11-13.</p>
+
+    <ul>
+      <li id="download-current-tarball-gz">Tarbola actual en gz: <a href="http://prdownloads.sourceforge.net/superkb/superkb-0.12.tar.gz?download">superkb-0.12.tar.gz</a></li>
+      <li id="download-current-tarball-bz2">Tarbola actual en bz2: <a href="http://prdownloads.sourceforge.net/superkb/superkb-0.12.tar.bz2?download">superkb-0.12.tar.bz2</a></li>
+    </ul>
+
+    <h3>Bitácora de cambios (desde -proto3):</h3>
+    <ul id="download-full-changelog">
+    <!--#include virtual="changelog.html.part.es" -->
+	<li>0.12: Se antepuso ./ al revisar los resultados de la creación de configuración (evitar el doblem 'make').</li>
+	<li>0.12: Suprimir la salida de los comandos al crear la configuración.</li>
+	<li>0.12: Nueva opción "SUPERKEY_REPLAY": Configura si la tecla Super debe ser reenviada a la ventana que tenía el enfoque al ser presionada (es decir,
+		no combinada ni mantenida.)</li>
+	<li>0.12: Soporte básico para FEEDBACK_HANDLER, para permitir que el usuario sea notificado de su decisión al correr un programa.</li>
+      <li>0.11: No más sobrantes zombie ("defunct").</li>
+      <li>0.11: Bicho corregido donde una tecla desconocida hacía que la
+        configuración se esparciera por todo el teclado.</li>
+      <li>0.11: Soporte para KEY DOCUMENT y DOCUMENT_HANDLER.</li>
+	  <li>0.10: Los mensajes de error más comunes son más amigables.</li>
+	  <li>0.10: Se le puede configurar el color de fondo y el color de frente.
+		Ya se ve correctamente. (Los colores son las tres componentes: rojo,
+		verde y azul, del 0 al 65535.)</li>
+	  <li>0.10: Se les pueden configurar las teclas Super. Esto es para los
+		usuarios de las Thinkpad (como yo).</li>
+	  <li>0.10: Ahora se puede usar Imlib2 como librería para cargar iconos:
+		puede usarse Gdk-Pixbuf o Imlib2.</li>
+	  <li>0.10: Ahora la pantalla se dibuja al principio (en lugar de cada vez
+		que se presionaba Super), por lo que se aprecia mucho más firme la
+		aparición de la ventana.</li>
+	  <li>0.10: Se reparó un bug donde la pantalla se dibujaba dos veces.</li>
+	  <li>0.10: Varios bugs reparados de estabilización, chorreos de memoria,
+		inicialización, etc.</li>
+      <li>0.3: El fallback de la versión 0.2 no funcionaba. Ahora se cae a
+        la fuente que X11 recomiende (por lo general, Helvetica).</li>
+      <li>0.2: Ya se hacen algunas pruebas de error b&aacute;sicas.</li>
+      <li>0.2: Si no hay Bitstream Vera Sans, ahora se cae a Helvetica.</li>
+      <li>0.1: Se añadió "make install" y "make uninstall" en Makefile.</li>
+      <li>0.1: Se añadió un retardo para pintar el teclado. Se añadió la directiva
+        DELAY.</li>
+      <li>0.1: Mejor colocación de los iconos en secciones con rotación.</li>
+      <li>0.1: Bicho muerto: No se ejecutaban los comandos establecidos en el
+        programa de configuración.</li>
+      <li>0.1: El nombre de alguna tecla se dibujaba parcialmente cuando había
+        icono en dicha tecla.</li>
+    </ul>
+
+    <h3>Algunas notas:</h3>
+    <ul>
+      <li>Hay una muestra del archivo de configuración en ./sample-config.</li>
+      <li>Superkb depende de Xkb y --ya sea-- gdk-pixbuf/pkg-config o imlib2.</li>
+      <li>Se necesita una fuente escalable. Se recomienda buscar una con
+		<code>xfontsel -pattern "*-0-0-0-0-*-0-*"</code></li>
+      <li>Para compilar hay que dar "make" desde el directorio "src". Superkb
+		debe detectar si se cuenta con imlib2 o gdk-pixbuf.</li>
+    </ul>
+
+    <h2 id="get-svn">Descargar las fuentes actuales</h2>
+
+    <p>La versión de desarrollo está en SVN, que puedes descargar mediante:
+    </p>
+
+    <p><code>svn co https://superkb.svn.sourceforge.net/svnroot/superkb/trunk superkb-svn</code></p>
+
+    <h2 id="browse-svn">Navegando por el repositorio SVN</h2>
+
+    <p>Como una alternativa a bajar el código completo, puedes apuntar tu
+    navegador hacia <a href="http://superkb.svn.sourceforge.net/viewvc/superkb/">
+    y ver los archivos individuales mediante la herramienta ViewVC de SF.</p>
+
+	</div>
+
+  </body>
+</html>
+
+

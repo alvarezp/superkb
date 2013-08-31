@@ -1,0 +1,19 @@
+		XkbComponentNamesRec s;
+		s.keymap = NULL;
+		s.keycodes = "xfree86";
+		s.types = NULL;
+		s.compat = NULL;
+		s.symbols = "us";
+		s.geometry = "pc(pc104)";
+		kbdesc = XkbGetKeyboardByName(dpy, XkbUseCoreKbd, &s, XkbGBN_AllComponentsMask, XkbGBN_GeometryMask | XkbGBN_SymbolsMask | XkbGBN_KeyNamesMask, False);
+		printf("FALLBACK: %p\n", kbdesc);
+		if (kbdesc == NULL) {
+			fprintf(stderr, "superkb: I couldn't even load a defualt keyboard "
+				"geometry. Quitting.\n\n");
+			fprintf(stderr, "\nIf using GNOME you might want to try adding a "
+				"keyboard layout and then\nremoving it, and making sure your "
+				"default layout is effectively selected as\ndefault.\n");
+			return EXIT_FAILURE;
+		}
+		kbgeom = kbdesc->geom;
+

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+	 PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+	<title>What & Why - Superkb</title>
+        <!--#include virtual="stylesheets.html" -->
+	<meta http-equiv="Content-type"
+	  content="application/xhtml+xml; charset=iso-8859-1" />
+	<style type="text/css"><!--
+	--></style>
+  <!--#include virtual="analytics.html" -->
+  </head>
+  <body> 
+
+	<!--#include virtual="menu.html.en" -->
+
+	<div class="content">
+
+	<div class ="index">
+		<ul class="index">
+			<li class="index"><a href="#what">What?</a>
+			<li class="index"><a href="#why">Why?</a>
+			<li class="index"><a href="#how">How?</a>
+			<li class="index"><a href="#weneed">We need...</a>
+			<li class="index"><a href="#who">Who?</a>
+			<li class="index"><a href="#license">License and Legal Stuff</a>
+		</ul>
+	</div>
+
+	<h1>About Superkb</h1>
+
+	<p>This page is divided into several sections. Please use the floating menu
+	at the right to navigate through it.</p>
+
+	<h2 id="what">What?</h2>
+
+	<p>Superkb is a graphical application launcher for Linux. It works by
+	activating upon a hotkey press, usually Super_L or Super_R (better known as
+	"the Windows key"). On activation it shows a keyboard on screen with the
+	keys and its corresponding actions.</p>
+
+	<h3 id="guidelines">Guidelines</h3>
+
+	<p>Superkb should:</p>
+
+	<ul>
+		<li>Never get in the way of the user's work.</li>
+		<li>Never waste screen space.</li>
+		<li>Be a light program. This is a very relative term, of course.</li>
+		<li>Never change unless the user explicitly asks for that.</li>
+		<li>Be easy to use. This is relative too, of course.</li>
+	</ul>
+
+	<p>We'll try our best.</p>
+
+	<h2 id="why">Why?</h2>
+
+	<p><q>It is the same as Windows.</q> &mdash;My friend, deceived.</p>
+
+	<p><q>It looks the same as Windows.</q> &mdash;My sister, deceived.</p>
+
+	<p><q>Linux is too difficult!</q> &mdash;A user that was shown a Windows-unlike Linux.</p>
+
+	<p><q>Okay, what do I do here?</q> &mdash;First time computer user (Win or Lin) staring at the empty desktop.</p>
+
+	<p><q>Argh! Why can't I open this calculator faster?!</q> &mdash;Me.</p>
+
+	<p><q>Where is a calculator when you need one?!</q> &mdash;A user right in front of the computer.</p>
+
+	<p><q>I didn't know it could do that...</q> &mdash;A newbie.</p>
+
+	<p><q>Why not use some freaking key to launch the Calculator?!</q> &mdash;Me.</p>
+
+	<p><q>My multimedia keyboard doesn't work with Linux</q> &mdash;Hypothetical case.</p>
+
+	<h2 id="how">How?</h2>
+
+	<p>The goal is to repaint they flag key to have some bigger letters saying
+	"MENU" or the like. For technical reasons, I'll refer to that key as Super.
+	Whenever I press either Super key, a keyboard appears on the screen telling
+	me what keys are bound to something, with the appropriate icons.</p>
+
+	<p>Let me show you what I mean. Let's suppose I'm working on whatever
+	application and I want to quickly launch my calculator. First, I press (and
+	hold) the Super key. A keyboard like the following appears on the screen:
+	</p>
+
+	<p><a href="shots/draft/draft-800-336.png">
+	  <img src="shots/draft/draft-640-269.png" alt="Sample keyboard" /></a>
+	</p>
+
+	<p>At this moment, I realize that the calculator is at the "C" key, so I
+	press it. After several times of doing it, it should become an automatic
+	movement, not needing the keyboard to appear: just press Super+C in an
+	automatic reaction to my desire to launch a calculator. After some
+	practise it will take less than half a second to do it. (Try that with
+	the mouse!)</p>
+
+	<p>That image is just a draft.</p>
+
+	<p>There would be some default bindings of course. For example:</p>
+
+	<ul>
+	  <li>Super+Arrows: Would move the current window by 10px.</li>
+	  <li>Super+Alt+Arrows: Would move the current window by 1px.</li>
+	  <li>Super+Shift+Arrows: Would resize the current window by 10px from the
+		lower right corner</li>
+	  <li>Super+Alt+Shift+Arrows: Would resize the current window by 1px from the
+		lower right corner.</li>
+	  <li>Super+Shift+Insert: Would run an application.</li>
+	  <li>Super+Shift+Delete: Would kill an application.</li>
+	  <li>Super+Shift+End: Would close the current application.</li>
+	  <li>Super+Home: Restore to original size.</li>
+	  <li>Super+PageUp: Maximize.</li>
+	  <li>Super+PageDn: Minimize.</li>
+	  <li>Super+N: Program for taking quick notes (NEdit, GEdit, KEdit, XEdit,
+		whatever-edit)</li>
+	</ul>
+
+	<p>According to that example, when the user holds down the Shift key
+	&mdash;of course, while holding down the Super key&mdash; superkb should
+	show the actions for Insert, Delete, End and other Shift-bound keys and
+	hide those that are only programmed to natural pressing.</p>
+
+	<h3 id="details">Details</h1>
+	<p>This is how the program should behave:</p>
+
+	<ol>
+	  <li>Superkb loads &mdash;either standalone or as part of the Window
+		Manager&mdash;.</li>
+	  <li>User presses (and holds down) the Super key.</li>
+	  <li>A keyboard like the one above shows up in the screen. That keyboard
+		should make the user aware that W, C and N keys do something. Also,
+		that the arrows and some edition keys do something too.</li>
+	  <li>User might do one of the following:
+		<ol>
+		  <li>A user presses (and releases), say, the W. The appropriate
+			action (load Writer) should begin. The keyboard should not disappear
+			from screen.</li>
+		  <li>A user presses (and holds) any already bound or any bindable key,
+			like the W, N or C, or any other alphabet letter, but not Pause,
+			for instance. If the user keeps the key held down for 3 seconds,
+			the keyboard should disappear and the "Configure Binding" window
+			should appear. If the user releases the key before those 3 seconds,
+			it is actually point 4.1.</li>
+		  <li>A user might use the mouse to move or rest the pointer over a
+			key. (However, mouse support is not currently a goal.)
+			<ol>
+			  <li>If he rolls the mouse over a bound key, additional information
+				might appear &mdash;making the icon bigger, for
+				instance&mdash;.</li>
+			  <li>If the user clicks a bound key, the action should be
+				performed.</li>
+			  <li>If the user holds the mouse button pressed over a key, the key
+				should be configured as in point 4.2.</li>
+			</ol>
+		  </li>
+		</ol>
+	  </li>
+	  <li>After the user has loaded all the programs he wants, he will release
+		the key and the keyboard will disappear. The programs should at this
+		moment be loading.</li>
+	</ol>
+
+	<h2 id="weneed">We need...</h2>
+
+	<ol>
+	  <li>Feedback on Superkb compilation. The goal is to make it compile
+		without needing ./configure as far as possible.</li>
+	  <li>A routine to get the best place in a polygon key to draw its icon
+		at. Examples are multimedia keys and L-shaped ENTER key.</li>
+	  <li>Port the icon loading library (puticon_gdk_pixbuf_xlib.c) to Qt.</li>
+	  <li>Code to rotate fonts (is it really not possible with Xlib?)</li>
+	  <li>A lot of other stuff.</li>
+	</ol>
+
+	<h2 id="who">Who?</h2>
+
+	<p>My name is Octavio Alvarez. My email is alvarezp@alvarezp.ods.org. I
+	can also be found at irc.freenode.net at #superkb, as alvarezp or octal.</p>
+
+	<h2 id="license">License and Legal Stuff</h2>
+
+	<p>All software regarding this project, incluiding prototypes and
+	draft code is distributed under the terms of the <a href="http://www.gnu.org/copyleft/gpl.html">
+	General Public License, version 2</a>. All art regarding this project is
+	released under the terms of the <a rel="license"
+	href="http://creativecommons.org/licenses/by-sa/2.5/">Creative Commons Attribution-ShareAlike 2.5 License</a>.</p>
+
+	<p>
+	The keyboard is a modified version of <a href="http://openclipart.org/clipart/computer/hardware/Computer-Keyboardlayout-de.svg">
+	the one put in the public domain by Christoph Eckert</a>.
+	</p>
+
+	<p>Here is a link to <a href="http://www.sourceforge.net/projects/superkb">the Superkb Project page
+	at Sourceforge.net</a>.
+
+	<p><a href="http://sourceforge.net"><img style="float: left; margin-right: 10px;"
+	src="http://sflogo.sourceforge.net/sflogo.php?group_id=154661&amp;type=2" width="125"
+	height="37" alt="SourceForge.net Logo" /></a>Also, as requested by the
+	SourceForge terms of service, here is the logo for SourceForge.net, the the great open
+	source project hoster, which helps in this way to the Superkb project.</p>
+
+	</div>
+
+  </body>
+</html>
+
+
