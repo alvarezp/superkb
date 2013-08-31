@@ -764,7 +764,7 @@ KbDrawKey(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 		if (!strncmp(key->name.name, _kb->names->keys[i].name, 4)) {
 			strncpy(name, _kb->names->keys[i].name, 4);
 			KeySym ks;
-			ks = XKeycodeToKeysym(this->dpy, i, 0);
+			ks = XkbKeycodeToKeysym(this->dpy, i, 0, 0);
 			kss = XKeysymToString(ks);
 			if (kss) {
 				strncpy(keystring, kss, 255);
@@ -940,7 +940,7 @@ KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 
 			strncpy(name, _kb->names->keys[i].name, 4);
 			KeySym ks;
-			ks = XKeycodeToKeysym(this->dpy, i, 0);
+			ks = XkbKeycodeToKeysym(this->dpy, i, 0, 0);
 			kss = XKeysymToString(ks);
 
 			if (!kss)

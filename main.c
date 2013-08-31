@@ -84,7 +84,7 @@ int IconQuery(KeySym keysym, unsigned int state, char buf[], int buf_n)
 	unsigned int i;
 	for (i = 0; i < config->key_bindings_n; i++)
 	{
-		if (keysym == XKeycodeToKeysym(dpy, config->key_bindings[i].keycode, 0) &&
+		if (keysym == XkbKeycodeToKeysym(dpy, config->key_bindings[i].keycode, 0, 0) &&
 			state == config->key_bindings[i].state) {
 			if (config->key_bindings[i].icon != NULL) {
 				strncpy(buf, config->key_bindings[i].icon, buf_n);

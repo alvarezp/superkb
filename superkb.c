@@ -9,6 +9,7 @@
 /* Superkb: This modules does all the key and event handling magic. */
 
 #include <X11/Xlib.h>
+#include <X11/XKBlib.h>
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -250,11 +251,11 @@ void superkb_start(superkb_p this)
 	}
 
 	if (t1 && t2 && !f1 && f2) {
-		one_superkey_used_friendly_warning(1, XKeysymToString(XKeycodeToKeysym(this->dpy, this->key1, 0)));
+		one_superkey_used_friendly_warning(1, XKeysymToString(XkbKeycodeToKeysym(this->dpy, this->key1, 0, 0)));
 	}
 
 	if (t1 && t2 && f1 && !f2) {
-		one_superkey_used_friendly_warning(2, XKeysymToString(XKeycodeToKeysym(this->dpy, this->key2, 0)));
+		one_superkey_used_friendly_warning(2, XKeysymToString(XkbKeycodeToKeysym(this->dpy, this->key2, 0, 0)));
 	}
 
 	XKeyboardState xkbs;
@@ -402,7 +403,7 @@ void superkb_start(superkb_p this)
 				ignore_release = 0;
 
 				debug(1, "[sk] Super key has been pressed, code: %d, name: %s.\n", ev.xkey.keycode,
-					XKeysymToString(XKeycodeToKeysym(this->dpy, ev.xkey.keycode, 0)));
+					XKeysymToString(XkbKeycodeToKeysym(this->dpy, ev.xkey.keycode, 0, 0)));
 
 				if (super_was_active++) {
 					super_replay = 0;
@@ -446,7 +447,7 @@ void superkb_start(superkb_p this)
 			} else if (ev.type == KeyRelease) {
 
 				debug(1, "[sk] Super key has been released, code: %d, name: %s.\n", ev.xkey.keycode,
-					XKeysymToString(XKeycodeToKeysym(this->dpy, ev.xkey.keycode, 0)));
+					XKeysymToString(XkbKeycodeToKeysym(this->dpy, ev.xkey.keycode, 0, 0)));
 
 				if (--super_was_active) {
 					debug(2, "[sa] super_was_active decreased to %d, ignoring release.\n", super_was_active);
@@ -490,8 +491,8 @@ void superkb_start(superkb_p this)
 					__Action(pressed_keys[x].keycode, pressed_keys[x].state);
 
 					debug(1, "[ac] Due to Super key release, executed action for key code = %d, name: %s\n", pressed_keys[x].keycode, 
-						XKeysymToString(XKeycodeToKeysym
-							(this->dpy, pressed_keys[x].keycode, 0)));
+						XKeysymToString(XkbKeycodeToKeysym
+							(this->dpy, pressed_keys[x].keycode, 0, 0)));
 
 				}
 
@@ -531,8 +532,8 @@ void superkb_start(superkb_p this)
 			__Action(ev.xkey.keycode, squashed_state);
 
 			debug(1, "[ac] Due to bound key release, executed action for key code = %d, name: %s\n", ev.xkey.keycode, 
-				   XKeysymToString(XKeycodeToKeysym
-								   (this->dpy, ev.xkey.keycode, 0)));
+				   XKeysymToString(XkbKeycodeToKeysym
+								   (this->dpy, ev.xkey.keycode, 0, 0)));
 			debug(2, "     ... and because super_was_active value was > 0: %d\n", super_was_active);
 
 			remove_from_pressed_key_stack(ev.xkey.keycode, squashed_state);
