@@ -1,7 +1,7 @@
 
 #Build configuration file.
 CONFIGURATION=configuration
-include $(CONFIGURATION)
+-include $(CONFIGURATION)
 
 #Module information:
 #puticon/puticon-gdkpixbuf
