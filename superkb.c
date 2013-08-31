@@ -175,6 +175,8 @@ int xerror_handler(Display *dpy, XErrorEvent *xerrev) {
 	} else {
 		display_generic_x_error(dpy, xerrev);
 	}
+
+	return 0;
 }
 
 void one_superkey_used_friendly_warning(int number, const char *keyname) {
