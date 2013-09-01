@@ -280,7 +280,7 @@ drawkb_cairo_KbDrawShape(drawkb_p this, cairo_t *cr, signed int angle,
 			Bool is_key, float line_width)
 {
 
-	cairo_pattern_t * pat;
+	cairo_pattern_t * pat = NULL;
 
 	this->debug (15, "[dk]        + This shape is: left=%d, top=%d, angle=%d\n", left, top, angle);
 
@@ -292,7 +292,7 @@ drawkb_cairo_KbDrawShape(drawkb_p this, cairo_t *cr, signed int angle,
 
 	XkbOutlinePtr source;
 	int i;
-	int t, l, b, r;
+	int t = 0, l = 0, b = 0, r = 0;
 	//int j;
 	int shapes_to_paint = 1;
 

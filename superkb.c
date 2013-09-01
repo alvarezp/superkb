@@ -313,10 +313,10 @@ void superkb_start(superkb_p this)
 		struct timeval hold_start;
 		struct timeval hold_end;
 		XEvent ev;
-		int XNEWT_ret;
+		int XNEWT_ret = 0;
 		int i;
-		int to_reason;
-		int super_replay;
+		int to_reason = 0;
+		int super_replay = 0;
 		XEvent event_save_for_replay;
 		Window event_saved_window;
 

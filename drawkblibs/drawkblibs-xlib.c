@@ -517,7 +517,7 @@ KbDrawShape(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 
 	XkbOutlinePtr source;
 	int i;
-	int t, l, b, r;
+	int t = 0, l = 0, b = 0, r = 0;
 	int j;
 	int shapes_to_paint = 1;
 
