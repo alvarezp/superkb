@@ -162,8 +162,6 @@ void kbwin_unmap(Display * dpy)
 
 int kbwin_init(Display * dpy)
 {
-	int r;
-
 	/* Initialize Window and pixmap to back it up. */
 
 	XColor background;
