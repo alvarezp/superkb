@@ -68,7 +68,7 @@ MACROS=-DPREFIX=$(PREFIX) -DLIBDIRNAME=$(LIBDIRNAME)
 #Special variables
 SHELL=/bin/sh
 CC=gcc
-CFLAGS=-Wall -std=c99 $(PEDANTIC_ERRORS) $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC -DVEXTRA=\""$(version_extrainfo)"\" $(MACROS)
+CFLAGS+=-Wall -std=c99 $(PEDANTIC_ERRORS) $(WEXTRA) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC -DVEXTRA=\""$(version_extrainfo)"\" $(MACROS)
 OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o timeval.o $(obj-y)
 LDPARAMS=-lX11 -lm -ldl -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
 
