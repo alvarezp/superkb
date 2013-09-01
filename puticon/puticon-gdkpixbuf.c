@@ -70,10 +70,6 @@ int pi_gdkpixbuf_init(Display *dpy,
 	imagelib_drawimage_t *ret_draw,
 	imagelib_freeimage_t *ret_free)
 {
-	/* Well, g_type_init() doesn't give anything back. I hope this is not
-	* a problem. */
-	g_type_init();
-
 	/* Neither does gdk_pixbuf_xlib_init(). */
 	gdk_pixbuf_xlib_init(dpy, 0);
 
