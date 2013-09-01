@@ -58,8 +58,8 @@ void pi_gdkpixbuf_paintimage(imagelib_image_t *this, Drawable d, int left, int t
 
 void pi_gdkpixbuf_freeimage(imagelib_image_t *this)
 {
-	gdk_pixbuf_unref(this->original);
-	gdk_pixbuf_unref(this->scaled);
+	g_object_unref(this->original);
+	g_object_unref(this->scaled);
 	free(this);
 }
 
