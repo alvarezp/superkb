@@ -131,7 +131,7 @@ imagelib.o: imagelib.h configuration puticon/puticon.h $(obj-y)
 drawkblib.o: drawkblib.h configuration drawkblibs/drawkblibs.h $(obj-y)
 main.o: superkb.h imagelib.h drawkblib.h superkbrc.h screeninfo.h
 drawkblibs/drawkblibs-xlib.o: drawkblibs/drawkblibs-xlib.h configuration
-drawkblibs/drawkblibs-cairo.o: drawkblibs/drawkblibs-cairo.h drawkblib.o configuration
+drawkblibs/drawkblibs-cairo.o: drawkblibs/drawkblibs-cairo.h configuration
 puticon/puticon-imlib2.o: puticon/puticon-imlib2.h configuration
 puticon/puticon-gdkpixbuf.o: puticon/puticon-gdkpixbuf.h configuration
 
