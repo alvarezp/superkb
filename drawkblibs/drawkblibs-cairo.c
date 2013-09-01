@@ -226,14 +226,6 @@ void drawkb_cairo_DrawHollowPolygon(Display * dpy, cairo_t *cr,
 	unsigned int corner_radius,
 	float line_width) {
 
-	int npoints;
-	int shape;
-	int mode;
-
-	npoints = 8;
-	shape = Convex;
-	mode = CoordModeOrigin;
-
 	double local_corner_radius = corner_radius;
 
 	cairo_set_line_width (cr, line_width);
@@ -260,14 +252,6 @@ void drawkb_cairo_DrawFilledPolygon(Display * dpy, cairo_t *cr,
 	unsigned int r,
 	unsigned int corner_radius,
 	float line_width) {
-
-	int npoints;
-	int shape;
-	int mode;
-
-	npoints = 8;
-	shape = Convex;
-	mode = CoordModeOrigin;
 
 	double local_corner_radius = corner_radius;
 
