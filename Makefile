@@ -86,11 +86,10 @@ all:
 	$(MAKE) configuration
 	$(MAKE) checkdep
 	$(MAKE) $(SHARED) $(APP)
-	$(MAKE) man
+	$(MAKE) $(APP).1
 
-man: $(APP)
-	mkdir -p man/
-	$(HELP2MAN) -n 'Graphical keyboard launcher with on-screen hints' --help-option=-h --version-option=-v -N ./$(APP) > man/$(APP).1
+$(APP).1: $(APP) superkb.1.inc
+	$(HELP2MAN) -n 'Graphical keyboard launcher with on-screen hints' --help-option=-h --version-option=-v -N -i superkb.1.inc ./$(APP) > $(APP).1
 
 $(APP): $(OBJS)
 	$(CC) -o $(APP) $(OBJS) $(LDPARAMS)
@@ -175,7 +174,7 @@ install-app:
 .PHONY : install-man
 install-man:
 	mkdir -p $(DESTDIR)/$(PREFIX)/share/man/man1
-	install man/superkb.1 $(DESTDIR)/$(PREFIX)/share/man/man1/superkb.1
+	install $(APP).1 $(DESTDIR)/$(PREFIX)/share/man/man1/
 
 
 .PHONY : install-shared
@@ -195,7 +194,7 @@ uninstall-shared:
 
 .PHONY : uninstall-man
 uninstall-man:
-	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/superkb.1
+	rm -fr $(DESTDIR)/$(PREFIX)/share/man/man1/$(APP).1
 
 .PHONY : uninstall-app
 uninstall-app:
@@ -207,4 +206,4 @@ clean:
 	-/bin/rm -f `find -name "*~"`
 	-/bin/rm -f `find -name core`
 	-/bin/rm -f `find -name "core.*"`
-	-/bin/rm -fr man/
+	-/bin/rm -fr $(APP).1
