@@ -92,7 +92,7 @@ $(APP).1: $(APP) superkb.1.inc
 	$(HELP2MAN) -n 'Graphical keyboard launcher with on-screen hints' --help-option=-h --version-option=-v -N -i superkb.1.inc ./$(APP) > $(APP).1
 
 $(APP): $(OBJS)
-	$(CC) -o $(APP) $(OBJS) $(LDPARAMS)
+	$(CC) -o $(APP) $(OBJS) $(LDFLAGS) $(LDPARAMS)
 	@[ -f superkb ] && { \
 		echo ; \
 		echo "Superkb has been successfully compiled!"; \
@@ -136,7 +136,7 @@ puticon/puticon-gdkpixbuf.o: puticon/puticon-gdkpixbuf.h configuration
 
 
 $(SHARED): %.so: %.o
-	gcc $(ldlibs-m) -shared -o $@ $<
+	gcc $(ldlibs-m) $(LDFLAGS) -shared -o $@ $<
 
 .PHONY : relink
 relink:
