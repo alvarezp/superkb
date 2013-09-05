@@ -28,9 +28,9 @@ Fedora (included in distro)
 
 Ubuntu (manual compilation)
 ---------------------------
- * Ubuntu users must manually compile it from source code. Some instructions for Debian and Ubuntu are available at http://superkb.org/wiki/index.php?title=Compilation_instructions_for_Superkb_0.21
+ * Ubuntu users must manually compile it from source code. Some instructions for Debian and Ubuntu are available at https://github.com/alvarezp/superkb/wiki/Compilation-instructions-for-Superkb-0.21
 
 Debian (manual compilation)
 ---------------------------
- * Debian users must manually compile it from source code. Some instructions for Debian and Ubuntu are available at http://superkb.org/wiki/index.php?title=Compilation_instructions_for_Superkb_0.21
+ * Debian users must manually compile it from source code. Some instructions for Debian and Ubuntu are available at https://github.com/alvarezp/superkb/wiki/Compilation-instructions-for-Superkb-0.21
 
