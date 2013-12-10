@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cat version.h | egrep -q '\+git'
 if [ $? -eq 1 ]; then # Version is a release.
