@@ -659,6 +659,7 @@ int config_load(config_t *this, Display *dpy)
 		fprintf(stderr, "  User local configuration file should be at $HOME/.superkbrc.\n");
 	}
 
+	free(file);
 	return EXIT_SUCCESS;
 }
 
