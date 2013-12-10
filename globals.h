@@ -10,7 +10,7 @@
 #define __GLOBALS_H
 
 /* Wrappers for easy dynamic array element adding and removing. */
-#define list_add_element(x, xn, y) {x = (y *)realloc(x, (++(xn))*sizeof(y));}
-#define list_rmv_element(x, xn, y) {x = (y *)realloc(x, (--(xn))*sizeof(y));}
+#define list_add_element(x, xn, y) do {void * t; t = (y *)realloc(x, (++(xn))*sizeof(y)); if (t == NULL) { free(x); x = NULL; } else x = t; } while (0)
+#define list_rmv_element(x, xn, y) do {void * t; t = (y *)realloc(x, (--(xn))*sizeof(y)); if (t == NULL) { free(x); x = NULL; } else x = t; } while (0)
 
 #endif
