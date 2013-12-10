@@ -276,7 +276,12 @@ void handle_line(char *line, int linesize) {
 	
 	while ((token = (char *) next_word(token + wordlength + 1, &wordlength, " \v\t\r")) != NULL) {
 		if (tok_size <= tok_index) {
-			token_array = realloc(token_array, tok_size * 2 * sizeof(*token_array));
+			void *new_token_array = realloc(token_array, tok_size * 2 * sizeof(*token_array));
+			if (new_token_array == NULL) {
+				fprintf(stderr, "superkbrc.c: error allocating memory for tokenizer. Aborting.\n");
+				abort();
+			}
+			token_array = new_token_array;
 			tok_size *= 2;
 		}
 		/* Need to end each token with a null, so add 1 to the wordlength and NULL it */
