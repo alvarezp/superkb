@@ -528,19 +528,19 @@ int parse_config(FILE *file) {
 	char *buf = malloc(sizeof(*buf));
 	if (buf == NULL) {
 		perror("superkb: parse_config(): buf = malloc() failed");
-		return EXIT_FAILURE;
+		abort();
 	}
 
 	int *bufSize = malloc(sizeof(*bufSize));
 	if (bufSize == NULL) {
 		perror("superkb: parse_config(): bufSize = malloc() failed");
-		return EXIT_FAILURE;
+		abort();
 	}
 
 	int *eof = malloc(sizeof(*eof));
 	if (eof == NULL) {
 		perror("superkb: parse_config(): eof = malloc() failed");
-		return EXIT_FAILURE;
+		abort();
 	}
  
 	*bufSize = 1;
@@ -553,6 +553,9 @@ int parse_config(FILE *file) {
 		buf=NULL;
 	}
 
+	free(buf);
+	free(bufSize);
+	free(eof);
 	return EXIT_SUCCESS;
 }
 
