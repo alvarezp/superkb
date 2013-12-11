@@ -6,9 +6,9 @@
  *
  */
 
-#include <malloc.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <X11/extensions/Xinerama.h>
 #include <X11/Xlib.h>
