@@ -86,7 +86,7 @@ void Imagelib_GetValues(char *buf, unsigned long buf_n)
 		}
 	}
 	
-
+	closedir(dir);
 }
 
 int Init_Imagelib(Display *dpy, const char *userlib)
