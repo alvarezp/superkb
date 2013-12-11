@@ -82,7 +82,7 @@ void drawkblib_GetValues(char *buf, unsigned long buf_n)
 		}
 	}
 	
-
+	closedir(dir);
 }
 
 int Init_drawkblib(const char *userlib)
