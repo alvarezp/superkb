@@ -639,7 +639,7 @@ int config_load(config_t *this, Display *dpy)
 		strcpy(file, home);
 		strcat(file, "/" CONFIG_FILENAME);
 	} else {
-		file = CONFIG_FILENAME;
+		file = strdup(CONFIG_FILENAME);
 	}
 
 	fd = fopen(file, "r");
