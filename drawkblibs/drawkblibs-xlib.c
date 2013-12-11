@@ -1264,6 +1264,7 @@ drawkb_p drawkb_xlib_create(Display *dpy, const char *font,
 	fs = XLoadQueryScalableFont(this->dpy, 0, this->font, 1000);
 	if (!fs) {
 		fprintf(stderr, "superkb: Couldn't XLoadQueryScalableFont. This shouldn't have happened.\n");
+		free(this);
 		return NULL;
 	}
 
