@@ -295,6 +295,7 @@ void __Superkb_Action(KeyCode keycode, unsigned int state)
 							strcat (cmdline, " &");
 							system(cmdline);
 						}
+						free(cmdline);
 					}
 					argv[2] = config->key_bindings[i].action.command;
 					execvp(*argv, argv);
@@ -311,6 +312,7 @@ void __Superkb_Action(KeyCode keycode, unsigned int state)
 							strcat (cmdline, config->key_bindings[i].feedback_string);
 							strcat (cmdline, " &");
 							system(cmdline);
+						free(cmdline);
 						}
 					}
 					char *cmdline = malloc(strlen(config->document_handler) + strlen(config->key_bindings[i].action.document) + 2);
@@ -368,6 +370,7 @@ void welcome_message() {
 		strcpy(cmdline, config->welcome_cmd);
 		strcat(cmdline, " &");
 		system(cmdline);
+		free(cmdline);
 	}
 }
 
