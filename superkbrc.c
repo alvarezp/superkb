@@ -210,7 +210,7 @@ const char *next_word(const char *buf, int *wordLength, const char* delim) {
  *  error message on error.
 **/
 char *get_line(FILE *in, char *buf, int *bufSize, int *isEof) {
-	char c;
+	int c;
 	int i = 0;
 
 	if (*bufSize == 0) *bufSize = 1;
