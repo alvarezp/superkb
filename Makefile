@@ -65,6 +65,10 @@ endif
 
 MACROS=-DPREFIX=$(PREFIX) -DLIBDIRNAME=$(LIBDIRNAME)
 
+#Replace -I with -isystem
+cflags-y := $(subst -I/,-isystem/,$(cflags-y))
+cflags-m := $(subst -I/,-isystem/,$(cflags-m))
+
 #Special variables
 SHELL=/bin/sh
 CC=gcc
