@@ -917,16 +917,19 @@ KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 	unsigned int j;
 
 	key_data_t *key_data = NULL;
-	unsigned int key_data_n = 0;
+
+	key_data = malloc(row->num_keys * sizeof(key_data_t));
+	if (key_data == NULL)
+		return;
+
+	memset(key_data, 0, sizeof(key_data_t) * row->num_keys);
 
 	for (j = 0; j < row->num_keys; j++) {
 		XkbKeyPtr key = &row->keys[j];
 
 		this->debug (4, "KbDrawRow: processing key j=%d\n ", j);
 
-		list_add_element (key_data, key_data_n, key_data_t);
-		memset(&(key_data[key_data_n-1]), 0, sizeof(key_data_t));
-		key_data[key_data_n-1].index = j;
+		key_data[j].index = j;
 
 		for (i = 0; i < fixed_num_keys; i++) {
 
@@ -980,20 +983,20 @@ KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 			if (this->IQF(XStringToKeysym(keystring), 0, NULL, 0) == EXIT_SUCCESS) {
 				/* If this key is a bound key... */
 				AdjustSize(this, labelbox, glyph, 0.28, scale, &size_bound);
-				key_data[key_data_n-1].size = size_bound;
+				key_data[j].size = size_bound;
 			} else if (strlen(glyph) == 1) {
 				/* If this key is a single char unbound key... */
 				AdjustSize(this, labelbox, glyph, 0.9, scale, &size_unbound_char);
-				key_data[key_data_n-1].size = size_unbound_char;
+				key_data[j].size = size_unbound_char;
 			} else {
 				/* This is a multiple char unbound key. */
 				labelbox.x1 += 4 / scale;
 				labelbox.x2 -= 4 / scale;
 				AdjustSize(this, labelbox, glyph, 0.25, scale, &size_unbound_string);
-				key_data[key_data_n-1].size = size_unbound_string;
+				key_data[j].size = size_unbound_string;
 			}
-			memcpy(&(key_data[key_data_n-1].labelbox), &labelbox, sizeof(XkbBoundsRec));
-			key_data[key_data_n-1].glyph = glyph;
+			memcpy(&(key_data[j].labelbox), &labelbox, sizeof(XkbBoundsRec));
+			key_data[j].glyph = glyph;
 
 			break;
 
@@ -1002,8 +1005,7 @@ KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 
 	for (i = 0; i < row->num_keys; i++) {
 
-		for (j = 0; j < key_data_n && key_data[j].index != i; j++);
-		assert(j < key_data_n);
+		for (j = 0; key_data[j].index != i; j++);
 
 		if (!row->vertical) {
 			KbDrawKey(this, w, gc, angle, left, top, scale,

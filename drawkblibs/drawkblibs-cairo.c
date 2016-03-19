@@ -854,7 +854,12 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 	unsigned int j;
 
 	key_data_t *key_data = NULL;
-	unsigned int key_data_n = 0;
+
+	key_data = malloc(row->num_keys * sizeof(key_data_t));
+	if (key_data == NULL)
+		return;
+
+	memset(key_data, 0, sizeof(key_data_t) * row->num_keys);
 
 	int already_increased_size_bound = 0;
 	int already_increased_size_unbound_char = 0;
@@ -865,9 +870,7 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 
 		this->debug (4, "drawkb_cairo_KbDrawRow: processing key j=%d\n ", j);
 
-		list_add_element (key_data, key_data_n, key_data_t);
-		memset(&(key_data[key_data_n-1]), 0, sizeof(key_data_t));
-		key_data[key_data_n-1].index = j;
+		key_data[j].index = j;
 
 		char name[5];
 		char glyph[256];
@@ -966,9 +969,9 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 			}
 
 
-			memcpy(&(key_data[key_data_n-1].labelbox), &labelbox, sizeof(XkbBoundsRec));
-			memcpy(&(key_data[key_data_n-1].fullbox), &fullbox, sizeof(XkbBoundsRec));
-			key_data[key_data_n-1].glyph = glyph;
+			memcpy(&(key_data[j].labelbox), &labelbox, sizeof(XkbBoundsRec));
+			memcpy(&(key_data[j].fullbox), &fullbox, sizeof(XkbBoundsRec));
+			key_data[j].glyph = glyph;
 
 			break;
 
@@ -983,8 +986,7 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 
 	for (i = 0; i < row->num_keys; i++) {
 
-		for (j = 0; j < key_data_n && key_data[j].index != i; j++);
-		assert(j < key_data_n);
+		for (j = 0; key_data[j].index != i; j++);
 
 		if (!row->vertical) {
 			drawkb_cairo_KbDrawKey(this, cr, 0,
