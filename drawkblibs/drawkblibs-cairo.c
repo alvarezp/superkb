@@ -736,6 +736,8 @@ int drawkb_cairo_increase_to_best_size_by_height(drawkb_p this, cairo_t *cr, Xkb
 
 	*size = size_now;
 
+	free(extents);
+
 	return size_now;
 
 }
@@ -772,8 +774,10 @@ int drawkb_cairo_reduce_to_best_size_by_width(drawkb_p this, cairo_t *cr, XkbBou
 	#define W_PRECISION 20
 	#define H_PRECISION 20
 
-	if (extents->width / PANGO_SCALE <= labelbox_width)
+	if (extents->width / PANGO_SCALE <= labelbox_width) {
+		free(extents);
 		return size_now;
+	}
 
 	/* Find best for width */
 	while ( abs(size_now - size_last) > PANGO_SCALE )
@@ -808,6 +812,8 @@ int drawkb_cairo_reduce_to_best_size_by_width(drawkb_p this, cairo_t *cr, XkbBou
 	this->debug(10, " <-- %s final size value: %f\n", __func__, size_now);
 
 	*size = size_now;
+
+	free(extents);
 
 	return size_now;
 
