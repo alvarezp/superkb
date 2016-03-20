@@ -1256,6 +1256,7 @@ drawkb_p drawkb_xlib_create(Display *dpy, const char *font,
 			" + You did not quote the name and the name contains spaces.\n"
 			" + The font doesn't exist. Try using XftFont *sel to find a suitable "
 				"font.\n", font);
+		free(this);
 		return NULL;
 	}
 
