@@ -1182,6 +1182,7 @@ int Init_Font(drawkb_p this, const char *font)
 
 	if (!font) {
 		fprintf(stderr, "User didn't specify font.\n");
+		font = "";
 	}
 
 	strncpy(this->font, font, 499);
