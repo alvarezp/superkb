@@ -201,16 +201,16 @@ int xerror_handler(Display *dpy, XErrorEvent *xerrev) {
 
 void one_superkey_used_friendly_warning(int number, const char *keyname) {
 
-	const char *ordinal;
+	const char *ordinal = "A";
 
 	if (number == 1)
-		ordinal = "first";
+		ordinal = "Your first";
 
 	if (number == 2)
-		ordinal = "second";
+		ordinal = "Your second";
 
 	fprintf(stderr,
-		"WARNING: Your %s configured Super key (%s) is already in\n"
+		"WARNING: %s configured Super key (%s) is already in\n"
 		"       use by another program (usually Compiz). You may continue using Superkb\n"
 		"       using your second Super key. You may want to try the following to avoid\n"
 		"       this error:\n"
