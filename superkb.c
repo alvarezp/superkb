@@ -48,6 +48,7 @@ void remove_from_pressed_key_stack(int keycode, int state)
 	int y;
 
 	for (x = pressed_keys_n-1; x >=0; x--) {
+		assert(pressed_keys != NULL);
 		if (pressed_keys[x].keycode == keycode &&
 			pressed_keys[x].state == state) {
 				/* Item to be removed found. */
@@ -56,6 +57,7 @@ void remove_from_pressed_key_stack(int keycode, int state)
 					pressed_keys[y].state = pressed_keys[y+1].state;
 				}
 				list_rmv_element(pressed_keys, pressed_keys_n, pressed_key_t);
+				assert(pressed_keys != NULL);
 		}
 	}
 }
@@ -63,6 +65,7 @@ void remove_from_pressed_key_stack(int keycode, int state)
 void push_into_pressed_key_stack(int keycode, int state)
 {
 	list_add_element(pressed_keys, pressed_keys_n, pressed_key_t);
+	assert(pressed_keys != NULL);
 	pressed_keys[pressed_keys_n-1].keycode = keycode;
 	pressed_keys[pressed_keys_n-1].state = state;
 }
