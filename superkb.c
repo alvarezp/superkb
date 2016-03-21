@@ -534,6 +534,7 @@ void superkb_start(superkb_p this)
 			int squashed_state = ev.xkey.state & this->state_mask;
 
 			push_into_pressed_key_stack(ev.xkey.keycode, squashed_state);
+			assert(pressed_keys != NULL);
 			debug(2, "[kp] Pushed key and state to stack: %d, %d\n", ev.xkey.keycode, squashed_state);
 		} else if ((ev.type == KeyRelease && !ignore_release &&
 				   super_was_active > 0)) {
