@@ -113,6 +113,7 @@ int Init_drawkblib(const char *userlib)
 	if (drawkbdlib) {
 		 drawkblib_init_t initlib = (drawkblib_init_t)(intptr_t)dlsym(drawkbdlib, "Init");
 		if ((initlib)(&drawkblib.create, &drawkblib.draw) == EXIT_SUCCESS) {
+			free(fn);
 			return EXIT_SUCCESS;
 		}
 	} else {

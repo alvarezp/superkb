@@ -125,6 +125,7 @@ int Init_Imagelib(Display *dpy, const char *userlib)
 //		image.FreeImage = dlsym(imagelib, "FreeImage");
 		if ((image.InitImage)(dpy, &image.NewImage, &image.LoadImage,
 				&image.ResizeImage,	&image.PaintImage, &image.FreeImage) == EXIT_SUCCESS) {
+			free(fn);
 			return EXIT_SUCCESS;
 		}
 	} else {
