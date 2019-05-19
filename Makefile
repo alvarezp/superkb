@@ -140,7 +140,7 @@ puticon/puticon-gdkpixbuf.o: puticon/puticon-gdkpixbuf.h configuration
 
 
 $(SHARED): %.so: %.o
-	gcc $(ldlibs-m) $(LDFLAGS) -shared -o $@ $<
+	gcc -shared -o $@ $< $(LDFLAGS) $(ldlibs-m)
 
 .PHONY : relink
 relink:
