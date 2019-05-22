@@ -3,54 +3,56 @@
 CONFIGURATION=configuration
 -include $(CONFIGURATION)
 
+PKG_CONFIG ?= pkg-config
+
 #Module information:
 #puticon/puticon-gdkpixbuf
 obj-$(PUTICON_GDKPIXBUF) += puticon/puticon-gdkpixbuf.o
 syms-$(PUTICON_GDKPIXBUF) += -DWITH_GDKPIXBUF
-ldlibs-$(PUTICON_GDKPIXBUF) += $(shell pkg-config gdk-pixbuf-xlib-2.0 --libs)
-cflags-$(PUTICON_GDKPIXBUF) += $(shell pkg-config gdk-pixbuf-xlib-2.0 --cflags)
+ldlibs-$(PUTICON_GDKPIXBUF) += $(shell $(PKG_CONFIG) gdk-pixbuf-xlib-2.0 --libs)
+cflags-$(PUTICON_GDKPIXBUF) += $(shell $(PKG_CONFIG) gdk-pixbuf-xlib-2.0 --cflags)
 
 #puticon/puticon-imlib2 (which I prefer)
 obj-$(PUTICON_IMLIB2) += puticon/puticon-imlib2.o
 syms-$(PUTICON_IMLIB2) += -DWITH_IMLIB2
-ldlibs-$(PUTICON_IMLIB2) += $(shell pkg-config imlib2 --libs)
-cflags-$(PUTICON_IMLIB2) += $(shell pkg-config imlib2 --cflags)
+ldlibs-$(PUTICON_IMLIB2) += $(shell $(PKG_CONFIG) imlib2 --libs)
+cflags-$(PUTICON_IMLIB2) += $(shell $(PKG_CONFIG) imlib2 --cflags)
 
 #drawkblibs/drawkblibs-xlib
 obj-$(DRAWKBLIBS_XLIB) += drawkblibs/drawkblibs-xlib.o
 syms-$(DRAWKBLIBS_XLIB) += -DWITH_DRAWKBLIBS_XLIB
-ldlibs-$(DRAWKBLIBS_XLIB) += $(shell pkg-config x11 --libs)
-cflags-$(DRAWKBLIBS_XLIB) += $(shell pkg-config x11 --cflags)
+ldlibs-$(DRAWKBLIBS_XLIB) += $(shell $(PKG_CONFIG) x11 --libs)
+cflags-$(DRAWKBLIBS_XLIB) += $(shell $(PKG_CONFIG) x11 --cflags)
 
 #drawkblibs/drawkblibs-cairo
 obj-$(DRAWKBLIBS_CAIRO) += drawkblibs/drawkblibs-cairo.o
 syms-$(DRAWKBLIBS_CAIRO) += -DWITH_DRAWKBLIBS_CAIRO
-ldlibs-$(DRAWKBLIBS_CAIRO) += $(shell pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --libs)
-cflags-$(DRAWKBLIBS_CAIRO) += $(shell pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --cflags) -DPANGO_ENABLE_BACKEND
+ldlibs-$(DRAWKBLIBS_CAIRO) += $(shell $(PKG_CONFIG) x11 renderproto xrender cairo cairo-xlib pangocairo --libs)
+cflags-$(DRAWKBLIBS_CAIRO) += $(shell $(PKG_CONFIG) x11 renderproto xrender cairo cairo-xlib pangocairo --cflags) -DPANGO_ENABLE_BACKEND
 
-cflags-y += $(shell pkg-config xft --cflags)
-ldlibs-y += $(shell pkg-config xft --libs)
+cflags-y += $(shell $(PKG_CONFIG) xft --cflags)
+ldlibs-y += $(shell $(PKG_CONFIG) xft --libs)
 
 #Choose whether Xinerama will be emulated or real.
 ifeq ($(XINERAMA_SUPPORT),n)
 	obj-y += screeninfo-xlib.o
 else
 	obj-y += screeninfo-xinerama.o
-	ldlibs-y += $(shell pkg-config xinerama --libs)
-	cflags-y += $(shell pkg-config xinerama --cflags)
+	ldlibs-y += $(shell $(PKG_CONFIG) xinerama --libs)
+	cflags-y += $(shell $(PKG_CONFIG) xinerama --cflags)
 endif
 
 version_extrainfo = $(shell ./extendedversioninfo.bash)
 
 #Conditional -pedantic-errors because of pango 1.32.3, 1.32.4 and 1.32.5.
 PEDANTIC_ERRORS := -pedantic-errors
-ifeq ($(shell pkg-config --modversion pango),1.32.3)
+ifeq ($(shell $(PKG_CONFIG) --modversion pango),1.32.3)
        PEDANTIC_ERRORS :=
 endif
-ifeq ($(shell pkg-config --modversion pango),1.32.4)
+ifeq ($(shell $(PKG_CONFIG) --modversion pango),1.32.4)
        PEDANTIC_ERRORS :=
 endif
-ifeq ($(shell pkg-config --modversion pango),1.32.5)
+ifeq ($(shell $(PKG_CONFIG) --modversion pango),1.32.5)
        PEDANTIC_ERRORS :=
 endif
 
@@ -112,17 +114,17 @@ $(APP): $(OBJS)
 	}
 
 configuration:
-	-pkg-config xinerama --exists > /dev/null \
+	-$(PKG_CONFIG) xinerama --exists > /dev/null \
 		&& (echo "XINERAMA_SUPPORT=y" >> configuration) \
 		|| (echo "XINERAMA_SUPPORT=n" >> configuration)
-	-pkg-config gdk-pixbuf-xlib-2.0 --exists > /dev/null \
+	-$(PKG_CONFIG) gdk-pixbuf-xlib-2.0 --exists > /dev/null \
 		&& (echo "PUTICON_GDKPIXBUF=$(MODTYPE)" >> configuration) \
 		|| (echo "PUTICON_GDKPIXBUF=n" >> configuration)
-	-pkg-config imlib2 --exists > /dev/null \
+	-$(PKG_CONFIG) imlib2 --exists > /dev/null \
 		&& (echo "PUTICON_IMLIB2=$(MODTYPE)" >> configuration) \
 		|| (echo "PUTICON_IMLIB2=n" >> configuration)
 	-echo "DRAWKBLIBS_XLIB=$(MODTYPE)" >> configuration
-	-pkg-config x11 renderproto xrender cairo cairo-xlib pangocairo --exists > /dev/null \
+	-$(PKG_CONFIG) x11 renderproto xrender cairo cairo-xlib pangocairo --exists > /dev/null \
 		&& (echo "DRAWKBLIBS_CAIRO=$(MODTYPE)" >> configuration) \
 		|| (echo "DRAWKBLIBS_CAIRO=n" >> configuration)
 

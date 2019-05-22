@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+: "${PKG_CONFIG:=pkg-config}"
+
 # Poor man's distro detection.
 DISTRO=unknown
 grep -q 'Debian' /etc/issue && DISTRO=debian
@@ -32,7 +34,7 @@ if echo "$DRAWKBLIBS_XLIB $PUTICON_IMLIB2 $PUTICON_GDKPIXBUF" |
 fi
 
 if [ "$DRAWKBLIBS_XLIB" = "y" -o "$DRAWKBLIBS_XLIB" = "m" ]; then
-	if pkg-config xft renderproto xrender --exists > /dev/null; then
+	if "${PKG_CONFIG}" xft renderproto xrender --exists > /dev/null; then
 		true
 	else
 
