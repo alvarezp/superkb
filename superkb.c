@@ -102,46 +102,29 @@ XNextEventWithTimeout(Display * display, XEvent * event_return,
 
 	XFlush(display);
 
-	while (1) {
-		if (QLength(display) <= 0) {
-
-			FD_ZERO(&fd);
-			FD_SET(XConnectionNumber(display), &fd);
-
-			do {
-				r = select(FD_SETSIZE, &fd, NULL, NULL, to);
-			} while(r == -1 && errno == EINTR);
-
-			if (r == -1) {
-				/* Some error other than EINTR. */
-				return -errno;
-			}
-
-			if (r == 0) {
-				/* Timeout */
-				return r;
-			}
-
-		}
-
+	if (QLength(display) > 0) {
 		XNextEvent(display, event_return);
-
-		/* Swallow next event if this is a key-repeating event */
-		if (event_return->type == KeyRelease && XEventsQueued(display, QueuedAfterReading))
-		{
-			XEvent nev;
-			XPeekEvent(display, &nev);
-
-			if (nev.type == KeyPress && nev.xkey.time == event_return->xkey.time &&
-				nev.xkey.keycode == event_return->xkey.keycode)
-			{
-				/* Key wasn’t actually released. Swallow this event and the next one. */
-				XNextEvent(display, event_return);
-				continue;
-			}
-		}
-		break;
+		return 1;
 	}
+
+	FD_ZERO(&fd);
+	FD_SET(XConnectionNumber(display), &fd);
+
+	do {
+		r = select(FD_SETSIZE, &fd, NULL, NULL, to);
+	} while(r == -1 && errno == EINTR);
+
+	if (r == -1) {
+		/* Some error other than EINTR. */
+		return -errno;
+	}
+
+	if (r == 0) {
+		/* Timeout */
+		return r;
+	}
+
+	XNextEvent(display, event_return);
 	return 1;
 }
 
