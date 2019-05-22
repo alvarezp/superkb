@@ -37,6 +37,7 @@
 #include "globals.h"
 #include "debug.h"
 #include "version.h"
+#include "main-help-message.h"
 
 #include "screeninfo.h"
 
@@ -421,14 +422,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	if (errflg || help) {
-		printf("usage: superkb [options]\n");
-		printf("\n");
-		printf("Options:\n");
-		printf("	-0         Quit when Superkb is ready (for timing and debugging).\n");
-		printf("	-d level   Show debug messages up to the specified verbosity level.\n");
-		printf("	-h         Shows this help.\n");
-		printf("	-v         Shows program version.\n");
-		printf("\n");
+		printf(HELP_MESSAGE);
 		if (help)
 			exit(EXIT_SUCCESS);	
 		else 
