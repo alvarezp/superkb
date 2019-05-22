@@ -8,7 +8,7 @@ if [ "$1" = "-v" ]; then
 fi
 
 if [ "$1" = "-h" ]; then
-    cat main-help-message.h | sed -n -re 's/\\n\\//g; s/^"//g; /HELP_MESSAGE/!p;'
+    bash <(cpp -E <(cat main-help-message.h; echo "echo -e HELP_MESSAGE"))
     exit 0
 fi
 
