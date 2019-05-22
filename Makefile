@@ -92,8 +92,9 @@ all:
 	$(MAKE) $(SHARED) $(APP)
 	$(MAKE) $(APP).1
 
-$(APP).1: $(APP) superkb.1.inc
-	$(HELP2MAN) -n 'Graphical keyboard launcher with on-screen hints' --help-option=-h --version-option=-v -N -i superkb.1.inc ./$(APP) > $(APP).1
+HELP_STUB=help2man-stub/superkb
+$(APP).1: $(APP) superkb.1.inc $(HELP_STUB)
+	$(HELP2MAN) -n 'Graphical keyboard launcher with on-screen hints' --help-option=-h --version-option=-v -N -i superkb.1.inc $(HELP_STUB) > $(APP).1
 
 $(APP): $(OBJS)
 	$(CC) -o $(APP) $(OBJS) $(LDFLAGS) $(LDPARAMS)

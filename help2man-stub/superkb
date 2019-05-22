@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ "$1" = "-v" ]; then
+    VERSION=$(cut -d'"' -f2 version.h)
+    VEXTRA=$(./extendedversioninfo.bash)
+    echo "$(cut -d'"' -f2 version.h)${VEXTRA}"
+    exit 0
+fi
+
+if [ "$1" = "-h" ]; then
+    cat main-help-message.h | sed -n -re 's/\\n\\//g; s/^"//g; /HELP_MESSAGE/!p;'
+    exit 0
+fi
+
+
