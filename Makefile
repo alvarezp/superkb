@@ -131,7 +131,7 @@ configuration:
 checkdep:
 	@./approve-config
 
-superkb.o: superkb.h
+superkb.o: superkb.h globals.h
 superkbrc.o: superkbrc.h globals.h
 imagelib.o: imagelib.h configuration puticon/puticon.h $(obj-y)
 drawkblib.o: drawkblib.h configuration drawkblibs/drawkblibs.h $(obj-y)
