@@ -57,7 +57,6 @@ void remove_from_pressed_key_stack(int keycode, int state)
 					pressed_keys[y].state = pressed_keys[y+1].state;
 				}
 				list_rmv_element(pressed_keys, pressed_keys_n, pressed_key_t);
-				assert(pressed_keys != NULL);
 		}
 	}
 }
