@@ -83,9 +83,7 @@ WNO=-Wno-unused-parameter
 CFLAGS+=-Wall -std=c99 $(PEDANTIC_ERRORS) $(WEXTRA) $(WNO) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC -DVEXTRA=\""$(version_extrainfo)"\" $(MACROS) -fcommon
 OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o timeval.o $(obj-y)
 LDPARAMS=-lX11 -lm -ldl -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
-SKIP_VALGRIND=y
 SKIP_SPLINT=y
-SKIP_CLANG=y
 
 #Convenience variables
 HELP2MAN=help2man
