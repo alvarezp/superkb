@@ -151,16 +151,6 @@ configuration:
 checkdep:
 	@./approve-config
 
-superkb.o: superkb.h globals.h
-superkbrc.o: superkbrc.h globals.h
-imagelib.o: imagelib.h configuration puticon/puticon.h $(obj-y)
-drawkblib.o: drawkblib.h configuration drawkblibs/drawkblibs.h $(obj-y)
-main.o: superkb.h imagelib.h drawkblib.h superkbrc.h screeninfo.h main-help-message.h
-drawkblibs/drawkblibs-xlib.o: drawkblibs/drawkblibs-xlib.h configuration
-drawkblibs/drawkblibs-cairo.o: drawkblibs/drawkblibs-cairo.h configuration
-puticon/puticon-imlib2.o: puticon/puticon-imlib2.h configuration
-puticon/puticon-gdkpixbuf.o: puticon/puticon-gdkpixbuf.h configuration
-
 OBJS = debug.o timeval.o superkb.o superkbrc.o imagelib.o drawkblib.o main.o $(obj-y)
 
 $(SHARED): %.so: %.o
