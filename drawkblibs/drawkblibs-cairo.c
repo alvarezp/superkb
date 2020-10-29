@@ -9,6 +9,7 @@
 #define _GNU_SOURCE
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "drawkblibs.h"
 // #include "drawkblibs-cairo.h"
@@ -977,7 +978,7 @@ drawkb_cairo_KbDrawRow(drawkb_p this, cairo_t *cr, signed int angle,
 
 			memcpy(&(key_data[j].labelbox), &labelbox, sizeof(XkbBoundsRec));
 			memcpy(&(key_data[j].fullbox), &fullbox, sizeof(XkbBoundsRec));
-			key_data[j].glyph = glyph;
+			key_data[j].glyph = strdup(glyph);
 
 			break;
 

@@ -214,7 +214,7 @@ uninstall-app:
 
 #These defaults are really aggressive. You may want to tweak them.
 VALGRIND_EXTRA = --suppressions=/dev/null
-CPPCHECK_EXTRA = --suppress=invalidLifetime --suppress=memleakOnRealloc
+CPPCHECK_EXTRA = --suppress=memleakOnRealloc
 SPLINT_EXTRA = -unrecog -fullinitblock -initallelements
 
 #Strictly speaking you should rebuild your entire project if you change the

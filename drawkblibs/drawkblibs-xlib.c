@@ -6,7 +6,10 @@
  *
  */
 
+#define _XOPEN_SOURCE 500
+
 #include <stdlib.h>
+#include <string.h>
 
 #include "drawkblibs.h"
 // #include "drawkblibs-xlib.h"
@@ -996,7 +999,7 @@ KbDrawRow(drawkb_p this, Drawable w, GC gc, unsigned int angle,
 				key_data[j].size = size_unbound_string;
 			}
 			memcpy(&(key_data[j].labelbox), &labelbox, sizeof(XkbBoundsRec));
-			key_data[j].glyph = glyph;
+			key_data[j].glyph = strdup(glyph);
 
 			break;
 
