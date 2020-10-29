@@ -322,6 +322,8 @@ void superkb_start(superkb_p this)
 		XEvent event_save_for_replay;
 		Window event_saved_window = 0xFFFFFFFFL;
 
+		memset(&ev, 0, sizeof(ev));
+
 		/* Decide wether to use XNextEvent or my own XNextEventWithTimeout
 		 * and do accordingly. If WithTimeout was used, substract the
 		 * time actually elapsed to the set timeout. */
