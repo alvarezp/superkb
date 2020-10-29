@@ -82,7 +82,6 @@ WNO=-Wno-unused-parameter
 CFLAGS+=-Wall -std=c99 $(PEDANTIC_ERRORS) $(WEXTRA) $(WNO) $(syms-y) $(cflags-y) $(cflags-m) -ggdb -fPIC -DVEXTRA=\""$(version_extrainfo)"\" $(MACROS) -fcommon
 OBJS=superkb.o main.o superkbrc.o imagelib.o drawkblib.o debug.o timeval.o $(obj-y)
 LDPARAMS=-lX11 -lm -ldl -L/usr/X11R6/lib -L/usr/X11/lib $(ldlibs-y)
-SKIP_CPPCHECK=y
 SKIP_VALGRIND=y
 SKIP_SPLINT=y
 SKIP_CLANG=y
@@ -215,7 +214,7 @@ uninstall-app:
 
 #These defaults are really aggressive. You may want to tweak them.
 VALGRIND_EXTRA = --suppressions=/dev/null
-#CPPCHECK_EXTRA = --suppress=...
+CPPCHECK_EXTRA = --suppress=invalidLifetime --suppress=memleakOnRealloc
 SPLINT_EXTRA = -unrecog -fullinitblock -initallelements
 
 #Strictly speaking you should rebuild your entire project if you change the
