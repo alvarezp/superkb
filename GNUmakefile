@@ -9,29 +9,24 @@ PKG_CONFIG ?= pkg-config
 #puticon/puticon-gdkpixbuf
 obj-$(PUTICON_GDKPIXBUF) += puticon/puticon-gdkpixbuf.o
 syms-$(PUTICON_GDKPIXBUF) += -DWITH_GDKPIXBUF
-ldlibs-$(PUTICON_GDKPIXBUF) += $(shell $(PKG_CONFIG) gdk-pixbuf-xlib-2.0 --libs)
-cflags-$(PUTICON_GDKPIXBUF) += $(shell $(PKG_CONFIG) gdk-pixbuf-xlib-2.0 --cflags)
+packages-$(PUTICON_GDKPIXBUF) += gdk-pixbuf-xlib-2.0
 
 #puticon/puticon-imlib2 (which I prefer)
 obj-$(PUTICON_IMLIB2) += puticon/puticon-imlib2.o
 syms-$(PUTICON_IMLIB2) += -DWITH_IMLIB2
-ldlibs-$(PUTICON_IMLIB2) += $(shell $(PKG_CONFIG) imlib2 --libs)
-cflags-$(PUTICON_IMLIB2) += $(shell $(PKG_CONFIG) imlib2 --cflags)
+packages-$(PUTICON_IMLIB2) += imlib2
 
 #drawkblibs/drawkblibs-xlib
 obj-$(DRAWKBLIBS_XLIB) += drawkblibs/drawkblibs-xlib.o
 syms-$(DRAWKBLIBS_XLIB) += -DWITH_DRAWKBLIBS_XLIB
-ldlibs-$(DRAWKBLIBS_XLIB) += $(shell $(PKG_CONFIG) x11 --libs)
-cflags-$(DRAWKBLIBS_XLIB) += $(shell $(PKG_CONFIG) x11 --cflags)
+packages-$(DRAWKBLIBS_XLIB) += x11
 
 #drawkblibs/drawkblibs-cairo
 obj-$(DRAWKBLIBS_CAIRO) += drawkblibs/drawkblibs-cairo.o
 syms-$(DRAWKBLIBS_CAIRO) += -DWITH_DRAWKBLIBS_CAIRO
-ldlibs-$(DRAWKBLIBS_CAIRO) += $(shell $(PKG_CONFIG) x11 renderproto xrender cairo cairo-xlib pangocairo --libs)
-cflags-$(DRAWKBLIBS_CAIRO) += $(shell $(PKG_CONFIG) x11 renderproto xrender cairo cairo-xlib pangocairo --cflags) -DPANGO_ENABLE_BACKEND
+packages-$(DRAWKBLIBS_CAIRO) += x11 renderproto xrender cairo cairo-xlib pangocairo
 
-cflags-y += $(shell $(PKG_CONFIG) xft --cflags)
-ldlibs-y += $(shell $(PKG_CONFIG) xft --libs)
+packages-y += xft
 
 CLEAN_MORE = */*.o */*.so superkb.1 configuration $(shell find . -iname "*~") core*
 
@@ -40,11 +35,17 @@ ifeq ($(XINERAMA_SUPPORT),n)
 	obj-y += screeninfo-xlib.o
 else
 	obj-y += screeninfo-xinerama.o
-	ldlibs-y += $(shell $(PKG_CONFIG) xinerama --libs)
-	cflags-y += $(shell $(PKG_CONFIG) xinerama --cflags)
+	packages-y += xinerama
 endif
 
 version_extrainfo = $(shell ./extendedversioninfo.bash)
+
+cflags-y := $(shell $(PKG_CONFIG) $(packages-y) --cflags) -DPANGO_ENABLE_BACKEND
+cflags-m := $(shell $(PKG_CONFIG) $(packages-m) --cflags) -DPANGO_ENABLE_BACKEND
+ldlibs-y := $(shell $(PKG_CONFIG) $(packages-y) --libs)
+ldlibs-m := $(shell $(PKG_CONFIG) $(packages-m) --libs)
+includes-y := $(shell $(PKG_CONFIG) $(packages-y) --cflags-only-I)
+includes-m := $(shell $(PKG_CONFIG) $(packages-m) --cflags-only-I)
 
 #Conditional -pedantic-errors because of pango 1.32.3, 1.32.4 and 1.32.5.
 PEDANTIC_ERRORS := -pedantic-errors
