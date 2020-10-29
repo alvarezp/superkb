@@ -780,7 +780,7 @@ int drawkb_cairo_reduce_to_best_size_by_width(drawkb_p this, cairo_t *cr, XkbBou
 	}
 
 	/* Find best for width */
-	while ( abs(size_now - size_last) > PANGO_SCALE )
+	while ( fabs(size_now - size_last) > PANGO_SCALE )
 	{
 		this->debug(13, " ===== Not within height precision yet: %f %f\n", size_now, size_last );
 		saved_size_now = size_now;
