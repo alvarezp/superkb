@@ -220,7 +220,7 @@ SPLINT_EXTRA = -unrecog -fullinitblock -initallelements
 #Strictly speaking you should rebuild your entire project if you change the
 #GNUmakefile, but it can be quite cumbersome if your project is really big
 #and you are debugging or hacking the GNUmakefile.
-REBUILD_ON=GNUmakefile
+REBUILD_ON=GNUmakefile configuration
 
 # ===== MODIFICATIONS SHOULD NOT BE NEEDED BELOW THIS LINE =====
 
