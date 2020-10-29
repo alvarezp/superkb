@@ -25,8 +25,8 @@
 #include "debug.h"
 #include "timeval.h"
 
-int keygrab1_serial = -1;
-int keygrab2_serial = -1;
+long unsigned int keygrab1_serial = -1;
+long unsigned int keygrab2_serial = -1;
 int superkey1_grabfail = 0;
 int superkey2_grabfail = 0;
 
@@ -320,7 +320,7 @@ void superkb_start(superkb_p this)
 		int to_reason = 0;
 		int super_replay = 0;
 		XEvent event_save_for_replay;
-		Window event_saved_window = -1;
+		Window event_saved_window = 0xFFFFFFFFL;
 
 		/* Decide wether to use XNextEvent or my own XNextEventWithTimeout
 		 * and do accordingly. If WithTimeout was used, substract the
@@ -463,7 +463,7 @@ void superkb_start(superkb_p this)
 				timerclear(&to[TO_DRAWKB]);
 				timerclear(&to[TO_CONFIG]);
 
-				if (super_replay && event_saved_window != -1) {
+				if (super_replay && event_saved_window != 0xFFFFFFFFL) {
 					/* Since Xlib only supports Replaying a key before getting the next keyboard event,
 					 * we can't really use XAllowEvents() to replay the Super key in case the user
 					 * asked to. So we try XSendEvent() with the Press from the saved event on KeyPress,
