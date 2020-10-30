@@ -15,7 +15,7 @@ Bug tracker for Superkb is located at
 
 [more information]
 The website for Superkb is located at
-.B http://superkb.sf.net/
+.B http://superkb.org/
 and
 there is a documentation Wiki at
 .BR http://superkb.org/wiki .
