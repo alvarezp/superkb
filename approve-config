@@ -76,6 +76,17 @@ if [ "$XINERAMA_SUPPORT" = "n" ]; then
 	SUGGEST_FEDORA_SUGG[$suggest_index]='libXinerama-devel'
 fi
 
+if which help2man | grep -q help2man; then
+    :
+else
+    echo "FALSE"
+	need_index=$((${#NEED_COMPONENTS[@]}+1))
+	NEED_SOMETHING=y
+	NEED_COMPONENTS[$need_index]='* help2man binary'
+	NEED_UBUNTU_SUGG[$need_index]='help2man'
+	NEED_DEBIAN_SUGG[$need_index]='help2man'
+	NEED_FEDORA_SUGG[$need_index]='help2man'
+fi
 
 
 if [ "$NEED_SOMETHING" = "y" ]; then
