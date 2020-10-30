@@ -40,12 +40,12 @@ endif
 
 version_extrainfo = $(shell ./extendedversioninfo.bash)
 
-cflags-y := $(shell $(PKG_CONFIG) $(packages-y) --cflags) -DPANGO_ENABLE_BACKEND
-cflags-m := $(shell $(PKG_CONFIG) $(packages-m) --cflags) -DPANGO_ENABLE_BACKEND
-ldlibs-y := $(shell $(PKG_CONFIG) $(packages-y) --libs)
-ldlibs-m := $(shell $(PKG_CONFIG) $(packages-m) --libs)
-includes-y := $(shell $(PKG_CONFIG) $(packages-y) --cflags-only-I)
-includes-m := $(shell $(PKG_CONFIG) $(packages-m) --cflags-only-I)
+cflags-y := $(shell $(PKG_CONFIG) $(packages-y) --cflags 2> /dev/null) -DPANGO_ENABLE_BACKEND
+cflags-m := $(shell $(PKG_CONFIG) $(packages-m) --cflags 2> /dev/null) -DPANGO_ENABLE_BACKEND
+ldlibs-y := $(shell $(PKG_CONFIG) $(packages-y) --libs 2> /dev/null)
+ldlibs-m := $(shell $(PKG_CONFIG) $(packages-m) --libs 2> /dev/null)
+includes-y := $(shell $(PKG_CONFIG) $(packages-y) --cflags-only-I 2> /dev/null)
+includes-m := $(shell $(PKG_CONFIG) $(packages-m) --cflags-only-I 2> /dev/null)
 
 #Conditional -pedantic-errors because of pango 1.32.3, 1.32.4 and 1.32.5.
 PEDANTIC_ERRORS := -pedantic-errors
