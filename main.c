@@ -288,7 +288,8 @@ void __Superkb_Action(KeyCode keycode, unsigned int state)
 			switch (config->key_bindings[i].action_type) {
 			case AT_COMMAND:
 				if (fork() == 0) {
-					if (config->key_bindings[i].feedback_string) {
+					if (config->key_bindings[i].feedback_string &&
+					  strcmp(config->key_bindings[i].feedback_string, "''") != 0) {
 						char *cmdline = malloc(strlen(config->feedback_handler) + strlen(config->key_bindings[i].feedback_string) + 4);
 						if (cmdline != NULL) {
 							strcpy (cmdline, config->feedback_handler);
@@ -306,7 +307,8 @@ void __Superkb_Action(KeyCode keycode, unsigned int state)
 				break;
 			case AT_DOCUMENT:
 				if (fork() == 0) {
-					if (config->key_bindings[i].feedback_string) {
+					if (config->key_bindings[i].feedback_string &&
+					  strcmp(config->key_bindings[i].feedback_string, "''") != 0) {
 						char *cmdline = malloc(strlen(config->feedback_handler) + strlen(config->key_bindings[i].feedback_string) + 4);
 						if (cmdline != NULL) {
 							strcpy (cmdline, config->feedback_handler);
