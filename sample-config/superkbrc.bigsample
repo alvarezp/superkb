@@ -4,7 +4,7 @@ FEEDBACK_HANDLER "notify-send --urgency normal -t 2000 --icon='gtk-info' Superkb
 # fixed welcome message on start, configured on /etc/superkbrc, but the user
 # may override it with any other command, including an empty string.
 #
-#Example vlaues:
+#Example values:
 #  WELCOME_CMD "notify-send 'Welcome to Superkb'"
 #  WELCOME_CMD "touch ~/.superkb-start-time"
 #  WELCOME_CMD ""
@@ -15,7 +15,7 @@ WELCOME_CMD "notify-send --urgency normal -t 5000 --icon='gtk-info' 'Welcome to 
 #DELAY: Time (in seconds) the Super key must be pressed before showing
 # the on-screen hints.
 #
-#Example vlaues:
+#Example values:
 #  DELAY 0.5
 #  DELAY 1
 #
@@ -126,7 +126,7 @@ SUPERKEY_RELEASE_CANCELS 0
 #and can be turned off by setting this value to 0.
 #
 #This value affects the rest of the configuration file and thus must be present
-#before any KEY directive disired to be affected.
+#before any KEY directive desired to be affected.
 #
 #Example values:
 #  FEEDBACK_STRINGS_AUTOQUOTE 1
