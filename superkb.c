@@ -90,7 +90,7 @@ void clear_pressed_key_stack() {
  *
  * RETURNS == 0 ? Timed out before getting an event.
  * RETURNS <  0 ? Error. Useful to get EINTR. Return set to -errno.
- * RETURNS >  0 ? Event catched.
+ * RETURNS >  0 ? Event caught.
  */
 int
 XNextEventWithTimeout(Display * display, XEvent * event_return,
@@ -324,8 +324,8 @@ void superkb_start(superkb_p this)
 
 		memset(&ev, 0, sizeof(ev));
 
-		/* Decide wether to use XNextEvent or my own XNextEventWithTimeout
-		 * and do accordingly. If WithTimeout was used, substract the
+		/* Decide whether to use XNextEvent or my own XNextEventWithTimeout
+		 * and do accordingly. If WithTimeout was used, subtract the
 		 * time actually elapsed to the set timeout. */
 
 		for (i = 0; i < to_n; i++) {
