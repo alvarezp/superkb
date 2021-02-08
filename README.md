@@ -26,11 +26,9 @@ Fedora (included in distro)
 ---------------------------
  * Fedora users since F17 can install it directly using <code>yum install superkb</code>.
 
-Ubuntu (manual compilation)
----------------------------
- * Ubuntu users must manually compile it from source code. Some instructions for Debian and Ubuntu are available at https://github.com/alvarezp/superkb/wiki/Compilation-instructions-for-Superkb-0.21
-
-Debian (manual compilation)
----------------------------
- * Debian users must manually compile it from source code. Some instructions for Debian and Ubuntu are available at https://github.com/alvarezp/superkb/wiki/Compilation-instructions-for-Superkb-0.21
+Ubuntu / Debian (included in distro)
+------------------------------------
+ * Ubuntu and Debian users can install it from repository:
+	`sudo apt install superkb`
+ * or they can compile it from source code. Some instructions for Debian and Ubuntu are available at https://github.com/alvarezp/superkb/wiki/Compilation-instructions-for-Superkb-0.21
 
