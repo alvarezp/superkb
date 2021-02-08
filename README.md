@@ -28,7 +28,7 @@ Fedora (included in distro)
 
 Ubuntu / Debian (included in distro)
 ------------------------------------
- * Ubuntu users can install it from repository:
+ * Ubuntu and Debian users can install it from repository:
 	`sudo apt install superkb`
  * or they can compile it from source code. Some instructions for Debian and Ubuntu are available at https://github.com/alvarezp/superkb/wiki/Compilation-instructions-for-Superkb-0.21
 
